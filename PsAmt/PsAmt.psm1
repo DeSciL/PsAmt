@@ -8,7 +8,7 @@
 # about_PsAmt
 
 #########################################################################################
-# Settings
+# Global Settings
 
 [string]$Global:AmtModulePath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
 
