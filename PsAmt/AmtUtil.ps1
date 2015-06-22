@@ -300,7 +300,14 @@ function Unprotect-String {
   $ms = new-Object IO.MemoryStream @(,$EncryptedBytes)
   $cs = new-Object Security.Cryptography.CryptoStream $ms, $d, "Read"
   $sr = new-Object IO.StreamReader $cs
-  $result = $sr.ReadToEnd()
+
+  Try {
+    $result = $sr.ReadToEnd()
+  } 
+  Catch {
+    Write-Error "Unable to decrypt encripted string." -ErrorAction Stop
+  }
+  
   $sr.Close()
   $cs.Close()
   $ms.Close()
