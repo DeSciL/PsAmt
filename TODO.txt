@@ -11,6 +11,10 @@ Priority 1
 
 Priority 2
 
+- Need some nice status report functions like including nice headers:
+  Get-AllHits | ft Title, HitStatus, NumberOfAssignmentsCompleted
+  $hit | Get-AllAssignmentForHit | ft workerId, assignmentstatus, submittime
+
 - Add templates for mturk.clt.properties, template.bonus.csv, template.codes.csv,
   ctl.imput, ctl.properties, ctl.question, and ctl.result files from the mturk repo.
   Add short explanation of what these files are, i.e. about_AmtTemplates.
@@ -23,6 +27,9 @@ Priority 2
 
 Priority 3
 
+- Reproduce typical files like success file, etc.
+- Split samples into sections
+- Marketing: Make it obvious why Mturk API with typed data is cool
 - Typical workflows and documentation
 - AmtClt command line tool wrappers
 - Pester Unit Tests
