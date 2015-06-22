@@ -50,7 +50,6 @@ function Set-AmtKeys {
    Protect-String
    Unprotect-String
 #>
- 
   Param(
    [Parameter(Position=0, Mandatory=$false)]
    [string]$Passphrase,
@@ -126,7 +125,6 @@ function Get-AmtKeys {
    Protect-String
    Unprotect-String
 #>
-
   Param(
    [Parameter(Position=0, Mandatory=$false)]
    [string]$Passphrase,
@@ -140,6 +138,7 @@ function Get-AmtKeys {
    [string]$KeyFile="Amt.key"
   )
 
+  # Check if passphrase is entered or stored
   if(!$Passphrase) {
     if(!$Global:AmtPassphrase) {
       $PassphraseSec = Read-Host "Enter AMT Passphrase" -asSecureString
@@ -150,6 +149,7 @@ function Get-AmtKeys {
     }
   }
 
+  # Test if key file exists
   if(!(Test-Path $KeyFile)) {
     $keyPath = Join-Path $Global:AmtModulePath $KeyFile
     if(!(Test-Path $keyPath)) {
@@ -157,12 +157,15 @@ function Get-AmtKeys {
     }
   }
 
+  # Decrypt and extract keys
   $encrypted = Get-Content $keyPath
   $joined = Unprotect-String $encrypted $Passphrase
   $splitted = $joined.Split("~")
   $accessKeyString = $splitted[0]
   $secretKeyString = $splitted[1]
   $requesterIdString = $splitted[2]
+
+  # Return requested element
   if($AccessKey.IsPresent) {
     return $accessKeyString
   }
@@ -216,6 +219,7 @@ function Protect-String {
    [string]$Init="Y3t anoth3r k3y"
   )
 
+  # Check if passphrase is provided, otherwise request it
   if(!$Passphrase) {
     $PassphraseSec = Read-Host "Enter Passphrase" -asSecureString
     $Passphrase = [System.Runtime.InteropServices.marshal]::PtrToStringAuto([System.Runtime.InteropServices.marshal]::SecureStringToBSTR($PassphraseSec))
@@ -281,6 +285,7 @@ function Unprotect-String {
    [string]$Init="Y3t anoth3r k3y"
   )
 
+  # Check if passphrase is provided, otherwise request it
   if(!$Passphrase) {
     $PassphraseSec = Read-Host "Enter Passphrase" -asSecureString
     $Passphrase = [System.Runtime.InteropServices.marshal]::PtrToStringAuto([System.Runtime.InteropServices.marshal]::SecureStringToBSTR($PassphraseSec))
