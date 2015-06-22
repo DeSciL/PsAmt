@@ -167,14 +167,16 @@ function Connect-Amt {
    Connect to Amazom Mechanical Turk
   
   .DESCRIPTION
-   Connect to Amazom Mechanical Turk by means of the .Net SDK. This function
-   set
+   Connect to Amazom Mechanical Turk by means of the .Net SDK.
 
   .PARAMETER  AccessKey
    The Amazon Mechanical Turk access key.
 
   .PARAMETER  SecretKey
    The Amazon Mechanical Turk secret key id.
+
+  .PARAMETER KeyFile
+   Specify the file with stored passwords.
    
   .PARAMETER  Sandbox
    Switches between sandbox and production site.
@@ -191,7 +193,7 @@ function Connect-Amt {
    [Parameter(Position=1, Mandatory=$false)]
    [string]$SecretKey,
    [Parameter(Position=1, Mandatory=$false)]
-   [string]$KeyFile=Amt.keys,
+   [string]$KeyFile="Amt.key",
    [Parameter(Position=2, Mandatory=$false)]
    [switch]$Sandbox
   )
@@ -207,8 +209,8 @@ function Connect-Amt {
   }
 
   # Get WebService credentials from encrypted key file
-  if(!$AccessKeyId) { $AccessKeyId = Get-AmtKeys -AccessKey }
-  if(!$SecretKey) { $SecretKey = Get-AmtKeys -SecretKey }
+  if(!$AccessKeyId) { $AccessKeyId = Get-AmtKeys -AccessKey -KeyFile $KeyFile }
+  if(!$SecretKey) { $SecretKey = Get-AmtKeys -SecretKey -KeyFile $KeyFile }
 
   # Check if sandbox
   if($Sandbox.IsPresent) {
@@ -243,6 +245,27 @@ function Connect-Amt {
 
   # Get available balance
   Get-AccountBalance
+}
+
+#########################################################################################
+function Disconnect-Amt {
+<# 
+  .SYNOPSIS 
+   Disconnect AMT Api
+  
+  .DESCRIPTION
+   Disconnects from AMT and clears all password and key usage.
+ 
+  .EXAMPLE 
+   Disconnect-Amt
+
+  .LINK
+   about_AmtApi
+#>
+  $Global:AmtConfig = $null
+  $Global:AmtClient = $null
+  $Global:AmtPassphrase = $null
+  Write-Host "Disconnected from AMT. All passwords cleared."
 }
 
 #########################################################################################
@@ -2599,7 +2622,7 @@ function Set-HitTypeNotification {
 
 #########################################################################################
 # Exports
-Export-ModuleMember about_AmtApi, Connect-Amt, Get-AccountBalance
+Export-ModuleMember about_AmtApi, Connect-Amt, Disconnect-Amt, Get-AccountBalance
 #Export-ModuleMember Test-AmtApi
 
 # HITS
