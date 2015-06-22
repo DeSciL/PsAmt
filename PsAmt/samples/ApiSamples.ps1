@@ -5,14 +5,41 @@
 #########################################################################################
 
 # CONTENTS
+# - Setup
 # - Hits
 # - HitTypes
 # - Qualifications
 # - Blocks
 # - Notifications
+# - Api
 
 #########################################################################################
 
+function Setup {
+
+  #----------------------------------------------------
+  # Setup and store amt keys
+  # Asks for AccessKeyID, SecretAccessKey, RequesterId, and a passphrase
+  Set-AmtKeys
+
+  # After keys have been stored, connecting to amt requires only the passphrase
+  Connect-Amt
+
+  # Set sandbox globally on all the following commands
+  Connect-Amt -sandbox
+
+  # Use another account
+  Connect-Amt -Keyfile "SecondAccount.key"
+
+  # Disconnect, clear all saved keys and passwords
+  Disconnect-Amt
+
+  # Always your first api call
+  Get-AccountBalance
+
+}
+
+#########################################################################################
 function Hits {
   
   #----------------------------------------------------
@@ -307,3 +334,16 @@ function Notifications {
 }
 
 #########################################################################################
+function Api {
+
+  # Working directly with API simple client
+  # List all members
+  $Global:AmtClient | Get-Member
+
+  # UpdateHits
+  # [...]
+  
+  # Requester Statistics
+  # [...]
+
+}
