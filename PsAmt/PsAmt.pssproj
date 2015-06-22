@@ -27,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Build.ps1" />
     <Compile Include="AmtUtil.ps1" />
     <Compile Include="AmtClt.ps1" />
     <Compile Include="PsAmt.psd1" />
