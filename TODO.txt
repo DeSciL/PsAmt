@@ -1,0 +1,26 @@
+PsAMT TODO
+stwehrli@gmail.com
+
+Priority 1
+
+- Install.ps1:
+  Build and install script
+- Initialize-Amt or Test-Amt:
+  Tests if everything is in place. Suggest install/build if something is wrong.
+- Get-AmtKeys: specify key file
+
+Priority 2
+
+- Add templates for mturk.clt.properties, template.bonus.csv, template.codes.csv,
+  ctl.imput, ctl.properties, ctl.question, and ctl.result files from the mturk repo.
+  Add short explanation of what these files are, i.e. about_AmtTemplates.
+- Pipelining
+  Approve-Assignment, Grant-Bonus should take a lists and loop such that for-loops
+  are not required.
+- Get-BonusPayments: what is the maximal page size? Adjust help.
+
+Priority 3
+
+- Typical workflows and documentation
+- AmtClt command line tool wrappers
+- Pester Unit Tests
