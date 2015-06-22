@@ -4,12 +4,4 @@
 # You can download Pester from http://go.microsoft.com/fwlink/?LinkID=534084
 #
 
-Throw "Not Implemented."
-
-Describe "Get-Function" {
-	Context "Function Exists" {
-		It "Should Return" {
-		
-		}
-	}
-}
+Throw "Not Implemented"

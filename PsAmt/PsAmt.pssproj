@@ -26,11 +26,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
+    <Compile Include="AmtUtil.ps1" />
+    <Compile Include="AmtClt.ps1" />
     <Compile Include="PsAmt.psd1" />
     <Compile Include="PsAmt.psm1" />
+    <Compile Include="AmtApi.ps1" />
     <Compile Include="PsAmt.tests.ps1" />
+    <Compile Include="samples\ApiSamples.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="templates\" />
+    <Folder Include="samples\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templates\Qualification.answer" />
+    <Content Include="templates\Qualification.question" />
+    <Content Include="templates\Survey.question" />
+    <Content Include="templates\Trivia.question" />
+    <Content Include="templates\Troubles.question" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
