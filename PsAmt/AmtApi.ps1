@@ -161,33 +161,8 @@
 function about_AmtApi {}
 
 #########################################################################################
-function Connect-Amt {
-<# 
-  .SYNOPSIS 
-   Connect to Amazom Mechanical Turk
-  
-  .DESCRIPTION
-   Connect to Amazom Mechanical Turk by means of the .Net SDK.
-
-  .PARAMETER  AccessKey
-   The Amazon Mechanical Turk access key.
-
-  .PARAMETER  SecretKey
-   The Amazon Mechanical Turk secret key id.
-
-  .PARAMETER KeyFile
-   Specify the file with stored passwords.
-   
-  .PARAMETER  Sandbox
-   Switches between sandbox and production site.
- 
-  .EXAMPLE 
-   Connect-Amt -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
-
-  .LINK
-   about_AmtApi
-#>
-  Param(
+function ConnectAmt {
+	Param(
    [Parameter(Position=0, Mandatory=$false)]
    [string]$AccessKeyId,
    [Parameter(Position=1, Mandatory=$false)]
@@ -244,7 +219,51 @@ function Connect-Amt {
   }
 
   # Get available balance
-  Get-AccountBalance
+  GetBalance
+}
+
+function Connect-Amt {
+<# 
+  .SYNOPSIS 
+   Connect to Amazom Mechanical Turk
+  
+  .DESCRIPTION
+   Connect to Amazom Mechanical Turk by means of the .Net SDK.
+
+  .PARAMETER  AccessKey
+   The Amazon Mechanical Turk access key.
+
+  .PARAMETER  SecretKey
+   The Amazon Mechanical Turk secret key id.
+
+  .PARAMETER KeyFile
+   Specify the file with stored passwords.
+   
+  .PARAMETER  Sandbox
+   Switches between sandbox and production site.
+ 
+  .EXAMPLE 
+   Connect-Amt -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
+
+  .LINK
+   about_AmtApi
+#>
+  Param(
+   [Parameter(Position=0, Mandatory=$false)]
+   [string]$AccessKeyId,
+   [Parameter(Position=1, Mandatory=$false)]
+   [string]$SecretKey,
+   [Parameter(Position=1, Mandatory=$false)]
+   [string]$KeyFile="Amt.key",
+   [Parameter(Position=2, Mandatory=$false)]
+   [switch]$Sandbox
+  )
+  
+  if($Sandbox) {
+	  ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -KeyFile $KeyFile -Sandbox
+  } else {
+	  ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -KeyFile $KeyFile
+  }
 }
 
 #########################################################################################
@@ -269,6 +288,13 @@ function Disconnect-Amt {
 }
 
 #########################################################################################
+
+function TestAmtApi {
+  if($AmtClient -eq $null) {
+	ConnectAmt
+  }
+}
+
 function Test-AmtApi {
 <# 
  .SYNOPSIS 
@@ -281,9 +307,7 @@ function Test-AmtApi {
  .LINK
   about_AmtApi
 #>
-  if($AmtClient -eq $null) {
-    Connect-Amt -Sandbox
-  }
+  TestAmtApi
 }
 
 #########################################################################################
@@ -315,7 +339,7 @@ function Approve-Assignment {
     [string]$RequesterFeedback
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
 }
 
@@ -351,7 +375,7 @@ function Approve-RejectedAssignment {
     [string]$RequesterFeedback
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
 }
 
@@ -397,7 +421,7 @@ function Grant-Qualification {
     [bool]$SendNotification=$false
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.AssignQualification($QualificationTypeId, $WorkerId, $IntegerValue, $SendNotification)
 }
 
@@ -432,7 +456,7 @@ function Block-Worker {
     [string]$Reason
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.BlockWorker($WorkerId, $Reason)
 }
 
@@ -473,7 +497,7 @@ function Set-HitTypeOfHit {
     [string]$HITTypeId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.ChangeHITTypeOfHIT($HITId, $HITTypeId)
 }
 
@@ -628,7 +652,7 @@ function Add-Hit {
     [HIT]$HIT
   )
 
-  Test-AmtApi
+  TestAmtApi
   if($Hit) {
     return $AmtClient.CreateHIT($Hit)
   }
@@ -666,7 +690,7 @@ function Disable-Hit {
     [string]$HITId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.DisableHIT($HITId)
 }
 
@@ -698,7 +722,7 @@ function Remove-Hit {
     [string]$HITId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.DisposeHIT($HITId)
 }
 
@@ -787,7 +811,7 @@ function Add-QualificationTypeFull {
     [int]$AutoGrantedValue = 1
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.CreateQualificationType($Name, $Keywords, $Description, $QualificationTypeStatus, $RetryDelayInSeconds, $Test, $AnswerKey, $TestDurationInSeconds, $AutoGranted, $null)
 }
 
@@ -831,7 +855,7 @@ function Add-QualificationType {
     [string]$Keywords = ""
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.CreateQualificationType($Name, $Keywords, $Description)
 }
 
@@ -864,7 +888,7 @@ function Remove-QualificationType {
     [string]$QualificationTypeId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.DisposeQualificationType($QualificationTypeId)
 }
 
@@ -909,7 +933,7 @@ function Expand-Hit {
     [long]$ExpirationIncrementInSeconds=$null
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.ExtendHIT($HITId, $MaxAssignmentsIncrement, $ExpirationIncrementInSeconds)
 }
 
@@ -941,11 +965,16 @@ function Stop-Hit {
     [string]$HITId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.ForceExpireHIT($HITId)
 }
 
 #########################################################################################
+function GetBalance {
+  TestAmtApi
+  return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
+}
+
 function Get-AccountBalance {
 <# 
  .SYNOPSIS 
@@ -961,7 +990,7 @@ function Get-AccountBalance {
  .LINK
   about_AmtApi
 #>
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
 }
 
@@ -993,7 +1022,7 @@ function Get-Assignment {
 
   [string[]]$ResponseGroup = $null
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetAssignment($AssignmentId, $ResponseGroup)
 }
 
@@ -1063,7 +1092,7 @@ function Get-AssignmentsForHit {
   # Implement AssignmentStatus
   # Implement ResponseGroup
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetAssignmentsForHIT($HITId, $SortDirection, $AssignmentStatus, $SortProperty, $PageNumber, $PageSize, $null)
 }
 
@@ -1092,7 +1121,7 @@ function Get-AllAssignmentsForHit {
     [string]$HITId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetAllAssignmentsForHIT($HITId)
 }
 
@@ -1112,7 +1141,7 @@ function Get-BlockedWorkers {
   .LINK
    about_AmtApi
 #>
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetAllBlockedWorkersIterator()
 }
 
@@ -1164,7 +1193,7 @@ function Get-BonusPayments {
     [int]$PageNumber=$null
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetBonusPayments($HITId, $AssignmentId, $PageSize, $PageNumber)
 }
 
@@ -1201,7 +1230,7 @@ function Get-FileUploadUrl {
     [string]$QuestionIdentifier
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetFileUploadURL($AssignmentId, $QuestionIdentifier)
 }
 
@@ -1228,7 +1257,7 @@ function Get-Hit {
     [string]$HITId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetHIT($HITId, $null)
 }
 
@@ -1247,7 +1276,7 @@ function Get-AllHits {
   .LINK
    about_AmtApi
 #>
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetAllHITs()
 }
 
@@ -1292,7 +1321,7 @@ function Get-HitsForQualificationType {
 
   Throw "Not implemented"
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageSize, $PageNumber)
 }
 
@@ -1343,7 +1372,7 @@ function Get-QualificationsForQualificationType {
   # TODO:
   # Implement Enum QualificationStatus
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetQualificationsForQualificationType($QualificationTypeId, $Status, $PageSize, $PageNumber)
 }
 
@@ -1400,7 +1429,7 @@ function Get-QualificationRequests {
 	#[string]$PageNumber=1
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetQualificationRequests($QualificationTypeId, $null, $null, $null, $null)
 }
 
@@ -1435,7 +1464,7 @@ function Get-QualificationScore {
     [string]$WorkerId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetQualificationScore($QualificationTypeId, $WorkerId)
 }
 
@@ -1463,7 +1492,7 @@ function Get-QualificationType {
     [string]$QualificationTypeId
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetQualificationType($QualificationTypeId)
 }
 
@@ -1482,7 +1511,7 @@ function Get-AllQualificationTypes {
   .LINK
    about_AmtApi
 #>
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetAllQualificationTypes()
 }
 
@@ -1545,7 +1574,7 @@ function Get-ReviewableHits {
   # TODO: 
   # Implement Enum ReviewableHitStatus
 
-  Test-AmtApi
+  TestAmtApi
   #return $AmtClient.GetReviewableHITs($HITTypeId, $Status, $SortProperty, $SortDirection, $PageSize, $PageNumber)
   return $AmtClient.GetReviewableHITs($HITTypeId, $null, $null, $null, $null, $null)
 }
@@ -1606,7 +1635,7 @@ function Get-ReviewResultsForHIT {
   # TODO:
   # PolicyLevels not implemented in API
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GetReviewResultsForHIT($HITId, $PolicyLevel, $AssignmentId, $RetrieveActions, $RetrieveResults)
 }
 
@@ -1654,7 +1683,7 @@ function Grant-Bonus {
     [string]$Reason
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GrantBonus($WorkerId, $BonusAmount, $AssignmentId, $Reason)
 }
 
@@ -1691,7 +1720,7 @@ function Grant-QualificationRequest {
     [int]$IntegerValue=1
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.GrantQualification($QualificationRequestId, $IntegerValue)
 }
 
@@ -1730,7 +1759,7 @@ function Send-WorkerNotification {
     [string[]]$WorkerIds
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerIds)
 }
 
@@ -1797,7 +1826,7 @@ function Register-HitType {
     $QualificationRequirement = $null
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
 }
 
@@ -1834,7 +1863,7 @@ function Deny-Assignment {
     [string]$RequesterFeedback
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
 }
 
@@ -1870,7 +1899,7 @@ function Deny-QualificationRequest  {
     [string]$Reason
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.RejectQualificationRequest($QualificationRequestId, $Reason)
 }
 
@@ -1912,7 +1941,7 @@ function Revoke-Qualification {
     [string]$Reason
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.RevokeQualification($QualificationTypeId, $WorkerId, $Reason)
 }
 
@@ -1946,7 +1975,7 @@ function Unblock-Worker {
     [string]$Reason
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.UnblockWorker($WorkerId, $Reason)
 }
 
@@ -1990,7 +2019,7 @@ function Update-QualificationScore {
     [int]$IntegerValue=$null
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.UpdateQualificationScore($QualificationTypeId, $WorkerId, $IntegerValue)
 }
 
@@ -2112,7 +2141,7 @@ function Update-QualificationType {
     }
   }
 
-  Test-AmtApi
+  TestAmtApi
   if($Test) {
     return $AmtClient.UpdateQualificationTypeFull($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus, $qt.Test, $qt.AnswerKey, $qt.TestDurationInSeconds, $qt.RetryDelayInSeconds, $null, $null) 
   } else {
@@ -2177,7 +2206,7 @@ function Search-QualificationTypes {
     [int]$PageNumber=$null
   )
 
-  Test-AmtApi
+  TestAmtApi
   return $AmtClient.SearchQualificationTypes($Query, $MustBeRequestable, $MustBeOwnedByCaller, $null, $null, $null, $null)
 }
 
@@ -2210,7 +2239,7 @@ function New-QualificationRequirement {
     [Parameter(Position=0, Mandatory=$false)]
     [string]$QualificationTypeId,
     [Parameter(Position=1, Mandatory=$false)]
-    [ValidateSet('Exists', 'LessThan','LessThanOrEqualTo', 'GreaterThan', 'GreaterThanOrEqualTo', 'EqualTo', 'NotEqualTo')]
+    [ValidateSet('Exists', 'LessThan','LessThanOrEqualTo', 'GreaterThan', 'GreaterThanOrEqualTo', 'EqualTo', 'NotEqualTo', 'DoesNotExist')]
     [string]$Comparator,
     [Parameter(Position=2, Mandatory=$false)]
     $IntegerValue,
@@ -2373,6 +2402,10 @@ function New-HtmlQuestion {
 }
 
 #########################################################################################
+function NewHit {
+	New-Object HIT
+}
+
 function New-Hit {
 <# 
  .SYNOPSIS 
@@ -2556,7 +2589,7 @@ function New-TestHit {
   .LINK
    about_AmtApi
 #>
-  $hit = New-Hit
+  $hit = NewHit
   $hit.Title = "Test HIT"
   $hit.Description = "This is just a test hit. Move along."
   $hit.Keywords = "Test, Testing"
