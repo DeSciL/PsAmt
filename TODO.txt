@@ -9,9 +9,17 @@ Priority 1
 - Initialize-Amt or Test-Amt:
   Tests if everything is in place. Suggest install/build if something is wrong.
 
+- Implement rest of the functionality / missing and throwing functions
+  Get-AssignmentsForHit, Get-HitsForQualificationType, Get-QualificationsForQualificationType
+  Get-ReviewableHits, Get-ReviewResultsForHIT, New-QuestionForm,
+  Search-Hits, Send-TestEventNotification, Set-HitAsReviewing, Set-HitTypeNotification
+
+- Review comment based help and adjust to PowerShell setting. Currently, help is just
+  copy/paste from API documentation.
+
 Priority 2
 
-- Need some nice status report functions like including nice headers:
+- Need some nice status report functions including nice headers:
   Get-AllHits | ft Title, HitStatus, NumberOfAssignmentsCompleted
   $hit | Get-AllAssignmentForHit | ft workerId, assignmentstatus, submittime
 
@@ -29,7 +37,7 @@ Priority 3
 
 - Reproduce typical files like success file, etc.
 - Split samples into sections
-- Marketing: Make it obvious why Mturk API with typed data is cool
 - Typical workflows and documentation
 - AmtClt command line tool wrappers
 - Pester Unit Tests
+- Marketing: Make it obvious why Mturk API with typed data is cool
