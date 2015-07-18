@@ -22,8 +22,9 @@
   PowerShell wrapper scripts to access Amazon Mechanical Turk .Net API
     
  .LINK
-  http://www.mturk.com
+  https://github.com/DeSciL/PsAmt
   http://mturkdotnet.codeplex.com/
+  http://www.mturk.com
 #>
 function about_PsAmt {}
 
@@ -31,10 +32,10 @@ function about_PsAmt {}
 # Exports 
 Export-ModuleMember about_PsAmt
 
-# AmtUtil
-# done in AmtUtil.ps1
+# AmtApi
+# Exports in AmtApi.ps1
 
-# AmtApi Exports
-# done in AmtApi.ps1
+# AmtUtil
+# Exports in AmtUtil.ps1
 
 #########################################################################################
