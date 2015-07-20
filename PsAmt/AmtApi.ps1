@@ -2239,7 +2239,7 @@ function New-QualificationRequirement {
     [Parameter(Position=0, Mandatory=$false)]
     [string]$QualificationTypeId,
     [Parameter(Position=1, Mandatory=$false)]
-    [ValidateSet('Exists', 'LessThan','LessThanOrEqualTo', 'GreaterThan', 'GreaterThanOrEqualTo', 'EqualTo', 'NotEqualTo', 'DoesNotExist')]
+    [ValidateSet('Exists', 'LessThan','LessThanOrEqualTo', 'GreaterThan', 'GreaterThanOrEqualTo', 'EqualTo', 'NotEqualTo', 'DoesNotExist', 'In', 'NotIn')]
     [string]$Comparator,
     [Parameter(Position=2, Mandatory=$false)]
     $IntegerValue,
