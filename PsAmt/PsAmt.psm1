@@ -9,8 +9,8 @@
 
 #########################################################################################
 # Global Settings
-
 [string]$Global:AmtModulePath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
+[string]$Global:AmtKeyPath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
 
 #########################################################################################
 

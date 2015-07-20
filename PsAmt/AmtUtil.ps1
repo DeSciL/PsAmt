@@ -80,7 +80,7 @@ function Set-AmtKeys {
     $Passphrase = [System.Runtime.InteropServices.marshal]::PtrToStringAuto([System.Runtime.InteropServices.marshal]::SecureStringToBSTR($PassphraseSec))
   }
 
-  $modulePath = $Global:AmtModulePath
+  $modulePath = $Global:AmtKeyPath
   $keyPath = Join-Path $modulePath $KeyFile
   $joinedKeys = $accessKey + "~" + $secretKey + "~" + $RequesterId
   $encrypted = Protect-String $joinedKeys $Passphrase
@@ -151,7 +151,7 @@ function Get-AmtKeys {
 
   # Test if key file exists
   if(!(Test-Path $KeyFile)) {
-    $keyPath = Join-Path $Global:AmtModulePath $KeyFile
+    $keyPath = Join-Path $Global:AmtKeyPath $KeyFile
     if(!(Test-Path $keyPath)) {
       Write-Error "File $KeyFile not found!" -ErrorAction Stop
     }
