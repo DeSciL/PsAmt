@@ -658,7 +658,7 @@ function Add-Hit {
   }
   if($HITTypeId) {
     [string[]]$ResponseGroup = $null
-    return $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
+	  return $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
   } else {
     return $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
   }
