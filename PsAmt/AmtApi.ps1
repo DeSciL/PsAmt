@@ -208,6 +208,7 @@ function ConnectAmt {
   $Global:AmtConfig = New-Object Amazon.WebServices.MechanicalTurk.MTurkConfig($AmtServiceEndpoint, $AccessKeyId, $SecretKey)
   $Global:AmtClient = New-Object Amazon.WebServices.MechanicalTurk.SimpleClient($AmtConfig)
   $Global:AmtQuestionUtil = [Amazon.WebServices.MechanicalTurk.QuestionUtil]
+  $Global:AmtQrList = New-Object 'System.Collections.Generic.List[QualificationRequirement]'
 
   # Report back
   if($AmtSandbox) {
@@ -2227,8 +2228,12 @@ function New-QualificationRequirement {
 
  .PARAMETER LocaleValue
 
+ .PARAMETER Locale
+
  .PARAMETER RequiredToPreview
   
+ .PARAMETER Sandbox
+
  .EXAMPLE
   Add-QualificationRequirement 
   
@@ -2239,17 +2244,21 @@ function New-QualificationRequirement {
     [Parameter(Position=0, Mandatory=$false)]
     [string]$QualificationTypeId,
     [Parameter(Position=1, Mandatory=$false)]
-    [ValidateSet('Exists', 'LessThan','LessThanOrEqualTo', 'GreaterThan', 'GreaterThanOrEqualTo', 'EqualTo', 'NotEqualTo', 'DoesNotExist', 'In', 'NotIn')]
+    [ValidateSet('LessThan','LessThanOrEqualTo', 'GreaterThan', 'GreaterThanOrEqualTo', 'EqualTo', 'NotEqualTo', 'Exists', 'DoesNotExist', 'In', 'NotIn')]
     [string]$Comparator,
     [Parameter(Position=2, Mandatory=$false)]
     $IntegerValue,
     [Parameter(Position=3, Mandatory=$false)]
-    [string]$LocaleValue,
+    [string[]]$LocaleValue,
     [Parameter(Position=4, Mandatory=$false)]
     [bool]$RequiredToPreview,
-    [Parameter(Position=4, Mandatory=$false)]
-    [ValidateSet('Masters','CategorizationMasters','PhotoModerationMaster','NumberHITsApproved', 'Locale','Adult','PercentAssignmentsApproved')]
-    [string]$BuiltIn
+    [Parameter(Position=5, Mandatory=$false)]
+    [ValidateSet('Masters','CategorizationMasters','PhotoModerationMaster','NumberHITsApproved', 'Locale', 'Adult','PercentAssignmentsApproved')]
+    [string]$BuiltIn, 
+	[Parameter(Position=6, Mandatory=$false)]
+    [Locale[]]$Locale,
+	[Parameter(Position=7, Mandatory=$false)]
+    [bool]$Sandbox=$AmtSandbox
   )
 
   switch($BuiltIn)
@@ -2260,7 +2269,7 @@ function New-QualificationRequirement {
       } else {
         $QualificationTypeId = "2F1QJWKUDD8XADTFD2Q0G6UTO95ALH"
       }
-      $Comparator = "Exists"
+      $DefaultComparator = "Exists"
     }
     "CategorizationMasters" {
       if($AmtSandbox) {
@@ -2268,7 +2277,7 @@ function New-QualificationRequirement {
       } else {
         $QualificationTypeId = "2NDP2L92HECWY8NS8H3CK0CP5L9GHO"
       }
-      $Comparator = "Exists"
+      $DefaultComparator = "Exists"
     }
     "PhotoModerationMasters" {
       if($AmtSandbox) {
@@ -2276,18 +2285,18 @@ function New-QualificationRequirement {
       } else {
         $QualificationTypeId = "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG"
       }
-      $Comparator = "Exists" 
+      $DefaultComparator = "Exists" 
     }
     "NumberHITsApproved" {
       $QualificationTypeId = "00000000000000000040"
     }
     "Locale" {
       $QualificationTypeId = "00000000000000000071"
-      $Comparator = "EqualTo"
+      $DefaultComparator = "EqualTo"
     }
     "Adult" {
       $QualificationTypeId = "00000000000000000060"
-      $Comparator = "EqualTo"
+      $DefaultComparator = "EqualTo"
       $IntegerValue = 1
     }
     "PercentAssignmentsApproved" {
@@ -2295,13 +2304,21 @@ function New-QualificationRequirement {
     }
   }
 
+  if(!$Comparator) {
+	  $Comparator = $DefaultComparator
+  }
+
   $qr = New-Object QualificationRequirement
   if($QualificationTypeId) { $qr.QualificationTypeId = $QualificationTypeId }
   if($Comparator) { $qr.Comparator = $Comparator }
   if($IntegerValue) { $qr.IntegerValue = $IntegerValue }
   if($LocaleValue) { $qr.LocaleValue = New-Locale $LocaleValue }
+  if($Locale) { $qr.LocaleValue = $Locale }
   if($RequiredToPreview) { $qr.RequiredToPreview = $RequiredToPreview }
   return $qr
+
+  # TODO:
+  # Tests if quals with integer values are properly set, e.g. percent assignments approved
 }
 
 #########################################################################################
@@ -2548,20 +2565,42 @@ function New-Locale {
 
   .PARAMETER Country
    A ISO-3166-2 country code, like "US" or "IN"
+
+  .PARAMETER Subdivision
+   A code for the state, like NY
+
+  .PARAMETER Both
+   Add country and state in composite form, like US-NY
   
   .EXAMPLE
-   New-Locale -Country US
+   New-Locale -Country "US"
+
+  .EXAMPLE
+   New-Locale -Country "US" -Subdivision "NY"
+
+  .EXAMPLE
+   New-Locale -Both "US-NY"
   
   .LINK
    about_AmtApi
 #>
   Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$Country
+    [Parameter(Position=0, Mandatory=$false)]
+    [string]$Country,
+	[Parameter(Position=1, Mandatory=$false)]
+    [string]$Subdivision,
+	[Parameter(Position=2, Mandatory=$false)]
+    [string]$Both
   )
-  $l = New-Object Locale
-  $l.Country = $Country
-  return $l
+
+  if($Both -and $Both.IndexOf("-") -gt 0) {
+	  $Country = $Both.split("-")[0]
+	  $Subdivision = $Both.split("-")[1]
+  }
+  $loc = New-Object Locale
+  $loc.Country = $Country
+  $loc.Subdivision = $Subdivision
+  return $loc
 }
 
 #########################################################################################
