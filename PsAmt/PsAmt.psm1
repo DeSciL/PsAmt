@@ -12,8 +12,10 @@
 [string]$Global:AmtModulePath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
 [string]$Global:AmtKeyPath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
 
-#########################################################################################
+# Global Function Calls
+# LoadAmt
 
+#########################################################################################
 <# 
  .SYNOPSIS 
   PowerShell wrapper scripts to access Amazon Mechanical Turk .Net API

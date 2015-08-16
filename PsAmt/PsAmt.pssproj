@@ -46,6 +46,7 @@
     <Content Include="templates\Survey.question" />
     <Content Include="templates\Trivia.question" />
     <Content Include="templates\Troubles.question" />
+    <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
