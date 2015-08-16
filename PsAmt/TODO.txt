@@ -1,0 +1,5 @@
+# TODO
+
+- Connect-Amt: Definition of objects needs to be done on load
+- Connect-Amt: If password is entered wrongly, cannot connect anymore because password is stored!?!
+- Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
