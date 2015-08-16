@@ -75,8 +75,7 @@
 # --                                                    New-Locale
 #
 #########################################################################################
-# Settings
-
+# Global Settings
 [bool]$Global:AmtSandbox = $true
 
 #########################################################################################
@@ -161,68 +160,106 @@
 function about_AmtApi {}
 
 #########################################################################################
-function ConnectAmt {
-	Param(
-   [Parameter(Position=0, Mandatory=$false)]
-   [string]$AccessKeyId,
-   [Parameter(Position=1, Mandatory=$false)]
-   [string]$SecretKey,
-   [Parameter(Position=1, Mandatory=$false)]
-   [string]$KeyFile="Amt.key",
-   [Parameter(Position=2, Mandatory=$false)]
-   [switch]$Sandbox
-  )
+function LoadAmt {
 
-  # Set assembly location
-  $assembly = "Amazon.WebServices.MechanicalTurk.dll"
-  $modulePath = $Global:AmtModulePath
-  $assemblyPath = Join-Path $modulePath $assembly
-  
-  # Test if assembly is present
-  if(!(Test-Path $assemblyPath)) { 
-    Write-Error "Amazon Mechanical Turk Assembly not found." -ErrorAction Stop
-  }
+	# Set assembly location
+	$assembly = "Amazon.WebServices.MechanicalTurk.dll"
+	$modulePath = $Global:AmtModulePath
+	$assemblyPath = Join-Path $modulePath $assembly
 
-  # Get WebService credentials from encrypted key file
-  if(!$AccessKeyId) { $AccessKeyId = Get-AmtKeys -AccessKey -KeyFile $KeyFile }
-  if(!$SecretKey) { $SecretKey = Get-AmtKeys -SecretKey -KeyFile $KeyFile }
+	# Test
+	if(!(Test-Path($assemblyPath))) {
+			Write-Error "Amazon Mechanical Turk Assembly not found." -ErrorAction Stop
+	}
 
-  # Check if sandbox
-  if($Sandbox.IsPresent) {
-    $Global:AmtSandbox = $true
-  } else {
-    $Global:AmtSandbox = $false
-  }
-
-  # Set Endpoint and URL
-  if($AmtSandbox) {
-    $AmtServiceEndpoint = "https://mechanicalturk.sandbox.amazonaws.com?Service=AWSMechanicalTurkRequester"
-    $AmtWebsiteUrl = "https://mechanicalturk.sandbox.amazonaws.com" 
-  } else {
-    $AmtServiceEndpoint = "https://mechanicalturk.amazonaws.com?Service=AWSMechanicalTurkRequester"
-    $AmtWebsiteUrl = "https://mechanicalturk.amazonaws.com"
-  }
-
-  # Setup config and simple client
-  $Global:AmtAssembly = [Reflection.Assembly]::LoadFile($assemblyPath)
-  $Global:AmtConfig = New-Object Amazon.WebServices.MechanicalTurk.MTurkConfig($AmtServiceEndpoint, $AccessKeyId, $SecretKey)
-  $Global:AmtClient = New-Object Amazon.WebServices.MechanicalTurk.SimpleClient($AmtConfig)
-  $Global:AmtQuestionUtil = [Amazon.WebServices.MechanicalTurk.QuestionUtil]
-  $Global:AmtQrList = New-Object 'System.Collections.Generic.List[QualificationRequirement]'
-
-  # Report back
-  if($AmtSandbox) {
-    Write-Host ""
-    Write-Host "Connected to AMT sandbox site"
-  } else {
-    Write-Host ""
-    Write-Host "Connected to AMT production site"
-  }
-
-  # Get available balance
-  GetBalance
+	# Setup config and simple client
+	$Global:AmtAssembly = [Reflection.Assembly]::LoadFile($assemblyPath)
+	$Global:AmtQuestionUtil = [Amazon.WebServices.MechanicalTurk.QuestionUtil]
+	$Global:AmtQrList = New-Object 'System.Collections.Generic.List[QualificationRequirement]'
+	$Global:AmtLocaleList = New-Object 'System.Collections.Generic.List[Locale]'
+	$Global:AmtClientConnected = $false
+	$Global:AmtClientLoaded = $true
 }
 
+#########################################################################################
+function TestAmtApi {
+	# Internal function wrapper for Test-AmtApi
+	if(!$Global:AmtClientLoaded) { LoadAmt }
+	if(!$Global:AmtClientConnected) { ConnectAmt }
+}
+
+function Test-AmtApi {
+<# 
+ .SYNOPSIS 
+  Test if AMT simple client is ready.
+
+ .DESCRIPTION
+  Test if AMT simple client is ready. If $AmtClient is not set,
+  a connection is established.
+
+ .LINK
+  about_AmtApi
+#>
+  TestAmtApi
+}
+
+#########################################################################################
+function ConnectAmt {
+	Param(
+		[Parameter(Position=0, Mandatory=$false)]
+		[string]$AccessKeyId,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$SecretKey,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$KeyFile="Amt.key",
+		[Parameter(Position=2, Mandatory=$false)]
+		[switch]$Sandbox
+	)
+
+	# Make sure assembly is loaded
+	if(!$Global:AmtClientLoaded) { LoadAmt }
+
+	# Get WebService credentials from encrypted key file
+	if(!$AccessKeyId) { $AccessKeyId = Get-AmtKeys -AccessKey -KeyFile $KeyFile }
+	if(!$SecretKey) { $SecretKey = Get-AmtKeys -SecretKey -KeyFile $KeyFile }
+
+	# Check if sandbox
+	if($Sandbox.IsPresent) {
+		$Global:AmtSandbox = $true
+	} else {
+		$Global:AmtSandbox = $false
+	}
+
+	# Set Endpoint and URL
+	if($AmtSandbox) {
+		$AmtServiceEndpoint = "https://mechanicalturk.sandbox.amazonaws.com?Service=AWSMechanicalTurkRequester"
+		$AmtWebsiteUrl = "https://mechanicalturk.sandbox.amazonaws.com" 
+	} else {
+		$AmtServiceEndpoint = "https://mechanicalturk.amazonaws.com?Service=AWSMechanicalTurkRequester"
+		$AmtWebsiteUrl = "https://mechanicalturk.amazonaws.com"
+	}
+
+	# Setup Client
+	$Global:AmtConfig = New-Object Amazon.WebServices.MechanicalTurk.MTurkConfig($AmtServiceEndpoint, $AccessKeyId, $SecretKey)
+	$Global:AmtClient = New-Object Amazon.WebServices.MechanicalTurk.SimpleClient($AmtConfig)
+
+	# Report back
+	if($AmtSandbox) {
+		Write-Host ""
+		Write-Host "Connected to AMT Sandbox Site"
+	} else {
+		Write-Host ""
+		Write-Host "Connected to AMT Production Site"
+	}
+
+	# Set connected
+	$Global:AmtClientConnected = $true
+
+	# Get available balance
+	Write-Host "Current balance: " (GetBalance)
+}
+
+#########################################################################################
 function Connect-Amt {
 <# 
   .SYNOPSIS 
@@ -231,16 +268,16 @@ function Connect-Amt {
   .DESCRIPTION
    Connect to Amazom Mechanical Turk by means of the .Net SDK.
 
-  .PARAMETER  AccessKey
+  .PARAMETER AccessKey
    The Amazon Mechanical Turk access key.
 
-  .PARAMETER  SecretKey
+  .PARAMETER SecretKey
    The Amazon Mechanical Turk secret key id.
 
   .PARAMETER KeyFile
    Specify the file with stored passwords.
    
-  .PARAMETER  Sandbox
+  .PARAMETER Sandbox
    Switches between sandbox and production site.
  
   .EXAMPLE 
@@ -286,29 +323,6 @@ function Disconnect-Amt {
   $Global:AmtClient = $null
   $Global:AmtPassphrase = $null
   Write-Host "Disconnected from AMT. All passwords cleared."
-}
-
-#########################################################################################
-
-function TestAmtApi {
-  if($AmtClient -eq $null) {
-	ConnectAmt
-  }
-}
-
-function Test-AmtApi {
-<# 
- .SYNOPSIS 
-  Test if AMT simple client is ready.
-
- .DESCRIPTION
-  Test if AMT simple client is ready. If $AmtClient is not set,
-  a connection is established.
-
- .LINK
-  about_AmtApi
-#>
-  TestAmtApi
 }
 
 #########################################################################################
@@ -658,7 +672,7 @@ function Add-Hit {
     return $AmtClient.CreateHIT($Hit)
   }
   if($HITTypeId) {
-    [string[]]$ResponseGroup = $null
+	[string[]]$ResponseGroup = $null
 	  return $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
   } else {
     return $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
@@ -2289,6 +2303,7 @@ function New-QualificationRequirement {
     }
     "NumberHITsApproved" {
       $QualificationTypeId = "00000000000000000040"
+		$DefaultComparator = "GreaterThanOrEqualTo"
     }
     "Locale" {
       $QualificationTypeId = "00000000000000000071"
@@ -2301,6 +2316,7 @@ function New-QualificationRequirement {
     }
     "PercentAssignmentsApproved" {
       $QualificationTypeId = "000000000000000000L0"
+	  $DefaultComparator = "GreaterThanOrEqualTo"
     }
   }
 
@@ -2565,38 +2581,27 @@ function New-Locale {
 
   .PARAMETER Country
    A ISO-3166-2 country code, like "US" or "IN"
-
-  .PARAMETER Subdivision
-   A code for the state, like NY
-
-  .PARAMETER Both
-   Add country and state in composite form, like US-NY
   
   .EXAMPLE
    New-Locale -Country "US"
 
   .EXAMPLE
-   New-Locale -Country "US" -Subdivision "NY"
-
-  .EXAMPLE
-   New-Locale -Both "US-NY"
+   New-Locale -Country "US-NY"
   
   .LINK
    about_AmtApi
 #>
   Param(
     [Parameter(Position=0, Mandatory=$false)]
-    [string]$Country,
-	[Parameter(Position=1, Mandatory=$false)]
-    [string]$Subdivision,
-	[Parameter(Position=2, Mandatory=$false)]
-    [string]$Both
+    [string]$Country
   )
 
-  if($Both -and $Both.IndexOf("-") -gt 0) {
-	  $Country = $Both.split("-")[0]
-	  $Subdivision = $Both.split("-")[1]
+  if($Country.IndexOf("-") -gt 0) {
+	  $Both = $Country.Split("-")
+	  $Country = $Both[0]
+	  $Subdivision = $Both[1]
   }
+
   $loc = New-Object Locale
   $loc.Country = $Country
   $loc.Subdivision = $Subdivision
