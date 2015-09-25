@@ -408,7 +408,7 @@ function Invoke-MakeTemplate {
 #########################################################################################
 # Exports
 
-Export-ModuleMember about_AmtClt
+#Export-ModuleMember about_AmtClt
 #Export-ModuleMember Invoke-GetBalance
 #Export-ModuleMember Invoke-LoadHits, Invoke-GetResults, Invoke-ApproveWork, Invoke-RejectWork
 #Export-ModuleMember Invoke-ReviewResults, Invoke-DeleteHits, Invoke-UpdateHits, Invoke-ExtendHits
