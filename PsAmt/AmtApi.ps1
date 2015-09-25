@@ -322,6 +322,7 @@ function Disconnect-Amt {
   $Global:AmtConfig = $null
   $Global:AmtClient = $null
   $Global:AmtPassphrase = $null
+  $Global:AmtClientConnected = $true
   Write-Host "Disconnected from AMT. All passwords cleared."
 }
 
@@ -1179,15 +1180,15 @@ function Get-BonusPayments {
    The ID of the assignment associated with the bonus payments to retrieve. 
    If specified, only bonus payments for the given assignment are returned.
 
-  .PARAMETER PageSize
-   The number of bonus payments to include in a page of results. 
-   The complete result set is divided into pages of this many bonus payments.
-
   .PARAMETER PageNumber
    The page of results to return. Once the list of bonus payments has been 
    divided into pages of size PageSize, the page corresponding to PageNumber 
    is returned as the results of the operation.
-  
+
+  .PARAMETER PageSize
+   The number of bonus payments to include in a page of results. 
+   The complete result set is divided into pages of this many bonus payments.
+
   .EXAMPLE
    Get-BonusPayments -HITId "HID"
 
@@ -1203,13 +1204,74 @@ function Get-BonusPayments {
 	[Parameter(Position=1, Mandatory=$false)]
     [string]$AssignmentId,
 	[Parameter(Position=2, Mandatory=$false)]
-    [int]$PageSize=$null,
+    [int]$PageNumber=1,
 	[Parameter(Position=3, Mandatory=$false)]
-    [int]$PageNumber=$null
+    [int]$PageSize=100
   )
 
   TestAmtApi
-  return $AmtClient.GetBonusPayments($HITId, $AssignmentId, $PageSize, $PageNumber)
+
+  if($HITId -and $AssignmentId) {
+	  Write-Error "You can only specify HITId OR AssignmentId." -ErrorAction Stop
+  }
+
+$AmtBonus = @" 
+    public class AmtBonus 
+    {
+      public string WorkerId { get; set; }
+      public decimal BonusAmount { get; set; }
+      public string AssignmentId { get; set; }
+      public string HITId { get; set; }
+      public System.DateTime GrantTime { get; set; }
+      public string Reason { get; set; }
+    }
+"@
+
+  Add-Type -TypeDefinition $AmtBonus
+  $bonuslist = New-object 'System.Collections.Generic.List[AmtBonus]'
+
+  if($HITId) {
+	  $ret = $AmtClient.GetBonusPaymentsByHit($HITId, $PageNumber, $PageSize)
+	  $bonuslist = Format-BonusList -BonusPaymentResult $ret -HITId $HITId
+	  if($ret.TotalNumResults -gt 100) {
+		  $pageCount =  [Math]::Floor(($ret.TotalNumResults / 100))
+		  for ($i = 1; $i -le $pageCount; $i++)
+		  { 
+			$ret = $AmtClient.GetBonusPaymentsByHit($HITId, ($i+1), $PageSize)
+			$bonuslist = Format-BonusList -BonusPaymentResult $ret -ListToAppend $bonuslist
+		  }
+	  }
+	  return $bonuslist
+  }
+
+  if($AssignmentId) {
+	  $assign = Get-Assignment -AssignmentId $AssignmentId
+	  $ret = $AmtClient.GetBonusPaymentsByAssignment($AssignmentId, $PageNumber, $PageSize)
+	  if($ret.TotalNumResults -gt 100) { Write-Error "Can only parse 100 entries." -ErrorAction Stop }
+	  $bonuslist = Format-BonusList -BonusPaymentResult $ret -HITId $assign.Assignment.HITId
+	  return $bonuslist
+  }
+}
+
+function Format-BonusList($BonusPaymentResult, [System.Collections.Generic.List[AmtBonus]]$ListToAppend, $HITId) {
+	$bl = New-object 'System.Collections.Generic.List[AmtBonus]'
+	if($ListToAppend -ne $null) {
+		$bl = $ListToAppend
+	}
+
+	$elements = $BonusPaymentResult.BonusPayment
+    foreach($i in $elements) {
+      $bo = New-Object -TypeName AmtBonus
+      $bo.WorkerId = $i.WorkerId
+      $bo.BonusAmount = $i.BonusAmount.Amount
+      $bo.AssignmentId = $i.AssignmentId
+      $bo.HITId = $HITId
+      $bo.Reason = $i.Reason
+      $bo.GrantTime = $i.GrantTime
+      $bl.Add($bo)
+    }
+
+	return $bl
 }
 
 #########################################################################################
