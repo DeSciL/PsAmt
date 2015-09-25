@@ -29,7 +29,6 @@
   <ItemGroup>
     <Compile Include="Build.ps1" />
     <Compile Include="AmtUtil.ps1" />
-    <Compile Include="AmtClt.ps1" />
     <Compile Include="PsAmt.psd1" />
     <Compile Include="PsAmt.psm1" />
     <Compile Include="AmtApi.ps1" />
@@ -46,7 +45,6 @@
     <Content Include="templates\Survey.question" />
     <Content Include="templates\Trivia.question" />
     <Content Include="templates\Troubles.question" />
-    <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
