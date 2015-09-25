@@ -7,10 +7,13 @@
 # PowerShell Wrappers for the Amazon Mechanical Turk .Net SDK
 # http://mturkdotnet.codeplex.com/
 #
+# Requires adjusted and updated .Net SDK
+# https://github.com/descil/dotnetmturk
+#
 ##########################################################################################
 # CONTENTS
 #
-# about_AmtApi
+# about_PsAmt
 # Connect-Amt
 #
 # ---------------------------------------  -----------  ----------------------------------           
@@ -79,88 +82,17 @@
 [bool]$Global:AmtSandbox = $true
 
 #########################################################################################
+function LoadAmt {
 <# 
  .SYNOPSIS 
-  PowerShell scripts to access Amazon Mechanical Turk
+  Loads Mturk .Net SDK
 
  .DESCRIPTION
-  Connect to Amazom Mechanical Turk by means of PowerShell Wrappers
-  for the AMT .Net SDK. First step is to setup a connection to the web
-  service with: 
-
-  Connect-Amt -AccessKey "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
-
-  After a successful connection, the following implemented operations
-  are supported. See comment based help of the functions for more details, 
-  e.g. help Add-Hit
-
-  Settings:
-  - Connect-Amt
-  - Set-AmtKeys
-
-  Working with Hits:
-  - Add-Hit
-  - Get-Hit
-  - Set-HitTypeOfHit
-  - Disable-Hit
-  - Remove-Hit
-  - Expand-Hit
-  - Stop-Hit
-  - Register-HitType
-
-  Assignments:
-  - Approve-Assignment
-  - Approve-RejectedAssignment
-  - Get-Assignment
-  - Get-AssignmentsForHit
-  - Reject-Assignment
-
-  Qualifications:
-  - Add-QualificationType
-  - Get-QualificationType
-  - Update-QualificationType
-  - Remove-QualificationType
-  - Search-QualificationTypes
-  - Get-QualificationRequests
-  - Reject-QualificationRequest
-  - Get-QualificationScore
-  - Update-QualificationScore
-  - Grant-Qualification
-  - Revoke-Qualification
-
-  Bonus payments:
-  - Grant-Bonus
-  - Get-BonusPayments
-
-  Misc:
-  - Get-AccountBalance
-  - Block-Worker
-  - Get-BlockedWorkers
-  - Unblock-Worker
-  - Get-FileUploadURL
-  - Send-WorkerNotification
-	
-  Not implemented operations:
-  //GetHITsForQualificationType
-  //GetQualificationsForQualificationType
-  //GetReviewableHITs
-  //GetReviewResultsForHIT
-  //GetRequesterStatistic
-  //GetRequesterWorkerStatistic
-  //Help
-  //SearchHITs
-  //SendTestEventNotification
-  //SetHITAsReviewing
-  //SetHITTypeNotification
+  Loads Mturk .Net SDK dll and prepares required objects.
 
  .LINK
-  http://www.mturk.com
-  http://mturkdotnet.codeplex.com/
+  about_PsAmt
 #>
-function about_AmtApi {}
-
-#########################################################################################
-function LoadAmt {
 
 	# Set assembly location
 	$assembly = "Amazon.WebServices.MechanicalTurk.dll"
@@ -182,29 +114,76 @@ function LoadAmt {
 }
 
 #########################################################################################
-function TestAmtApi {
-	# Internal function wrapper for Test-AmtApi
-	if(!$Global:AmtClientLoaded) { LoadAmt }
-	if(!$Global:AmtClientConnected) { ConnectAmt }
-}
-
 function Test-AmtApi {
 <# 
  .SYNOPSIS 
   Test if AMT simple client is ready.
 
  .DESCRIPTION
-  Test if AMT simple client is ready. If $AmtClient is not set,
+  Test if AMT simple client is ready. If $AmtClient is not loaded,
+  objects will be prepared. If $AmtClient is no connected,
   a connection is established.
 
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
   TestAmtApi
 }
 
+function TestAmtApi {
+	# Internal function for Test-AmtApi
+	if(!$Global:AmtClientLoaded) { LoadAmt }
+	if(!$Global:AmtClientConnected) { ConnectAmt }
+}
+
+#########################################################################################
+function Connect-Amt {
+<# 
+  .SYNOPSIS 
+   Connect to Amazom Mechanical Turk
+  
+  .DESCRIPTION
+   Connect to Amazom Mechanical Turk by means of the .Net SDK.
+
+  .PARAMETER AccessKey
+   The Amazon Mechanical Turk access key.
+
+  .PARAMETER SecretKey
+   The Amazon Mechanical Turk secret key id.
+
+  .PARAMETER KeyFile
+   Specify the file with stored passwords.
+   
+  .PARAMETER Sandbox
+   Switches between sandbox and production site.
+ 
+  .EXAMPLE 
+   Connect-Amt -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
+
+  .LINK
+   about_PsAmt
+#>
+  Param(
+   [Parameter(Position=0, Mandatory=$false)]
+   [string]$AccessKeyId,
+   [Parameter(Position=1, Mandatory=$false)]
+   [string]$SecretKey,
+   [Parameter(Position=1, Mandatory=$false)]
+   [string]$KeyFile="Amt.key",
+   [Parameter(Position=2, Mandatory=$false)]
+   [switch]$Sandbox
+  )
+  
+  if($Sandbox) {
+	  ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -KeyFile $KeyFile -Sandbox
+  } else {
+	  ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -KeyFile $KeyFile
+  }
+}
+
 #########################################################################################
 function ConnectAmt {
+	# Internal function for Connect-Amt
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
 		[string]$AccessKeyId,
@@ -260,64 +239,19 @@ function ConnectAmt {
 }
 
 #########################################################################################
-function Connect-Amt {
-<# 
-  .SYNOPSIS 
-   Connect to Amazom Mechanical Turk
-  
-  .DESCRIPTION
-   Connect to Amazom Mechanical Turk by means of the .Net SDK.
-
-  .PARAMETER AccessKey
-   The Amazon Mechanical Turk access key.
-
-  .PARAMETER SecretKey
-   The Amazon Mechanical Turk secret key id.
-
-  .PARAMETER KeyFile
-   Specify the file with stored passwords.
-   
-  .PARAMETER Sandbox
-   Switches between sandbox and production site.
- 
-  .EXAMPLE 
-   Connect-Amt -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
-
-  .LINK
-   about_AmtApi
-#>
-  Param(
-   [Parameter(Position=0, Mandatory=$false)]
-   [string]$AccessKeyId,
-   [Parameter(Position=1, Mandatory=$false)]
-   [string]$SecretKey,
-   [Parameter(Position=1, Mandatory=$false)]
-   [string]$KeyFile="Amt.key",
-   [Parameter(Position=2, Mandatory=$false)]
-   [switch]$Sandbox
-  )
-  
-  if($Sandbox) {
-	  ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -KeyFile $KeyFile -Sandbox
-  } else {
-	  ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -KeyFile $KeyFile
-  }
-}
-
-#########################################################################################
 function Disconnect-Amt {
 <# 
   .SYNOPSIS 
-   Disconnect AMT Api
+   Disconnects from AMT
   
   .DESCRIPTION
-   Disconnects from AMT and clears all password and key usage.
+   Disconnects from AMT, clears all password and key usage.
  
   .EXAMPLE 
    Disconnect-Amt
 
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   $Global:AmtConfig = $null
   $Global:AmtClient = $null
@@ -346,7 +280,7 @@ function Approve-Assignment {
    Approve-Assignment -AssignmentId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC" -RequesterFeedback "Well done."
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -378,11 +312,11 @@ function Approve-RejectedAssignment {
    Constraints: Can be up to 1024 characters.
   
   .EXAMPLE
-   $aid = ""
+   $aid = "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
    Approve-RejectedAssignment -AssignmentId $aid -RequesterFeedback "Sorry, now approved."
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -403,7 +337,7 @@ function Grant-Qualification {
 
   .DESCRIPTION
    The AssignQualification operation gives a Worker a Qualification. AssignQualification 
-   does not require that the Worker submit a Qualification request. 
+   does not require that the Worker submits a Qualification request. 
    It gives the Qualification directly to the Worker.
 
   .PARAMETER QualificationTypeId
@@ -411,20 +345,20 @@ function Grant-Qualification {
 
   .PARAMETER WorkerId
    The ID of the Worker to whom the Qualification is being assigned. 
-   Worker IDs are included with submitted HIT assignments and Qualification requests.
 
   .PARAMETER IntegerValue
-   The value of the Qualification to assign.
+   The value of the Qualification to assign. This could be a performance
+   level between 0-100.
 
   .PARAMETER SendNotification
    Specifies whether to send a notification email message to the Worker saying that 
-   the qualification was assigned to the Worker.
+   the qualification was assigned to the Worker. Default is $false.
 
   .EXAMPLE
    Grant-Qualification -QualificationTypeId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC" -WorkerId "ABCEDFG"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -463,7 +397,7 @@ function Block-Worker {
    Block-Worker -WorkerId ABCDEFGHIKLM -Reason "Don't do this again!"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -504,7 +438,7 @@ function Set-HitTypeOfHit {
    Set-HITTypeOfHIT -HITId $hitId -HITTypeId $hitTypeId
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -556,7 +490,7 @@ function Add-Hit {
 
   .PARAMETER Reward
    The amount of money the Requester will pay a Worker for 
-   successfully completing the HIT.
+   successfully completing the HIT. Reward is in USD.
 
   .PARAMETER AssignmentDurationInSeconds
    The amount of time, in seconds, that a Worker has to complete the 
@@ -610,11 +544,10 @@ function Add-Hit {
    A HIT object.
   
   .EXAMPLE
-   # ...
-   #This is a simple hit asking for the last US president:
-
    Add-Hit -Title "President" -Description "Find name of president" -Reward 0.55  -Question "Who was the last president of the United States?" -MaxAssignments 5
   
+   This is a simple hit asking for the last US president:
+
   .EXAMPLE
    # ...
    # For external questions, a HitType needs to be registered first:
@@ -629,7 +562,7 @@ function Add-Hit {
    Add-Hit -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $q  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
    
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$false)]
@@ -674,7 +607,7 @@ function Add-Hit {
   }
   if($HITTypeId) {
 	[string[]]$ResponseGroup = $null
-	  return $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
+	return $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
   } else {
     return $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
   }
@@ -693,13 +626,13 @@ function Disable-Hit {
   for a HIT that has been disposed.
 
  .PARAMETER HITId
-  The ID of the HIT to retrieve.
+  The ID of the HIT to diable.
   
  .EXAMPLE
   Disable-Hit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -723,15 +656,15 @@ function Remove-Hit {
  .PARAMETER HITId
   The ID of the HIT to retrieve.
 
-  .NOTES
-   The name of cmdlet differs from the web operation naming:
-   DisposeHIT -> Remove-Hit
+ .NOTES
+  The name of cmdlet differs from the web operation naming:
+  DisposeHIT -> Remove-Hit
   
  .EXAMPLE
   Remove-Hit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -749,8 +682,8 @@ function Add-QualificationTypeFull {
    Create a new qualification type.
 
   .DESCRIPTION
-   The CreateQualificationType operation creates a new Qualification type, which is 
-   represented by a QualificationType data structure.
+   The CreateQualificationType operation creates a new Qualification type, 
+   which is represented by a QualificationType data structure.
 
   .PARAMETER Name
    The name you give to the Qualification type. The type name is used to 
@@ -801,7 +734,7 @@ function Add-QualificationTypeFull {
    [...]
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -838,8 +771,8 @@ function Add-QualificationType {
    Create a new qualification type.
 
   .DESCRIPTION
-   The CreateQualificationType operation creates a new Qualification type, which is 
-   represented by a QualificationType data structure.
+   The CreateQualificationType operation creates a new Qualification type, 
+   which is represented by a QualificationType data structure.
 
   .PARAMETER Name
    The name you give to the Qualification type. The type name is used to 
@@ -856,11 +789,15 @@ function Add-QualificationType {
    separated by commas. The keywords of a type make the type easier 
    to find during a search.
   
+  .NOTES
+   For QualificationTypes bound to a qualification test see extended
+   version of the function: Add-QualificationTypeFull
+
   .EXAMPLE
    Add-QualificationType "Test Qual" "Test Qualification" "Keyword 123"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -879,7 +816,7 @@ function Add-QualificationType {
 function Remove-QualificationType {
 <# 
   .SYNOPSIS 
-   Dispose / delete a HIT.
+   Dispose / delete a QualificationType.
 
   .DESCRIPTION
    The DisposeQualificationType operation disposes a Qualification type and disposes 
@@ -897,7 +834,7 @@ function Remove-QualificationType {
    Remove-QualificationType -QualificationTypeId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -915,8 +852,8 @@ function Expand-Hit {
    Extend / expand a HIT.
 
   .DESCRIPTION
-   The ExtendHIT operation increases the maximum number of assignments, or 
-   extends the expiration date, of an existing HIT.
+   The Expand-Hit (aka ExtendHIT) operation increases the maximum number 
+   of assignments, or extends the expiration date, of an existing HIT.
 
   .PARAMETER HITId
    The ID of the HIT to extend.
@@ -936,9 +873,12 @@ function Expand-Hit {
   .EXAMPLE
    $hitId = "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
    Expand-Hit -HITId $hitId -M 20 -E 1000
+
+   This will add 20 assignments to the HIT and pushes the expiration
+   time by 1000 seconds.
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -960,8 +900,8 @@ function Stop-Hit {
    Stop / force expire a HIT.
 
   .DESCRIPTION
-   The ForceExpireHIT operation causes a HIT to expire immediately, as if the 
-   LifetimeInSeconds parameter of the HIT had elapsed.
+   The Stop-Hit operation (aka ForceExpireHIT) causes a HIT to expire immediately, 
+   as if the LifetimeInSeconds parameter of the HIT had elapsed.
 
   .PARAMETER HITId
    The ID of the HIT to retrieve.
@@ -974,7 +914,7 @@ function Stop-Hit {
    Stop-Hit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -998,13 +938,14 @@ function Get-AccountBalance {
 
  .DESCRIPTION
   The GetAccountBalance operation retrieves the amount of 
-  money in your Amazon Mechanical Turk account.
+  money in your Amazon Mechanical Turk account. On the sandbox
+  this stays at $10'000.
 
  .EXAMPLE
   Get-AccountBalance
 
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
   TestAmtApi
   return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
@@ -1029,7 +970,7 @@ function Get-Assignment {
    Get-Assignment -AssignmentId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1086,7 +1027,7 @@ function Get-AssignmentsForHit {
    Get-AssignmentsForHit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1107,6 +1048,7 @@ function Get-AssignmentsForHit {
   # TODO:
   # Implement AssignmentStatus
   # Implement ResponseGroup
+  # Alternative Get-AllAssignmentsForHit
 
   TestAmtApi
   return $AmtClient.GetAssignmentsForHIT($HITId, $SortDirection, $AssignmentStatus, $SortProperty, $PageNumber, $PageSize, $null)
@@ -1130,7 +1072,7 @@ function Get-AllAssignmentsForHit {
    Get-AllAssignmentsForHit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1155,7 +1097,7 @@ function Get-BlockedWorkers {
    Get-BlockedWorkers
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   TestAmtApi
   return $AmtClient.GetAllBlockedWorkersIterator()
@@ -1196,7 +1138,7 @@ function Get-BonusPayments {
    Get-BonusPayments -AssignmentId "AID"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$false)]
@@ -1298,7 +1240,7 @@ function Get-FileUploadUrl {
    Get-FileUploadUrl -AssignmentId $aid -QuestionIdentifier $qi
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1327,7 +1269,7 @@ function Get-Hit {
    Get-Hit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1351,7 +1293,7 @@ function Get-AllHits {
    Get-AllHits
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   TestAmtApi
   return $AmtClient.GetAllHITs()
@@ -1372,34 +1314,34 @@ function Get-HitsForQualificationType {
    by the CreateQualificationType operation. The operation returns HITs that 
    require that a Worker have a Qualification of this type.
 
+  .PARAMETER PageNumber
+   The page of results to return. After the HITs are divided into pages of size 
+   PageSize, the operation returns the page corresponding to the PageNumber.
+
   .PARAMETER PageSize
    The number of HITs to include in a page of results. The complete results set 
    is divided into pages of this many HITs.
 
-  .PARAMETER PageNumber
-   The page of results to return. After the HITs are divided into pages of size 
-   PageSize, the operation returns the page corresponding to the PageNumber.
-  
   .EXAMPLE
    $qid = ""
    Get-HitsForQualificationType -QualificationTypeId $qid
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
     [string]$QualificationTypeId,
 	[Parameter(Position=1, Mandatory=$true)]
-    [string]$PageSize=10,
+    [string]$PageNumber=1,
 	[Parameter(Position=2, Mandatory=$true)]
-    [string]$PageNumber=1
+    [string]$PageSize=10
   )
 
   Throw "Not implemented"
 
   TestAmtApi
-  return $AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageSize, $PageNumber)
+  return $AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageNumber, $PageSize)
 }
 
 #########################################################################################
@@ -1432,7 +1374,7 @@ function Get-QualificationsForQualificationType {
    Get-QualificationsForQualificationType -QualificationTypeId $qid
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1440,17 +1382,18 @@ function Get-QualificationsForQualificationType {
 	[Parameter(Position=0, Mandatory=$false)]
     [string]$Status="Granted",
 	[Parameter(Position=0, Mandatory=$false)]
-    [string]$PageSize=10,
+    [string]$PageNumber=1,
 	[Parameter(Position=0, Mandatory=$false)]
-    [string]$PageNumber=1
+    [string]$PageSize=100
   )
 
   Throw "Not Implemented"
   # TODO:
   # Implement Enum QualificationStatus
+  # Review order of PageNumber and PageSize
 
   TestAmtApi
-  return $AmtClient.GetQualificationsForQualificationType($QualificationTypeId, $Status, $PageSize, $PageNumber)
+  return $AmtClient.GetQualificationsForQualificationType($QualificationTypeId, $Status, $PageNumber, $PageSize)
 }
 
 #########################################################################################
@@ -1491,7 +1434,7 @@ function Get-QualificationRequests {
    Get-QualificationRequests -QualificationTypeId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1505,6 +1448,9 @@ function Get-QualificationRequests {
 	#[Parameter(Position=0, Mandatory=$true)]
 	#[string]$PageNumber=1
   )
+
+  # TODO:
+  # Implement missing parameters
 
   TestAmtApi
   return $AmtClient.GetQualificationRequests($QualificationTypeId, $null, $null, $null, $null)
@@ -1532,7 +1478,7 @@ function Get-QualificationScore {
    Get-QualificationScore -QualificationTypeId $qid -WorkerId $wid
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1562,7 +1508,7 @@ function Get-QualificationType {
    Get-QualificationType -QualificationTypeId $qid
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1586,7 +1532,7 @@ function Get-AllQualificationTypes {
    Get-AllQualificationTypes
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   TestAmtApi
   return $AmtClient.GetAllQualificationTypes()
@@ -1616,21 +1562,21 @@ function Get-ReviewableHits {
   .PARAMETER SortDirection
    The direction of the sort used with the field specified by the SortProperty property.
    Valid Values: Ascending | Descending
-   
-  .PARAMETER PageSize
-   The number of HITs to include in a page of results. The operation divides the 
-   complete sorted result set is divided into pages of this many HITs.
 
   .PARAMETER PageNumber
    The page of results to return. After the operation filters, sorts, and 
    divides the HITs into pages of size PageSize, it returns the page 
    corresponding to PageNumber as the results of the operation.
+   
+  .PARAMETER PageSize
+   The number of HITs to include in a page of results. The operation divides the 
+   complete sorted result set is divided into pages of this many HITs.
      
   .EXAMPLE
    Get-ReviewableHits -HITTypeId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$false)]
@@ -1642,14 +1588,15 @@ function Get-ReviewableHits {
 	[Parameter(Position=0, Mandatory=$false)]
     [string]$SortDirection="Descending",
 	[Parameter(Position=0, Mandatory=$false)]
-    [string]$PageSize=10,
+    [string]$PageNumber=1,
 	[Parameter(Position=0, Mandatory=$false)]
-    [string]$PageNumber=1
+    [string]$PageSize=100
   )
 
   Throw "Not Implemented"
   # TODO: 
   # Implement Enum ReviewableHitStatus
+  # Review PageNumber
 
   TestAmtApi
   #return $AmtClient.GetReviewableHITs($HITTypeId, $Status, $SortProperty, $SortDirection, $PageSize, $PageNumber)
@@ -1693,7 +1640,7 @@ function Get-ReviewResultsForHIT {
    Get-QualificationScore -QualificationTypeId $qid -WorkerId $wid
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1709,6 +1656,7 @@ function Get-ReviewResultsForHIT {
   )
 
   Throw "Not Implemented"
+
   # TODO:
   # PolicyLevels not implemented in API
 
@@ -1733,7 +1681,7 @@ function Grant-Bonus {
    data of the GetAssignmentsForHIT operation.
 
   .PARAMETER BonusAmount
-   The bonus amount to pay.
+   The bonus amount to pay. Bonus is in USD.
 
   .PARAMETER AssignmentId
    The ID of the assignment for which this bonus is paid, as returned 
@@ -1744,10 +1692,10 @@ function Grant-Bonus {
    The Worker receiving the bonus can see this message.
   
   .EXAMPLE
-   Grant-Bonus -WorkerId "ABCDEFG" -AssignmentId "ABCDEFG" -BonusAmount 1.25 
+   Grant-Bonus -WorkerId "ABCDEFG" -AssignmentId "ABCDEFG" -BonusAmount 1.25 -Reason "Good job"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1788,7 +1736,7 @@ function Grant-QualificationRequest {
    Grant-QualificationRequest -QualificationRequestId "ABCDEFG" [-IntegerValue 1]
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1805,39 +1753,40 @@ function Grant-QualificationRequest {
 function Send-WorkerNotification {
 <# 
   .SYNOPSIS 
-   Unblock a worker.
+   Send a notification.
 
   .DESCRIPTION
    The NotifyWorkers operation sends an email to one or more Workers that you specify
    with the Worker ID. You can specify up to 100 Worker IDs to send the same message 
    with a single call to the NotifyWorkers operation.
 
+  .PARAMETER WorkerId
+   The ID of the Worker to notify, as returned by the GetAssignmentsForHIT operation.
+   You can specify up to 100 Worker IDs to send the same message with a single call.
+
   .PARAMETER Subject
    The subject line of the email message to send.
 
   .PARAMETER MessageText
    The text of the email message to send
-  
-  .PARAMETER WorkerIds
-   The ID of the Worker to notify, as returned by the GetAssignmentsForHIT operation.
 
   .EXAMPLE
-   Send-Notification -Subject "Alert" -MessageText "A new hit is online" -WorkerId "ABCDEFG"
+   Send-Notification -WorkerId "ABCDEFG" -Subject "Hi" -MessageText "A new hit is online."
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
-    [Parameter(Position=0, Mandatory=$true)]
+	[Parameter(Position=0, Mandatory=$true)]
+    [string[]]$WorkerId,
+    [Parameter(Position=1, Mandatory=$true)]
     [string]$Subject,
-    [Parameter(Position=1, Mandatory=$false)]
-    [string]$MessageText,
-	[Parameter(Position=1, Mandatory=$false)]
-    [string[]]$WorkerIds
+    [Parameter(Position=2, Mandatory=$true)]
+    [string]$MessageText
   )
 
   TestAmtApi
-  return $AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerIds)
+  return $AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
 }
 
 #########################################################################################
@@ -1884,7 +1833,7 @@ function Register-HitType {
    [...]
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1931,7 +1880,7 @@ function Deny-Assignment {
    Deny-Assignment -AssignmentId "ABCDEFGHIKLM" -RequesterFeedback "Bad work!"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -1948,7 +1897,7 @@ function Deny-Assignment {
 function Deny-QualificationRequest  {
 <# 
   .SYNOPSIS 
-   Reject a aualification request.
+   Reject a qualification request.
 
   .DESCRIPTION
    The RejectQualificationRequest operation rejects a user's request for a Qualification.
@@ -1967,7 +1916,7 @@ function Deny-QualificationRequest  {
    Deny-QualificationRequest -QualificationRequestId "ABCDEFGHIKLM" -Reason "Sorry!"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -2002,12 +1951,10 @@ function Revoke-Qualification {
    The user who had the Qualification sees this message.
   
   .EXAMPLE
-   $qid= ""
-   $wid = ""
-   Revoke-Qualification -QualificationTypeId $qid  -WorkerId $wid -Reason "Sorry!"
+   Revoke-Qualification -QualificationTypeId "ABCDEFG"  -WorkerId "ABCDEFG" -Reason "Sorry!"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -2029,8 +1976,8 @@ function Unblock-Worker {
    Unblock a worker.
 
   .DESCRIPTION
-   The UnblockWorker operation allows you to reinstate a blocked Worker to work on your HITs. 
-   This operation reverses the effects of the BlockWorker operation
+   The UnblockWorker operation allows you to reinstate a blocked Worker to work 
+   on your HITs.This operation reverses the effects of the BlockWorker operation.
 
   .PARAMETER WorkerId
    The ID of the Worker to block.
@@ -2043,7 +1990,7 @@ function Unblock-Worker {
    Unblock-Worker -WorkerId ABCDEFGHIKLM -Reason "Be nice!"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -2080,12 +2027,10 @@ function Update-QualificationScore {
    The new value for the Qualification.
 
   .EXAMPLE
-   $qid = ""
-   $wid = ""
-   Update-QualificationScore -QualificationTypeId $qid -WorkerId $wid -Reason -IntegerValue 5
+   Update-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG" -Reason "Much better now." -IntegerValue 5
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -2093,7 +2038,7 @@ function Update-QualificationScore {
     [Parameter(Position=1, Mandatory=$true)]
     [string]$WorkerId,
     [Parameter(Position=2, Mandatory=$true)]
-    [int]$IntegerValue=$null
+    [int]$IntegerValue
   )
 
   TestAmtApi
@@ -2150,11 +2095,10 @@ function Update-QualificationType {
    The Qualification value to use if AutoGranted is true.
   
   .EXAMPLE
-   $qid = ""
-   Update-QualificationType -$QualificationTypeId $qid -Title "The new title"
+   Update-QualificationType -$QualificationTypeId "ABCDEFG" -Title "The new title"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$false)]
@@ -2254,21 +2198,21 @@ function Search-QualificationTypes {
    Specifies that only Qualification types that the Requester created are returned. 
    If false, the operation returns all Qualification types.
 
-  .PARAMETER PageSize
-   The number of Qualification types to include in a page of results. 
-   The operation divides the complete sorted result set into pages 
-   of this many Qualification types.
-
   .PARAMETER PageNumber
    The page of results to return. After the operation filters, sorts, and 
    divides the Qualification types into pages of size PageSize, it returns 
    page corresponding to PageNumber as the results of the operation.
 
+  .PARAMETER PageSize
+   The number of Qualification types to include in a page of results. 
+   The operation divides the complete sorted result set into pages 
+   of this many Qualification types.
+
   .EXAMPLE
    Search-QualificationTypes -Query "Test" -MustBeRequestable $false -MustBeOwnedByCaller $false
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -2278,10 +2222,13 @@ function Search-QualificationTypes {
 	[Parameter(Position=2, Mandatory=$false)]
     [bool]$MustBeOwnedByCaller=$true,
     [Parameter(Position=3, Mandatory=$false)]
-    [int]$PageSize=$null,
+    [int]$PageNumber=$null,
 	[Parameter(Position=4, Mandatory=$false)]
-    [int]$PageNumber=$null
+    [int]$PageSize=$null
   )
+
+  # TODO:
+  # Review order of PageNumber, PageSize and maximal values
 
   TestAmtApi
   return $AmtClient.SearchQualificationTypes($Query, $MustBeRequestable, $MustBeOwnedByCaller, $null, $null, $null, $null)
@@ -2314,7 +2261,7 @@ function New-QualificationRequirement {
   Add-QualificationRequirement 
   
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$false)]
@@ -2403,20 +2350,23 @@ function New-QualificationRequirement {
 function New-ExternalQuestion {
 <# 
  .SYNOPSIS 
-  Setup a new external HIT question
+  Setup a new external HIT question.
 
  .DESCRIPTION
-  Setup a qualification requirement object
+  Setup a new external HIT question.
 
  .PARAMETER ExternalURL
+  The URL of your web form, to be displayed in a frame in the Worker's web browser. 
+  This URL must use the HTTPS protocol.
 
  .PARAMETER FrameHeight 
+  The height of the frame, in pixels.
   
  .EXAMPLE
   New-ExternalHitQuestion -ExternalURL "http://mysite.com/" -FrameHeight 400 
   
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
     
   Param(
@@ -2439,24 +2389,31 @@ function New-QuestionForm {
   Setup a new Question Form.
 
  .DESCRIPTION
-  Setup a new HTML question.
+  The QuestionForm data format describes one or more questions for a HIT, 
+  or for a Qualification test. It contains instructions and data Workers use 
+  to answer the questions, and a set of one or more form fields, which are 
+  rendered as a web form for a Worker to fill out and submit.
 
- .PARAMETER HTMLContent
+  A QuestionForm is a string value that consists of XML data. This XML data 
+  must conform to the QuestionForm schema. All elements in a QuestionForm
+  belong to a namespace whose name is identical to the URL of the QuestionForm
+  schema document. See WSDL and Schema Locations for the location of this schema.
 
- .PARAMETER FrameHeight 
+ .PARAMETER TemplatePath
+  Path to the question form template
   
  .EXAMPLE
-  New-HtmlQuestion -HTMLContent "<h1>Hello World</h1>" -FrameHeight 400 
+  New-QuestionForm -TemplatePath c:\template.xml 
   
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
     [string]$TemplatePath
   )
 
-  throw "Not implemented"
+  Throw "Not implemented"
 
   $template = gc $TemplatePath
   $qf = New-Object Amazon.WebServices.MechanicalTurk.Domain.QuestionForm
@@ -2474,14 +2431,17 @@ function New-HtmlQuestion {
   Setup a new HTML question.
 
  .PARAMETER HTMLContent
+  The HTML code of your web form, to be displayed in a frame in the Worker's web browser. 
+  The HTML must validate against the HTML5 specification.
 
  .PARAMETER FrameHeight 
-  
+  The height of the frame, in pixels.
+
  .EXAMPLE
   New-HtmlQuestion -HTMLContent "<h1>Hello World</h1>" -FrameHeight 400 
   
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -2510,36 +2470,66 @@ function New-Hit {
   Setup a new HIT.
 
  .PARAMETER HITTypeId
+  The ID of the HIT type of this HIT
 
  .PARAMETER HITLayoutId
+  The ID of the HIT Layout of this HIT
 
  .PARAMETER Title
+  The title of the HIT
 
  .PARAMETER Description 
+  A general description of the HIT
 
  .PARAMETER Question
+  The data the Worker completing the HIT uses produce the results.
+  Type is either a QuestionForm or an ExternalQuestion data structure.
 
  .PARAMETER Keywords 
+  One or more words or phrases that describe the HIT, separated by commas. 
+  Search terms similar to the keywords of a HIT are more likely to 
+  have the HIT in the search results.
 
  .PARAMETER MaxAssignments
+  The number of times the HIT can be accepted and completed before the HIT becomes unavailable.
 
- .PARAMETER Reward 
+ .PARAMETER Reward
+  The amount of money the Requester will pay a Worker for 
+  successfully completing the HIT.
 
  .PARAMETER AutoApprovalDelayInSeconds
+  The amount of time, in seconds, after the Worker submits an assignment for the HIT 
+  that the results are automatically approved by Amazon Mechanical Turk. This is the 
+  amount of time the Requester has to reject an assignment submitted by a Worker before 
+  the assignment is auto-approved and the Worker is paid.
 
- .PARAMETER Expiration 
+ .PARAMETER Expiration
+  The date and time the HIT expires.
+  Type is a dateTime structure in the Coordinated Universal Time 
 
  .PARAMETER AssignmentDurationInSeconds
+  The length of time, in seconds, that a Worker has to complete the HIT after accepting it.
 
  .PARAMETER RequesterAnnotation
+  An arbitrary data field the Requester who created the HIT can use. This field is 
+  visible only to the creator of the HIT.
 
- .PARAMETER QualificationRequirement 
+ .PARAMETER QualificationRequirement
+  A condition that a Worker's Qualifications must meet in order to accept the HIT. 
+  A HIT can have between zero and ten Qualification requirements. All requirements 
+  must be met by a Worker's Qualifications for the Worker to accept the HIT.
+
+ .PARAMETER OldHIT
+  Provide an old HIT data structure and adjust with parameters.
   
+ .NOTES
+  Not all attributes of the AMT HIT data structure are settable via parameters.
+
  .EXAMPLE
   New-Hit
   
  .LINK
-  about_AmtApi
+  about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$false)]
@@ -2616,15 +2606,21 @@ function New-Price {
    the CurrencyCode. For example, if CurrencyCode is USD, the amount will be 
    in United States dollars (e.g. 12.75 is $12.75 US).
   
+  .PARAMETER CurrencyCode
+   A code that represents the country and units of the currency. Its value is
+   Type an ISO 4217 currency code, such as USD for United States dollars.
+
   .EXAMPLE
    New-Price -Amount 0.5
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
-    [decimal]$Amount
+    [decimal]$Amount,
+	[Parameter(Position=0, Mandatory=$true)]
+    [decimal]$CurrencyCode="USD"
   )
   $p = New-Object Price
   $p.Amount = $Amount
@@ -2642,7 +2638,9 @@ function New-Locale {
    Setup a new locale object to define country qualifications.
 
   .PARAMETER Country
-   A ISO-3166-2 country code, like "US" or "IN"
+   A ISO-3166-2 country code, like "US" or "IN". Subdivisions
+   must be separated with a dash and will be automatically parsed,
+   e.g. US-NY.
   
   .EXAMPLE
    New-Locale -Country "US"
@@ -2651,7 +2649,7 @@ function New-Locale {
    New-Locale -Country "US-NY"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$false)]
@@ -2680,20 +2678,20 @@ function New-TestHit {
    Setup a new HIT object with test entries:
 
    Title = "Test HIT"
-   Description = "This is just a test hit. Move along."
+   Description = "This is test hit. Move along."
    Keywords = "Test, Testing"
    MaxAssignments = 5
    AssignmentDurationInSeconds = 3600
    AutoApprovalDelayInSeconds = 0
    Question = "What is the answer to the mother of all test questions?"
    Reward = New-Price 0
-   RequesterAnnotation = "Just a test question"
+   RequesterAnnotation = "A test question"
 
   .EXAMPLE
    New-TestHit
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   $hit = NewHit
   $hit.Title = "Test HIT"
@@ -2727,7 +2725,7 @@ function Enter-Hit {
    Enter-Hit -HITGroupId "ABCDEFG"
   
   .LINK
-   about_AmtApi
+   about_PsAmt
 #>
   Param(
     [Parameter(Position=0, Mandatory=$true)]
@@ -2761,7 +2759,7 @@ function Set-HitTypeNotification {
 
 #########################################################################################
 # Exports
-Export-ModuleMember about_AmtApi, Connect-Amt, Disconnect-Amt, Get-AccountBalance
+Export-ModuleMember Connect-Amt, Disconnect-Amt, Get-AccountBalance
 #Export-ModuleMember Test-AmtApi
 
 # HITS
