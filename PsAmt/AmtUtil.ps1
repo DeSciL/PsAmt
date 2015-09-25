@@ -1,5 +1,5 @@
 #########################################################################################
-# PsTAmt Module - Utility Functions
+# PsAmt Module - Utility Functions
 # stwehrli@gmail.com
 # 6may2014
 #########################################################################################
@@ -18,10 +18,10 @@
 function Set-AmtKeys {
 <# 
   .SYNOPSIS 
-   Encrypt TurkR Service Keys.
+   Encrypt Amt Service Keys.
   
   .DESCRIPTION
-   Provide AMT Access Key and Secret Key together with a passphrase
+   Provide AMT AccessKey and SecretKey together with a passphrase
    to protect credentials in an encrypted file (Amt.key).
    If passphrase, access key and secret keys are not specified, the
    user will be promped to enter them as secure keys. In future
@@ -46,7 +46,7 @@ function Set-AmtKeys {
    Set-AmtKeys -Passphrase "MyPassphrase" -AccessKey "MyAccessKey" -SecretKey "MySecretKey" -RequesterId "MyRequesterId"
 
   .LINK
-   Get-TurkRKeys
+   Get-AmtKeys
    Protect-String
    Unprotect-String
 #>
@@ -121,7 +121,7 @@ function Get-AmtKeys {
    Get-AmtKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -SecretKey
 
   .LINK
-   Set-TurkRKeys
+   Set-AmtKeys
    Protect-String
    Unprotect-String
 #>
@@ -153,7 +153,7 @@ function Get-AmtKeys {
   if(!(Test-Path $KeyFile)) {
     $keyPath = Join-Path $Global:AmtKeyPath $KeyFile
     if(!(Test-Path $keyPath)) {
-      Write-Error "File $KeyFile not found!" -ErrorAction Stop
+      Write-Error "Key file $KeyFile not found!" -ErrorAction Stop
     }
   }
 
