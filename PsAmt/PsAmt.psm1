@@ -24,7 +24,8 @@
   PowerShell wrapper scripts to access Amazon Mechanical Turk .Net API
     
  .LINK
-  https://github.com/DeSciL/PsAmt
+  https://github.com/descil/psamt
+  https://github.com/descil/dotnetmturk
   http://mturkdotnet.codeplex.com/
   http://www.mturk.com
 #>
