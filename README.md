@@ -6,7 +6,7 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 - Makes it easy to build solutions leveraging Amazon Mechanical Turk.
 - More convenient than the outdated [AMT Command Line Tools](https://requester.mturk.com/developer/tools/clt).
-- Working with strongly-typed objects allows chaining, pipeping, and efficient scripting.
+- Working with strongly-typed objects allows easy scripting (query, chain, pipe, etc.)
 
 ### Example
 
@@ -83,6 +83,11 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
      Function     Update-QualificationScore                  PsAmt
      Function     Update-QualificationType                   PsAmt
 
+### Install
+
+- Clone and copy PsAmt subfolder to your module directory, i.e. to $Evn:PsModulePath. Add DLL from modified [dotnetmturk](https://github.com/descil/dotnetmturk/releases).
+- Or download and put the latest [full package](https://github.com/descil/psamt/releases) into your module directory.
+
 ### Documentation
 
 - PowerShell functions have comment-based help, i.e. `help Get-HIT`
@@ -95,7 +100,6 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 - Windows Management Framework 3 (.Net4, PowerShell 3)
 - Amazon Mechanical Turk Requester Account
 - Amazon WebService Account
-- Modified/updated version of Mturk SKD for .Net from [github.com/descil/dotnetmturk](https://github.com/descil/dotnetmturk)
 
 ### License
 
