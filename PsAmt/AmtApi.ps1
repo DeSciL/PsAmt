@@ -1,7 +1,7 @@
 #########################################################################################
 # PsAmt Module - Amazon Mechanical Turk .NET API for PowerShell
 # stwehrli@gmail.com
-# 28apr2014
+# 28sept2015
 #########################################################################################
 #
 # PowerShell Wrappers for the Amazon Mechanical Turk .Net SDK
@@ -194,8 +194,8 @@ function ConnectAmt {
 	if(!$Global:AmtClientLoaded) { LoadAmt }
 
 	# Get WebService credentials from encrypted key file
-	if(!$AccessKeyId) { $AccessKeyId = Get-AmtKeys -AccessKey -KeyFile $KeyFile }
-	if(!$SecretKey) { $SecretKey = Get-AmtKeys -SecretKey -KeyFile $KeyFile }
+	if(!$AccessKeyId) { $AccessKeyId = Get-AMTKeys -AccessKey -KeyFile $KeyFile }
+	if(!$SecretKey) { $SecretKey = Get-AMTKeys -SecretKey -KeyFile $KeyFile }
 
 	# Check if sandbox
 	if($Sandbox.IsPresent) {
@@ -277,15 +277,21 @@ function Approve-Assignment {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$AssignmentId,
-    [Parameter(Position=1, Mandatory=$false)]
-    [string]$RequesterFeedback
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$AssignmentId,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$RequesterFeedback
+	)
 
-  TestAmtApi
-  return $AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.ApproveAssignment($_, $RequesterFeedback)
+		Write-Verbose "Approved $_"
+	}
 }
 
 #########################################################################################
@@ -312,15 +318,21 @@ function Approve-RejectedAssignment {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$AssignmentId,
-    [Parameter(Position=1, Mandatory=$false)]
-    [string]$RequesterFeedback
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$AssignmentId,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$RequesterFeedback
+	)
 
-  TestAmtApi
-  return $AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.ApproveRejectedAssignment($_, $RequesterFeedback)
+		Write-Verbose "Approved rejected assignment $_"
+	}
 }
 
 #########################################################################################
@@ -393,15 +405,21 @@ function Block-Worker {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$WorkerId,
-    [Parameter(Position=1, Mandatory=$false)]
-    [string]$Reason
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string[]]$WorkerId,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$Reason
+	)
 
-  TestAmtApi
-  return $AmtClient.BlockWorker($WorkerId, $Reason)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.BlockWorker($_, $Reason)
+		Write-Verbose "Blocked worker $_"
+	}
 }
 
 #########################################################################################
@@ -626,13 +644,19 @@ function Disable-HIT {
  .LINK
   about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$HITId
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$HITId
+	)
 
-  TestAmtApi
-  return $AmtClient.DisableHIT($HITId)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.DisableHIT($_)
+		Write-Verbose "Disabled HIT $_"
+	}
 }
 
 #########################################################################################
@@ -642,7 +666,7 @@ function Remove-HIT {
   Dispose / delete a HIT.
 
  .DESCRIPTION
-  The DisposeHIT operation disposes of a HIT that is no longer needed. 
+  The Remove-HIT (aka DisposeHIT) operation disposes of a HIT that is no longer needed. 
   Only the Requester who created the HIT can dispose of it.
 
  .PARAMETER HITId
@@ -658,13 +682,19 @@ function Remove-HIT {
  .LINK
   about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$HITId
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$HITId
+	)
 
-  TestAmtApi
-  return $AmtClient.DisposeHIT($HITId)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.DisposeHIT($_)
+		Write-Verbose "Removed HIT $_"
+	}
 }
 
 #########################################################################################
@@ -832,13 +862,19 @@ function Remove-QualificationType {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$QualificationTypeId
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$QualificationTypeId
+	)
 
-  TestAmtApi
-  return $AmtClient.DisposeQualificationType($QualificationTypeId)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.DisposeQualificationType($_)
+		Write-Verbose "Removed QualificationType $_"
+	}
 }
 
 #########################################################################################
@@ -910,17 +946,24 @@ function Stop-HIT {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$HITId
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$HITId
+	)
+	
+	Begin {
+		TestAmtApi
+	}
 
-  TestAmtApi
-  return $AmtClient.ForceExpireHIT($HITId)
+	Process {
+		$AmtClient.ForceExpireHIT($_)
+		Write-Verbose "Forced expiration of HIT $_"
+	}
 }
 
 #########################################################################################
 function GetBalance {
+  # Helper function
   TestAmtApi
   return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
 }
@@ -940,8 +983,8 @@ function Get-AccountBalance {
  .LINK
   about_PsAmt
 #>
-  TestAmtApi
-  return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
+	TestAmtApi
+	return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
 }
 
 #########################################################################################
@@ -1038,6 +1081,7 @@ function Get-AssignmentsForHIT {
   )
 
   Throw "Not Implemented"
+
   # TODO:
   # Implement AssignmentStatus
   # Implement ResponseGroup
@@ -1188,7 +1232,7 @@ $AmtBonus = @"
   }
 }
 
-function Format-BonusList($BonusPaymentResult, [System.Collections.Generic.List[AmtBonus]]$ListToAppend, $HITId) {
+function Format-BonusList($BonusPaymentResult, [System.Collections.Generic.List[AmtBonus]]$ListToAppend, [string]$HITId) {
 	$bl = New-object 'System.Collections.Generic.List[AmtBonus]'
 	if($ListToAppend -ne $null) {
 		$bl = $ListToAppend
@@ -1262,13 +1306,13 @@ function Get-HIT {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$HITId
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true)]
+		[string]$HITId
+	)
 
-  TestAmtApi
-  return $AmtClient.GetHIT($HITId, $null)
+	TestAmtApi
+	return $AmtClient.GetHIT($HITId, $null)
 }
 
 #########################################################################################
@@ -1286,8 +1330,8 @@ function Get-AllHITs {
   .LINK
    about_PsAmt
 #>
-  TestAmtApi
-  return $AmtClient.GetAllHITs()
+	TestAmtApi
+	return $AmtClient.GetAllHITs()
 }
 
 #########################################################################################
@@ -1319,19 +1363,19 @@ function Get-HITsForQualificationType {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$QualificationTypeId,
-	[Parameter(Position=1, Mandatory=$true)]
-    [string]$PageNumber=1,
-	[Parameter(Position=2, Mandatory=$true)]
-    [string]$PageSize=10
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true)]
+		[string]$QualificationTypeId,
+		[Parameter(Position=1, Mandatory=$true)]
+		[string]$PageNumber=1,
+		[Parameter(Position=2, Mandatory=$true)]
+		[string]$PageSize=10
+	)
 
-  Throw "Not implemented"
+	Throw "Not implemented"
 
-  TestAmtApi
-  return $AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageNumber, $PageSize)
+	TestAmtApi
+	return $AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageNumber, $PageSize)
 }
 
 #########################################################################################
@@ -1377,6 +1421,7 @@ function Get-QualificationsForQualificationType {
   )
 
   Throw "Not Implemented"
+
   # TODO:
   # Implement Enum QualificationStatus
   # Review order of PageNumber and PageSize
@@ -1496,13 +1541,13 @@ function Get-QualificationType {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$QualificationTypeId
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+		[string]$QualificationTypeId
+	)
 
-  TestAmtApi
-  return $AmtClient.GetQualificationType($QualificationTypeId)
+	TestAmtApi
+	return $AmtClient.GetQualificationType($QualificationTypeId)
 }
 
 #########################################################################################
@@ -1520,8 +1565,8 @@ function Get-AllQualificationTypes {
   .LINK
    about_PsAmt
 #>
-  TestAmtApi
-  return $AmtClient.GetAllQualificationTypes()
+	TestAmtApi
+	return $AmtClient.GetAllQualificationTypes()
 }
 
 #########################################################################################
@@ -1665,12 +1710,12 @@ function Grant-Bonus {
    The ID of the Worker being paid the bonus, as returned in the assignment 
    data of the GetAssignmentsForHIT operation.
 
-  .PARAMETER BonusAmount
-   The bonus amount to pay. Bonus is in USD.
-
   .PARAMETER AssignmentId
    The ID of the assignment for which this bonus is paid, as returned 
    in the assignment data of the GetAssignmentsForHIT operation.
+
+  .PARAMETER BonusAmount
+   The bonus amount to pay. Bonus is in USD.
 
   .PARAMETER Reason
    A message that explains the reason for the bonus payment. 
@@ -1682,19 +1727,19 @@ function Grant-Bonus {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$WorkerId,
-    [Parameter(Position=1, Mandatory=$true)]
-    [decimal]$BonusAmount,
-    [Parameter(Position=2, Mandatory=$true)]
-    [string]$AssignmentId,
-	[Parameter(Position=3, Mandatory=$true)]
-    [string]$Reason
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true)]
+		[string]$WorkerId,
+		[Parameter(Position=1, Mandatory=$true)]
+		[string]$AssignmentId,
+		[Parameter(Position=2, Mandatory=$true)]
+		[decimal]$BonusAmount,
+		[Parameter(Position=3, Mandatory=$true)]
+		[string]$Reason
+	)
 
-  TestAmtApi
-  return $AmtClient.GrantBonus($WorkerId, $BonusAmount, $AssignmentId, $Reason)
+	TestAmtApi
+	return $AmtClient.GrantBonus($WorkerId, $BonusAmount, $AssignmentId, $Reason)
 }
 
 #########################################################################################
@@ -1723,15 +1768,20 @@ function Grant-QualificationRequest {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$QualificationRequestId,
-    [Parameter(Position=1, Mandatory=$false)]
-    [int]$IntegerValue=1
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$QualificationRequestId,
+		[Parameter(Position=1, Mandatory=$false)]
+		[int]$IntegerValue=1
+	)
 
-  TestAmtApi
-  return $AmtClient.GrantQualification($QualificationRequestId, $IntegerValue)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.GrantQualification($_, $IntegerValue)
+	}
 }
 
 #########################################################################################
@@ -1765,17 +1815,17 @@ function Send-WorkerNotification {
   .LINK
    about_PsAmt
 #>
-  Param(
-	[Parameter(Position=0, Mandatory=$true)]
-    [string[]]$WorkerId,
-    [Parameter(Position=1, Mandatory=$true)]
-    [string]$Subject,
-    [Parameter(Position=2, Mandatory=$true)]
-    [string]$MessageText
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true)]
+		[string[]]$WorkerId,
+		[Parameter(Position=1, Mandatory=$true)]
+		[string]$Subject,
+		[Parameter(Position=2, Mandatory=$true)]
+		[string]$MessageText
+	)
 
-  TestAmtApi
-  return $AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
+	TestAmtApi
+	return $AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
 }
 
 #########################################################################################
@@ -1855,11 +1905,11 @@ function Deny-Assignment {
    Reject an assignment.
 
   .DESCRIPTION
-   The RejectAssignment operation rejects the results of a completed assignment. 
-   You can include an optional feedback message with the rejection, which the Worker 
-   can see in the Status section of the web site. When you include a feedback message 
-   with the rejection, it helps the Worker understand why the assignment was rejected, 
-   and can improve the quality of the results the Worker submits in the future.
+   The Deny-Assignment (aka RejectAssignment) operation rejects the results of a 
+   completed assignment. You can include an optional feedback message with the rejection,  
+   which the Worker can see in the Status section of the web site. When you include a 
+   feedback message with the rejection, it helps the Worker understand why the assignment 
+   was rejected, and can improve the quality of the results the Worker submits in the future.
 
   .PARAMETER AssignmentId
    The assignment ID.
@@ -1874,15 +1924,21 @@ function Deny-Assignment {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$AssignmentId,
-    [Parameter(Position=1, Mandatory=$false)]
-    [string]$RequesterFeedback
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$AssignmentId,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$RequesterFeedback
+	)
 
-  TestAmtApi
-  return $AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.RejectAssignment($_, $RequesterFeedback)
+		Write-Verbose "Rejected assignment $_"
+	}
 }
 
 #########################################################################################
@@ -1910,15 +1966,20 @@ function Deny-QualificationRequest  {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$QualificationRequestId,
-    [Parameter(Position=1, Mandatory=$false)]
-    [string]$Reason
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$QualificationRequestId,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$Reason
+	)
 
-  TestAmtApi
-  return $AmtClient.RejectQualificationRequest($QualificationRequestId, $Reason)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.RejectQualificationRequest($_, $Reason)
+	}
 }
 
 #########################################################################################
@@ -1984,15 +2045,21 @@ function Unblock-Worker {
   .LINK
    about_PsAmt
 #>
-  Param(
-    [Parameter(Position=0, Mandatory=$true)]
-    [string]$WorkerId,
-    [Parameter(Position=1, Mandatory=$false)]
-    [string]$Reason
-  )
+	Param(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[string]$WorkerId,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$Reason
+	)
 
-  TestAmtApi
-  return $AmtClient.UnblockWorker($WorkerId, $Reason)
+	Begin {
+		TestAmtApi
+	}
+
+	Process {
+		$AmtClient.UnblockWorker($_, $Reason)
+		Write-Verbose "Unblocked worker $_"
+	}
 }
 
 #########################################################################################
@@ -2221,6 +2288,7 @@ function Search-QualificationTypes {
 
   # TODO:
   # Review order of PageNumber, PageSize and maximal values
+  # Add additional parameters
 
   TestAmtApi
   return $AmtClient.SearchQualificationTypes($Query, $MustBeRequestable, $MustBeOwnedByCaller, $null, $null, $null, $null)
@@ -2407,6 +2475,9 @@ function New-QuestionForm {
   )
 
   Throw "Not implemented"
+
+  # TODO:
+  # Required for Trouble Tickets
 
   $template = gc $TemplatePath
   $qf = New-Object Amazon.WebServices.MechanicalTurk.Domain.QuestionForm
@@ -2619,10 +2690,10 @@ function New-Price {
 	[Parameter(Position=0, Mandatory=$true)]
     [decimal]$CurrencyCode="USD"
   )
-  $p = New-Object Price
-  $p.Amount = $Amount
-  $p.CurrencyCode = "USD"
-  return $p
+  $price = New-Object Price
+  $price.Amount = $Amount
+  $price.CurrencyCode = "USD"
+  return $price
 }
 
 #########################################################################################
@@ -2659,10 +2730,10 @@ function New-Locale {
 	  $Subdivision = $Both[1]
   }
 
-  $loc = New-Object Locale
-  $loc.Country = $Country
-  $loc.Subdivision = $Subdivision
-  return $loc
+  $locale = New-Object Locale
+  $locale.Country = $Country
+  $locale.Subdivision = $Subdivision
+  return $locale
 }
 
 #########################################################################################
