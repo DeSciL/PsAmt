@@ -88,7 +88,6 @@ function LoadAmt {
  .LINK
   about_PsAmt
 #>
-
 	# Set assembly location
 	$assembly = "Amazon.WebServices.MechanicalTurk.dll"
 	$modulePath = $Global:AmtModulePath
@@ -2301,18 +2300,37 @@ function New-QualificationRequirement {
   Setup a qualification requirement object
 
  .PARAMETER QualificationTypeId
+  The ID of the Qualification type for the requirement.
 
  .PARAMETER Comparator
+  The kind of comparison to make against a Qualification's value.
+  LessThan | LessThanOrEqualTo | GreaterThan | GreaterThanOrEqualTo | 
+  EqualTo | NotEqualTo | Exists | DoesNotExist | In | NotIn
 
  .PARAMETER IntegerValue
+  The integer value to compare against the Qualification's value.
+  IntegerValue must not be present if Comparator is Exists or DoesNotExist.
 
  .PARAMETER LocaleValue
+  The locale value to compare against the Qualification's value. 
+  The local value must be a valid ISO 3166 country code or supports ISO 3166-2 subdivisions.
 
  .PARAMETER Locale
+  A locale object.
+
+ .PARAMETER Builtin
+  The following built in qualifications exist: Masters, Categorization Masters, 
+  Photo Moderation Masters, Worker_?NumberHITsApproved, Worker_Locale, Worker_Adult, 
+  Worker_?PercentAssignmentsApproved, 
 
  .PARAMETER RequiredToPreview
+  If true, the question data for the HIT will not be shown when a Worker whose Qualifications do 
+  not meet this requirement tries to preview the HIT. That is, a Worker's Qualifications must meet 
+  all of the requirements for which RequiredToPreview is true in order to preview the HIT.
   
  .PARAMETER Sandbox
+  Build-in qualification requirements have different Ids on the life and sandbox site.
+  Indicate where you want to use them.
 
  .EXAMPLE
   Add-QualificationRequirement 
