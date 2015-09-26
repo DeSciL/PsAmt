@@ -95,7 +95,7 @@ function LoadAmt {
 
 	# Test
 	if(!(Test-Path($assemblyPath))) {
-			Write-Error "Amazon Mechanical Turk Assembly not found." -ErrorAction Stop
+			Write-Error "Amazon Mechanical Turk assembly not found." -ErrorAction Stop
 	}
 
 	# Setup config and simple client

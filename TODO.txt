@@ -1,43 +1,32 @@
-PsAMT TODO
+TODO PsAmt
 stwehrli@gmail.com
 
+Know Bugs / Issues
+- Connect-Amt: Definition of objects needs to be done on load
+- Connect-Amt: If wrong password is entered cannot connect anymore because password is stored!?!
+- Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
+
 Priority 1
-
-- Install.ps1:
-  Build and install script
-
-- Initialize-Amt or Test-Amt:
-  Tests if everything is in place. Suggest install/build if something is wrong.
-
+- Review pipeing: Approve-Assignment, Grant-Bonus, etc.
+- Add examples to Add-HIT, Add-QualificationTypeFull
+- Review PageNumber and PageSize for search functions, e.g.  Get-HitsForQualificationType
+- New-HIT: long for Expiration? Needs casting?
+- Get-Assignment -> What is the response group?
 - Implement rest of the functionality / missing and throwing functions
   Get-AssignmentsForHit, Get-HitsForQualificationType, Get-QualificationsForQualificationType
   Get-ReviewableHits, Get-ReviewResultsForHIT, New-QuestionForm,
   Search-Hits, Send-TestEventNotification, Set-HitAsReviewing, Set-HitTypeNotification
 
-- Review comment based help and adjust to PowerShell setting. Currently, help is just
-  copy/paste from API documentation.
-
 Priority 2
-
-- Need some nice status report functions including nice headers:
+- Add common status report functions including nice headers:
   Get-AllHits | ft Title, HitStatus, NumberOfAssignmentsCompleted
   $hit | Get-AllAssignmentForHit | ft workerId, assignmentstatus, submittime
 
-- Add templates for mturk.clt.properties, template.bonus.csv, template.codes.csv,
-  ctl.imput, ctl.properties, ctl.question, and ctl.result files from the mturk repo.
-  Add short explanation of what these files are, i.e. about_AmtTemplates.
-
-- Pipelining
-  Approve-Assignment, Grant-Bonus should take a lists and loop such that for-loops
-  are not required.
-
-- Get-BonusPayments: what is the maximal page size? Adjust help.
-
 Priority 3
-
-- Reproduce typical files like success file, etc.
+- Reproduce typical files like success file, etc. form command line tools
 - Split samples into sections
-- Typical workflows and documentation
-- AmtClt command line tool wrappers
-- Pester Unit Tests
-- Marketing: Make it obvious why Mturk API with typed data is cool
+- Add Typical workflows and documentation
+- Add Pester Unit Tests
+
+
+
