@@ -10,13 +10,7 @@
 # Requires adjusted and updated .Net SDK
 # https://github.com/descil/dotnetmturk
 #
-##########################################################################################
-# CONTENTS
-#
-# about_PsAmt
-# Connect-Amt
-#
-# ---------------------------------------  -----------  ----------------------------------           
+##########################################################################################          
 # AMT WebService Operation                 Implemented  PowerShell Wrapper Name                
 #                                          Status       .Net API
 # ---------------------------------------  -----------  ----------------------------------           
@@ -257,7 +251,7 @@ function Disconnect-AMT {
   $Global:AmtConfig = $null
   $Global:AmtClient = $null
   $Global:AmtPassphrase = $null
-  $Global:AmtClientConnected = $true
+  $Global:AmtClientConnected = $false
   Write-Host "Disconnected from AMT. All passwords cleared."
 }
 
@@ -278,7 +272,7 @@ function Approve-Assignment {
    Constraints: Can be up to 1024 characters.
   
   .EXAMPLE
-   Approve-Assignment -AssignmentId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC" -RequesterFeedback "Well done."
+   Approve-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Well done."
   
   .LINK
    about_PsAmt
@@ -313,8 +307,7 @@ function Approve-RejectedAssignment {
    Constraints: Can be up to 1024 characters.
   
   .EXAMPLE
-   $aid = "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
-   Approve-RejectedAssignment -AssignmentId $aid -RequesterFeedback "Sorry, now approved."
+   Approve-RejectedAssignment -AssignmentId "ABCDEFG" -RequesterFeedback "Sorry, now approved."
   
   .LINK
    about_PsAmt
@@ -356,7 +349,7 @@ function Grant-Qualification {
    the qualification was assigned to the Worker. Default is $false.
 
   .EXAMPLE
-   Grant-Qualification -QualificationTypeId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC" -WorkerId "ABCEDFG"
+   Grant-Qualification -QualificationTypeId "ABCDEFG" -WorkerId "ABCEDFG"
   
   .LINK
    about_PsAmt
@@ -395,7 +388,7 @@ function Block-Worker {
    you to keep track of your Workers. The Worker does not see this message.
   
   .EXAMPLE
-   Block-Worker -WorkerId ABCDEFGHIKLM -Reason "Don't do this again!"
+   Block-Worker -WorkerId "ABCDEFG" -Reason "Don't do this again!"
   
   .LINK
    about_PsAmt
@@ -628,7 +621,7 @@ function Disable-HIT {
   The ID of the HIT to diable.
   
  .EXAMPLE
-  Disable-Hit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+  Disable-Hit -HITId "ABCDEFG"
   
  .LINK
   about_PsAmt
@@ -660,7 +653,7 @@ function Remove-HIT {
   DisposeHIT -> Remove-Hit
   
  .EXAMPLE
-  Remove-Hit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+  Remove-HIT -HITId "ABCDEFG"
   
  .LINK
   about_PsAmt
@@ -761,6 +754,10 @@ function Add-QualificationTypeFull {
 
   TestAmtApi
   return $AmtClient.CreateQualificationType($Name, $Keywords, $Description, $QualificationTypeStatus, $RetryDelayInSeconds, $Test, $AnswerKey, $TestDurationInSeconds, $AutoGranted, $null)
+
+  # TODO:
+  # Add an example
+
 }
 
 #########################################################################################
@@ -830,7 +827,7 @@ function Remove-QualificationType {
    DisposeQualificationType -> Remove-QualificationType
   
   .EXAMPLE
-   Remove-QualificationType -QualificationTypeId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Remove-QualificationType -QualificationTypeId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -872,8 +869,7 @@ function Expand-HIT {
   .EXAMPLE
    Expand-HIT -HITId "ABCDEFG" -M 20 -E 1000
 
-   This will add 20 assignments to the HIT and pushes the expiration
-   time by 1000 seconds.
+   This will add 20 assignments to the HIT and pushes the expiration time by 1000 seconds.
   
   .LINK
    about_PsAmt
@@ -909,7 +905,7 @@ function Stop-HIT {
    ForceExpireHIT -> Stop-Hit
   
   .EXAMPLE
-   Stop-HIT -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Stop-HIT -HITId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -935,9 +931,8 @@ function Get-AccountBalance {
   Get the current account balance.
 
  .DESCRIPTION
-  The GetAccountBalance operation retrieves the amount of 
-  money in your Amazon Mechanical Turk account. On the sandbox
-  this stays at $10'000.
+  The GetAccountBalance operation retrieves the amount of money in your Amazon Mechanical 
+  Turk account. On the sandbox this stays at $10'000.
 
  .EXAMPLE
   Get-AccountBalance
@@ -965,7 +960,7 @@ function Get-Assignment {
    The ID of the assignment that is being requested.
   
   .EXAMPLE
-   Get-Assignment -AssignmentId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Get-Assignment -AssignmentId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1022,7 +1017,7 @@ function Get-AssignmentsForHIT {
    Type: positive integer
   
   .EXAMPLE
-   Get-AssignmentsForHIT -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Get-AssignmentsForHIT -HITId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1067,7 +1062,7 @@ function Get-AllAssignmentsForHIT {
    The ID of the HIT for which completed assignments are requested.
   
   .EXAMPLE
-   Get-AllAssignmentsForHit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Get-AllAssignmentsForHit -HITId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1130,10 +1125,10 @@ function Get-BonusPayments {
    The complete result set is divided into pages of this many bonus payments.
 
   .EXAMPLE
-   Get-BonusPayments -HITId "HID"
+   Get-BonusPayments -HITId "ABCDEFG"
 
   .EXAMPLE
-   Get-BonusPayments -AssignmentId "AID"
+   Get-BonusPayments -AssignmentId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1233,9 +1228,7 @@ function Get-FileUploadUrl {
    the QuestionForm of the HIT.
 
   .EXAMPLE
-   $aid = ""
-   $qi = ""
-   Get-FileUploadUrl -AssignmentId $aid -QuestionIdentifier $qi
+   Get-FileUploadUrl -AssignmentId "ABCDEFG" -QuestionIdentifier "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1264,7 +1257,7 @@ function Get-HIT {
    The ID of the HIT to retrieve.
   
   .EXAMPLE
-   Get-HIT -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Get-HIT -HITId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1876,7 +1869,7 @@ function Deny-Assignment {
    Constraints: can be up to 1024 characters, including multi-byte characters.
   
   .EXAMPLE
-   Deny-Assignment -AssignmentId "ABCDEFGHIKLM" -RequesterFeedback "Bad work!"
+   Deny-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Bad work!"
   
   .LINK
    about_PsAmt
@@ -1912,7 +1905,7 @@ function Deny-QualificationRequest  {
    who made the request.
   
   .EXAMPLE
-   Deny-QualificationRequest -QualificationRequestId "ABCDEFGHIKLM" -Reason "Sorry!"
+   Deny-QualificationRequest -QualificationRequestId "ABCDEFG" -Reason "Sorry!"
   
   .LINK
    about_PsAmt
@@ -2526,7 +2519,7 @@ function New-HIT {
   Not all attributes of the AMT HIT data structure are settable via parameters.
 
  .EXAMPLE
-  New-HIT
+  New-HIT [...]
   
  .LINK
   about_PsAmt
