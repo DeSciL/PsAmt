@@ -18,30 +18,30 @@
   for the AMT .Net SDK. First step is to setup a connection to the web
   service with: 
 
-  Connect-Amt -AccessKey "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
+  Connect-AMT -AccessKey "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
 
   After a successful connection, the following operations are supported. 
   See comment based help of the functions for more details, e.g. help Add-Hit
 
   Settings:
-  - Connect-Amt
-  - Set-AmtKeys
+  - Connect-AMT
+  - Set-AMTKeys
 
   Working with Hits:
-  - Add-Hit
-  - Get-Hit
-  - Set-HitTypeOfHit
-  - Disable-Hit
-  - Remove-Hit
-  - Expand-Hit
-  - Stop-Hit
-  - Register-HitType
+  - Add-HIT
+  - Get-HHIT
+  - Set-HITTypeOfHIT
+  - Disable-HIT
+  - Remove-HIT
+  - Expand-HIT
+  - Stop-HIT
+  - Register-HITType
 
   Assignments:
   - Approve-Assignment
   - Approve-RejectedAssignment
   - Get-Assignment
-  - Get-AssignmentsForHit
+  - Get-AssignmentsForHIT
   - Reject-Assignment
 
   Qualifications:
@@ -69,18 +69,18 @@
   - Get-FileUploadURL
   - Send-WorkerNotification
 	
-  Currently implemented operations:
-  //GetHITsForQualificationType
-  //GetQualificationsForQualificationType
-  //GetReviewableHITs
-  //GetReviewResultsForHIT
-  //GetRequesterStatistic
-  //GetRequesterWorkerStatistic
-  //Help
-  //SearchHITs
-  //SendTestEventNotification
-  //SetHITAsReviewing
-  //SetHITTypeNotification
+  Currently not implemented:
+  // GetHITsForQualificationType
+  // GetQualificationsForQualificationType
+  // GetReviewableHITs
+  // GetReviewResultsForHIT
+  // GetRequesterStatistic
+  // GetRequesterWorkerStatistic
+  // Help
+  // SearchHITs
+  // SendTestEventNotification
+  // SetHITAsReviewing
+  // SetHITTypeNotification
 
  .LINK
   https://github.com/descil/psamt
