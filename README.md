@@ -4,14 +4,14 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 ### Features
 
-- Makes it easy to build solutions leveraging Amazon Mechanical Turk.
-- More convenient than the outdated [AMT Command Line Tools](https://requester.mturk.com/developer/tools/clt).
-- Working with strongly-typed objects allows easy scripting (query, chain, pipe, etc.)
+- Makes it easy to build solutions and script Amazon Mechanical Turk.
+- A replacement for the outdated [AMT Command Line Tools](https://requester.mturk.com/developer/tools/clt).
+- Working with strongly-typed objects (query, chain, pipe, etc.)
 
 ### Example
 
      # Make a connection to Mturk
-     Connect-Amt -AccessKeyId "MyAccessKey" -SecretKey "MySecretKey" -Sandbox
+     Connect-AMT -AccessKeyId "MyAccessKey" -SecretKey "MySecretKey" -Sandbox
 
 	 # Upload a HIT
 	 $h = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
@@ -107,10 +107,4 @@ Copyright (C) 2015 Stefan Wehrli
 
 PsAmt is based on a modified version of the [Amazon Mechanical Turk SDK for .Net](http://mturkdotnet.codeplex.com/). 
 Comment based help of PowerShell functions are taken from the [Amazon Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html)
-The rest is MIT and provided "as is".
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+The rest is [MIT](https://github.com/descil/psamt/license) and provided "as is".
