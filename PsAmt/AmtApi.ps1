@@ -1230,11 +1230,41 @@ $AmtBonus = @"
 	}
 }
 
-function Format-BonusList($BonusPaymentResult, [System.Collections.Generic.List[AmtBonus]]$ListToAppend, [string]$HITId) {
+#########################################################################################
+function Format-BonusList {
+<# 
+  .SYNOPSIS 
+   Format a BonusPayment Result
+
+  .DESCRIPTION
+   Format a BonusPayment Result
+
+  .PARAMETER BonusPaymentResult
+   A bonus payment result return by Get-BonusPayment.
+
+  .PARAMETER ListToAppend
+   Add bonus result to existing list
+
+  .PARAMETER HITId
+   The ID of the HIT.
+  
+  .LINK
+   about_PsAmt
+#>
+	Param(
+		[Parameter(Position=0, Mandatory=$false)]
+		$BonusPaymentResult,
+		[Parameter(Position=1, Mandatory=$false)]
+		[System.Collections.Generic.List[AmtBonus]]$ListToAppend,
+		[Parameter(Position=2, Mandatory=$false)]
+		[string]$HITId
+	)
+
 	$bl = New-object 'System.Collections.Generic.List[AmtBonus]'
 	if($ListToAppend -ne $null) {
 		$bl = $ListToAppend
 	}
+
 	$elements = $BonusPaymentResult.BonusPayment
     foreach($i in $elements) {
 		$bo = New-Object -TypeName AmtBonus
