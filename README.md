@@ -4,9 +4,9 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 ### Features
 
-- Makes it easy to build solutions and script Amazon Mechanical Turk.
-- A replacement for the outdated [AMT Command Line Tools](https://requester.mturk.com/developer/tools/clt).
-- Working with strongly-typed objects (query, chain, pipe, etc.)
+- Makes it easier to script solutions leveraging Amazon Mechanical Turk.
+- A replacement for the [AMT Command Line Tools](https://requester.mturk.com/developer/tools/clt).
+- Working with strongly-typed objects (query, pipe, output to CSV, etc.)
 
 ### Example
 
@@ -14,18 +14,19 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
      Connect-AMT -AccessKeyId "MyAccessKey" -SecretKey "MySecretKey" -Sandbox
 
 	 # Upload a HIT
-	 $h = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
+	 $h = Add-HIT -Title "Life" -Description "Answer a hard question" -Question "What is the meaning of live?" -Reward 0.5 -MaxAssignments 5
 
 	 # List assignments for the HIT
 	 $assigns = Get-AllAssignmentsForHIT -HITId $h.HITId
 
 	 # Approve assignments
 	 foreach($a in $assigns) {
-	   Approve-Assignment -AssignmentId $a.AssignmentId -RequesterFeedback "Well done."
+	   Approve-Assignment -AssignmentId $a.AssignmentId -RequesterFeedback "Well done!"
 	 }
 
-### Functions
+### Methods
 
+     # List methods of $AmtClient
      Get-Command -Module PsAmt
 
      CommandType  Name                                       ModuleName
@@ -83,6 +84,13 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
      Function     Update-QualificationScore                  PsAmt
      Function     Update-QualificationType                   PsAmt
 
+### Prerequisites
+
+- Windows 7, 8, 10
+- Windows Management Framework 3 (.NET 4, PowerShell 3)
+- Amazon Mechanical Turk Requester Account
+- Amazon WebService Account
+
 ### Install
 
 - Clone and copy PsAmt subfolder to your module directory, i.e. to $Evn:PsModulePath. Add DLL from modified [dotnetmturk](https://github.com/descil/dotnetmturk/releases).
@@ -90,21 +98,14 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 ### Documentation
 
-- PowerShell functions have comment-based help, i.e. `help Get-HIT`
+- PowerShell functions have comment-based help, i.e., type `help Get-HIT`
 - Functions follow the [Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html)
 - See the walk-through examples in the sample folder.
-
-### Prerequisites
-
-- Windows 7, 8, 10
-- Windows Management Framework 3 (.Net4, PowerShell 3)
-- Amazon Mechanical Turk Requester Account
-- Amazon WebService Account
 
 ### License
 
 Copyright (C) 2015 Stefan Wehrli
 
 PsAmt is based on a modified version of the [Amazon Mechanical Turk SDK for .Net](http://mturkdotnet.codeplex.com/). 
-Comment based help of PowerShell functions are taken from the [Amazon Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html)
-The rest is [MIT](https://github.com/descil/psamt/license) and provided "as is".
+Comment based help of PowerShell functions are taken from the [Amazon Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html).
+The rest is [MIT](https://github.com/DeSciL/PsAmt/blob/master/LICENSE) and provided "as is".
