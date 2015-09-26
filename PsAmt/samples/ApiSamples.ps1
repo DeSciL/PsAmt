@@ -1,7 +1,7 @@
 #########################################################################################
-# PsTurkR Module - AMT API Tests
+# PsAmt Module - AMT API Tests
 # stwehrli@gmail.com
-# 28apr2014
+# 20sept2015
 #########################################################################################
 
 # CONTENTS
@@ -18,25 +18,24 @@
 function Setup {
 
   #----------------------------------------------------
-  # Setup and store amt keys
+  # Setup and store AMT keys
   # Asks for AccessKeyID, SecretAccessKey, RequesterId, and a passphrase
-  Set-AmtKeys
+  Set-AMTKeys
 
   # After keys have been stored, connecting to amt requires only the passphrase
-  Connect-Amt
+  Connect-AMT
 
   # Set sandbox globally on all the following commands
-  Connect-Amt -sandbox
+  Connect-AMT -sandbox
 
   # Use another account
-  Connect-Amt -Keyfile "SecondAccount.key"
+  Connect-AMT -Keyfile "SecondAccount.key"
 
   # Disconnect, clear all saved keys and passwords
-  Disconnect-Amt
+  Disconnect-AMT
 
   # Always your first api call
   Get-AccountBalance
-
 }
 
 #########################################################################################
@@ -44,46 +43,46 @@ function Hits {
   
   #----------------------------------------------------
   # Connect 
-  Connect-Amt -Sandbox
+  Connect-AMT -Sandbox
 
   #----------------------------------------------------
   # List current Hits
-  $hitlist = Get-AllHits
-  $hitlist | ft HITId, Title, HITStatus -AutoSize
+  $hitlist = Get-AllHITs
+  $hitlist | Format-Table HITId, Title, HITStatus -AutoSize
 
   #----------------------------------------------------
   # Add a hit
 
-  $hit = Add-Hit -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
+  $hit = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
   $hit
 
   # Get the Hit (now with createdate, and groupid)
-  $hit = Get-Hit $hit.HITId
+  $hit = Get-HIT $hit.HITId
   $hit
 
   # Stop  a hit / force expiration
-  Stop-Hit -HITId $hit.HITId
+  Stop-HIT -HITId $hit.HITId
 
   # Exend hit / add assignments and time
-  Expand-Hit -HITId $hit.HITId -MaxAssignmentsIncrement 5 -ExpirationIncrementInSeconds 180
+  Expand-HIT -HITId $hit.HITId -MaxAssignmentsIncrement 5 -ExpirationIncrementInSeconds 180
 
   # Delete
-  Remove-Hit -HITId $hit.HITId
+  Remove-HIT -HITId $hit.HITId
 
   #----------------------------------------------------
   # Add a hit, accept it, fill out, and approve
 
-  $hit = Add-Hit -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the last US president?"  -MaxAssignments 5
+  $hit = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the last US president?"  -MaxAssignments 5
   $hit
 
   # Get the Hit
-  $hit = Get-Hit $hit.HITId
+  $hit = Get-HIT $hit.HITId
 
   # Preview the Hit
-  Enter-Hit $hit.HITGroupId
+  Enter-HIT $hit.HITGroupId
 
   # Get all assignments
-  $assigns = Get-AllAssignmentsForHit -HITId $hit.HITId
+  $assigns = Get-AllAssignmentsForHIT -HITId $hit.HITId
   $assigns | ft WorkerId, AssignmentStatus, SubmitTime -AutoSize
 
   # Get the first assignment
@@ -93,15 +92,15 @@ function Hits {
   Approve-Assignment -AssignmentId $assigns[0].AssignmentId -RequesterFeedback "Well done"
 
   # Disable
-  Disable-Hit -HITId $hit.HITId
+  Disable-HIT -HITId $hit.HITId
 
   #----------------------------------------------------
   # Add a hit, accept it, fill out on website, reject it, and approve after rejection
 
-  $hit = Add-Hit -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
-  $hit = Get-Hit $hit.HITId
-  Enter-Hit $hit.HITGroupId
-  $assigns = Get-AllAssignmentsForHit -HITId $hit.HITId
+  $hit = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
+  $hit = Get-HIT $hit.HITId
+  Enter-HIT $hit.HITGroupId
+  $assigns = Get-AllAssignmentsForHIT -HITId $hit.HITId
   $assign  = Get-Assignment -AssignmentId $assigns[0].AssignmentId
 
   # Reject and then approve
@@ -109,14 +108,13 @@ function Hits {
   Approve-RejectedAssignment -AssignmentId $assign.Assignment.AssignmentId -RequesterFeedback "You were right."
 
   # Disable
-  Disable-Hit -HITId $hit.HITId
-
+  Disable-HIT -HITId $hit.HITId
 }
 
 #########################################################################################
 function HitTypes {
 
-  Connect-Amt -Sandbox
+  Connect-AMT -Sandbox
 
   #----------------------------------------------------
   # Register a HitType
@@ -125,7 +123,7 @@ function HitTypes {
   $desc = "Find the name of a president"
   $q = "What's the name of the last US president?"
 
-  $hitTypeId = Register-HitType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President"
+  $hitTypeId = Register-HITType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President"
   $hitTypeId
 
   #----------------------------------------------------
@@ -133,26 +131,26 @@ function HitTypes {
 
   $eq = New-ExternalQuestion -ExternalURL "https://yoursite.com/questionnaire.html" -FrameHeight 400
 
-  $hit = Add-Hit -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $q  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
-  $hit = Get-Hit $hit.HITId
+  $hit = Add-HIT -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $q  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
+  $hit = Get-HIT $hit.HITId
 
   #----------------------------------------------------
   # Question Form / Trouble Ticket
   
   $templateDir = Join-Path $AmtModulePath templates
   $troubleTempate = gc (Join-Path $templateDir troubles.question)
-  $hit = Add-Hit -Title "ETH DeSciL Trouble Ticket" -Description "Trouble Ticket" -Reward 0 -Question $troubleTempate  -MaxAssignments 20
+  $hit = Add-HIT -Title "ETH DeSciL Trouble Ticket" -Description "Trouble Ticket" -Reward 0 -Question $troubleTempate  -MaxAssignments 20
 
-  Disable-Hit $hit.HITId
+  Disable-HIT $hit.HITId
 
   #----------------------------------------------------
   # Question Form / Simple Questionnaire
   
   $templateDir = Join-Path $AmtModulePath templates
   $troubleTempate = gc (Join-Path $templateDir trivia.question)
-  $hit = Add-Hit -Title "Trivia Test Qualification" -Description "A qualification test" -Reward 0 -Question $triviaTempate  -MaxAssignments 20
+  $hit = Add-HIT -Title "Trivia Test Qualification" -Description "A qualification test" -Reward 0 -Question $triviaTempate  -MaxAssignments 20
 
-  Disable-Hit $hit.HITId
+  Disable-HIT $hit.HITId
 
   #----------------------------------------------------
   # HTML Questions / A more complex questionnaire
@@ -160,23 +158,23 @@ function HitTypes {
   # https://requestersandbox.mturk.com/create/projects
 
   # Get the designed hit
-  $hit = get-hit (Read-Host "Enter the HITId of the designed hit.")
+  $hit = Get-HIT (Read-Host "Enter the HITId of the designed hit.")
 
   # Export the template
   $hit.Question | Out-File (Join-Path $templateDir MySurvey.question)
 
   # Add the template to a new HIT
-  $hit = Add-Hit -Title "Survey Test" -Description "Survey Test" -Reward 0 -Question $hit.Question  -MaxAssignments 20
-  Disable-Hit $hit.HITId
+  $hit = Add-HIT -Title "Survey Test" -Description "Survey Test" -Reward 0 -Question $hit.Question  -MaxAssignments 20
+  Disable-HIT $hit.HITId
 
 }
 
 #########################################################################################
 function Qualifications {
   
-  $myWorker = Get-AmtKeys -RequesterId
+  $myWorker = Get-AMTKeys -RequesterId
 
-  Connect-Amt -Sandbox
+  Connect-AMT -Sandbox
 
   #----------------------------------------------------
   # Retrieve operations
@@ -195,6 +193,7 @@ function Qualifications {
   # Setup new qualification
   $qt = Add-QualificationType -Name "TQ2" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword2"
   
+  # Display
   $qt = Get-QualificationType $qt.QualificationTypeId
   $qt
 
@@ -211,7 +210,7 @@ function Qualifications {
   $qr
 
   # Setup a new HIT using the 
-  $h = New-Hit
+  $h = New-HIT
   $h.Title = $title
   $h.Description = $desc
   $h.Keywords = "Keyword 1"
@@ -223,7 +222,8 @@ function Qualifications {
   $h.Question = "Who was the last president?"
   $h.Reward = New-Price 0.5
   $h.QualificationRequirement= $qr
-  Add-Hit -HIT $h
+  
+  Add-HIT -HIT $h
 
   # --> Now search the HIT on the website and request the qualification
 
@@ -247,21 +247,21 @@ function Qualifications {
   $qPercent = New-QualificationRequirement -BuiltIn PercentAssignmentsApproved -IntegerValue 95 -Comparator GreaterThan
 
   # Setup test hit
-  $h = New-TestHit
+  $h = New-TestHIT
   $h.QualificationRequirement = $qLocale
 
   # Add muliple qualifications
   $h.QualificationRequirement = @($qLocale, $qApprove)
 
   # Upload
-  Add-Hit -HIT $h
+  Add-HIT -HIT $h
 
   #----------------------------------------------------
   # Qualification Test
 
   # Get sources of question and answer
-  $testSource = gc C:\home\modules\PsTurkR\templates\Qualification.question -Raw
-  $answerSource = gc C:\home\modules\PsTurkR\templates\Qualification.answer -Raw
+  $testSource = gc C:\home\modules\PsAmt\templates\Qualification.question -Raw
+  $answerSource = gc C:\home\modules\PsAmt\templates\Qualification.answer -Raw
 
   # Add a qualification type
   $q = Add-QualificationTypeFull -Name "TQ12" -Keywords "Key 1" -Description "Desc" -QualificationTypeStatus Active -RetryDelayInSeconds 1000 -Test $testSource -AnswerKey $answerSource -TestDurationInSeconds 360
@@ -276,12 +276,12 @@ function Qualifications {
   # Register a HitType
   $title = "Name of the president"
   $desc = "Find the name of a president"
-  $hitTypeId = Register-HitType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President" -QualificationRequirement $qr
+  $hitTypeId = Register-HITType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President" -QualificationRequirement $qr
   $hitTypeId
 
   # Publish HIT
-  $hit = Add-Hit -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $eq  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
-  $hit = Get-Hit $hit.HITId
+  $hit = Add-HIT -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $eq  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
+  $hit = Get-HIT $hit.HITId
 
   #----------------------------------------------------
   # Qualification Updates
@@ -299,7 +299,7 @@ function Qualifications {
   #----------------------------------------------------
   # Qualification Assignments and Value Updates
 
-  $myWorker = Get-AmtKeys -RequesterId
+  $myWorker = Get-AMTKeys -RequesterId
 
   Grant-Qualification -QualificationTypeId $qt.QualificationTypeId -WorkerId $MyWorkerId -SendNotification $true
   Update-QualificationScore -QualificationTypeId $qt.QualificationTypeId -WorkerId  $MyWorkerId -IntegerValue 25
@@ -310,42 +310,48 @@ function Qualifications {
 #########################################################################################
 function Blocking {
 
-  Connect-Amt -Sandbox
-  $myWorker = Get-AmtKeys -RequesterId
+  # Connect and do this on the sandbox
+  Connect-AMT -Sandbox
 
+  # Get your WorkerId stored in the key file
+  $myWorker = Get-AMTKeys -RequesterId
+
+  # Block yourself from accepting HITs
   Block-Worker -WorkerId $myWorker -Reason "Don't do this again!"
 
+  # List all blocked workers
   Get-BlockedWorkers
   
+  # Unblock yourself
   Unblock-Worker -WorkerId $myWorker -Reason "Be nice!"
-
 }
 
 #########################################################################################
 function Notifications {
 
-  Connect-Amt -Sandbox
+  Connect-AMT -Sandbox
   $myWorker = Get-AmtKeys -RequesterId
 
   $subject = "Hello there" 
   $message = "This is the message"
  
-  Send-WorkerNotification -Subject $subject -MessageText $message -WorkerIds $myWorker
+  # Send yourself an email
+  Send-WorkerNotification -WorkerIds $myWorker -Subject $subject -MessageText $message
+
+  # Parameter WorkerId takes an array of max length 100, 
+  # i.e. you can send identical mails in batches
 }
 
 #########################################################################################
 function Api {
 
-  # Working directly with API simple client
-  # List all members
+  # Working directly with API simple client. The client object is $AmtClient.
+
+  # List all members properties and function
   $Global:AmtClient | Get-Member
 
-  # UpdateHits
-  # [...]
-  
-  # Requester Statistics
-  # [...]
-
+  # Balance
+  $AmtClient.GetAccountBalance()
 }
 
 #########################################################################################
