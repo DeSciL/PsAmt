@@ -1,7 +1,19 @@
 # PsAmt
+
 PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
+### Features
 
+- Makes it easy to build solutions leveraging Amazon Mechanical Turk.
+- More convenient than the outdated [AMT Command Line Tools](https://requester.mturk.com/developer/tools/clt).
+- Working with strongly-typed objects allows chaining, pipeping, and efficient scripting.
+
+### Example
+
+     # Make a connection to Mturk
+     Connect-Amt -AccessKeyId sdf -SecretKey -Sandbox
+
+	 # Add-Hit -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
 
 ### Functions
 
@@ -64,9 +76,9 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 ### Documentation
 
-- PowerShell scripts have comment based help, i.e. help `Get-HIT`
-* GUI has no help but should be self explanatory.
-* Host and API documentation will show up when things settle down.
+- PowerShell functions have comment-based help, i.e. `help Get-HIT`
+- Functions follow the [Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html)
+- See the walk-through examples in the sample folder.
 
 ### Prerequisites
 
