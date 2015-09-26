@@ -11,9 +11,18 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 ### Example
 
      # Make a connection to Mturk
-     Connect-Amt -AccessKeyId sdf -SecretKey -Sandbox
+     Connect-Amt -AccessKeyId "MyAccessKey" -SecretKey "MySecretKey" -Sandbox
 
-	 # Add-Hit -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
+	 # Upload a HIT
+	 $h = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
+
+	 # List assignments for the HIT
+	 $assigns = Get-AllAssignmentsForHIT -HITId $h.HITId
+
+	 # Approve assignments
+	 foreach($a in $assigns) {
+	   Approve-Assignment -AssignmentId $a.AssignmentId -RequesterFeedback "Well done."
+	 }
 
 ### Functions
 
