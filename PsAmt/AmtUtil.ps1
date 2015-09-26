@@ -5,8 +5,8 @@
 #########################################################################################
 #
 # CONTENTS
-# - Set-AmtKeys
-# - Get-AmtKeys
+# - Set-AAMTKeys
+# - Get-AMTKeys
 # - Protect-String
 # - Unprotect-String
 #
@@ -15,7 +15,7 @@
 [Security.SecureString]$Global:AmtPassphrase = $null
 
 #########################################################################################
-function Set-AmtKeys {
+function Set-AMTKeys {
 <# 
   .SYNOPSIS 
    Encrypt Amt Service Keys.
@@ -43,7 +43,7 @@ function Set-AmtKeys {
    A file to store the encrypted keys. Default is Amt.key.
  
   .EXAMPLE 
-   Set-AmtKeys -Passphrase "MyPassphrase" -AccessKey "MyAccessKey" -SecretKey "MySecretKey" -RequesterId "MyRequesterId"
+   Set-AMTKeys -Passphrase "MyPassphrase" -AccessKey "MyAccessKey" -SecretKey "MySecretKey" -RequesterId "MyRequesterId"
 
   .LINK
    Get-AmtKeys
@@ -89,7 +89,7 @@ function Set-AmtKeys {
 }
 
 #########################################################################################
-function Get-AmtKeys {
+function Get-AMTKeys {
 <# 
   .SYNOPSIS 
    Decrypts AMT Service Keys
@@ -99,26 +99,29 @@ function Get-AmtKeys {
    is not provided, script prompts to enter a passphrase as a secure string.
    Passphrase is stored in $Global:AmtPassphrase
 
-  .PARAMETER  <KeyFile>
-   A file to store the encrypted keys
-
   .PARAMETER  Passphrase
    The Passphrase to decrypt the keys
 
   .PARAMETER  AccessKey
    Return the Amazon Mechanical Turk AccessKey Id from secure store.
    
-  .PARAMETER  <SecretKey>
+  .PARAMETER  SecretKey
    Return the Amazon Mechanical Turk SecretKey from secure store.
 
   .PARAMETER RequesterId
    The Amazon Mechanical Turk Requester Id
+
+  .PARAMETER  KeyFile
+   A file to store the encrypted keys
    
   .EXAMPLE 
-   Get-AmtKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -AccessKey
+   Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -AccessKey
 
   .EXAMPLE
-   Get-AmtKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -SecretKey
+   Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -SecretKey
+
+  .EXAMPLE
+   Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -RequesterId
 
   .LINK
    Set-AmtKeys
@@ -322,7 +325,7 @@ function Unprotect-String {
 
 #########################################################################################
 # Exports
-Export-ModuleMember Set-AmtKeys
-Export-ModuleMember Get-AmtKeys
+Export-ModuleMember Set-AMTKeys
+Export-ModuleMember Get-AMTKeys
 
 #########################################################################################
