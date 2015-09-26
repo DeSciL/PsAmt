@@ -24,39 +24,39 @@
 # ApproveRejectedAssignment                ok           Approve-RejectedAssignment
 # AssignQualification                      ok           Grant-Qualification
 # BlockWorker                              ok           Block-Worker
-# ChangeHITTypeOfHIT                       ok           Set-HitTypeOfHit
-# CreateHIT                                ok           Add-Hit
+# ChangeHITTypeOfHIT                       ok           Set-HITTypeOfHIT
+# CreateHIT                                ok           Add-HIT
 # CreateQualificationType                  --           Add-QualificationType
-# DisableHIT                               ok           Disable-Hit
-# DisposeHIT                               ok           Remove-Hit
+# DisableHIT                               ok           Disable-HIT
+# DisposeHIT                               ok           Remove-HIT
 # DisposeQualificationType                 ok           Remove-QualificationType
-# ExtendHIT                                ok           Expand-Hit
-# ForceExpireHIT                           ok           Stop-Hit
+# ExtendHIT                                ok           Expand-HIT
+# ForceExpireHIT                           ok           Stop-HIT
 # GetAccountBalance                        ok           Get-AccountBalance
 # GetAssignment                            ok           Get-Assignment
-# GetAssignmentsForHIT                     --           Get-AssignmentsForHit
-#                                          --           Get-AllAssignmentsForHit
+# GetAssignmentsForHIT                     --           Get-AssignmentsForHIT
+#                                          --           Get-AllAssignmentsForHIT
 # GetBlockedWorkers                        ok           Get-BlockedWorkers
 # GetBonusPayments                         ok           Get-BonusPayments
 # GetFileUploadURL                         ok           Get-FileUploadURL
-# GetHIT                                   ok           Get-Hit
-#                                          ok           Get-AllHits
-# GetHITsForQualificationType              --           Get-HitsForQualificationType
+# GetHIT                                   ok           Get-HIT
+#                                          ok           Get-AllHITs
+# GetHITsForQualificationType              --           Get-HITsForQualificationType
 # GetQualificationsForQualificationType    --           Get-QualificationsForQualificationType
 # GetQualificationRequests                 --           Get-QualificationRequests 
 # GetQualificationScore                    ok           Get-QualificationScore
 # GetQualificationType                     ok           Get-QualificationType
 # --                                       --           Get-AllQualificationTypes
 # --                                       ok           Add-QualificationRequirement
-# GetReviewableHITs                        --           Get-ReviewableHits 
-# GetReviewResultsForHIT                   --           Get-ReviewResultsForHit
+# GetReviewableHITs                        --           Get-ReviewableHITs 
+# GetReviewResultsForHIT                   --           Get-ReviewResultsForHIT
 # GetRequesterStatistic                    --           Get-RequesterStatistic
 # GetRequesterWorkerStatistic              --           Get-RequesterWorkerStatistic
 # GrantBonus                               ok           Grant-Bonus
 # GrantQualification                       --           Grant-QualificationRequest
 # Help                                     --       
 # NotifyWorkers                            ok           Send-WorkerNotification
-# RegisterHITType                          --           Register-HitType
+# RegisterHITType                          --           Register-HITType
 # RejectAssignment                         ok           Deny-Assignment
 # RejectQualificationRequest               ok           Deny-QualificationRequest  
 # RevokeQualification                      ok           Revoke-Qualification
@@ -73,10 +73,11 @@
 # --                                                    New-ExternalQuestion
 # --                                                    New-QuestionForm
 # --                                                    New-HtmlQuestion
-# --                                                    New-Hit
+# --                                                    New-HIT
 # --                                                    New-Price
 # --                                                    New-Locale
-#
+# --                                                    New-TestHIT
+#            
 #########################################################################################
 # Global Settings
 [bool]$Global:AmtSandbox = $true
@@ -137,7 +138,7 @@ function TestAmtApi {
 }
 
 #########################################################################################
-function Connect-Amt {
+function Connect-AMT {
 <# 
   .SYNOPSIS 
    Connect to Amazom Mechanical Turk
@@ -158,7 +159,7 @@ function Connect-Amt {
    Switches between sandbox and production site.
  
   .EXAMPLE 
-   Connect-Amt -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
+   Connect-AMT -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
 
   .LINK
    about_PsAmt
@@ -239,7 +240,7 @@ function ConnectAmt {
 }
 
 #########################################################################################
-function Disconnect-Amt {
+function Disconnect-AMT {
 <# 
   .SYNOPSIS 
    Disconnects from AMT
@@ -248,7 +249,7 @@ function Disconnect-Amt {
    Disconnects from AMT, clears all password and key usage.
  
   .EXAMPLE 
-   Disconnect-Amt
+   Disconnect-AMT
 
   .LINK
    about_PsAmt
@@ -411,7 +412,7 @@ function Block-Worker {
 }
 
 #########################################################################################
-function Set-HitTypeOfHit {
+function Set-HITTypeOfHIT {
 <# 
   .SYNOPSIS 
    Change / set the HitType of a HIT.
@@ -433,9 +434,7 @@ function Set-HitTypeOfHit {
    ChangeHITTypeOfHIT -> Set-HitTypeOfHit
   
   .EXAMPLE
-   $hitId = ""
-   $hitTypeId = ""
-   Set-HITTypeOfHIT -HITId $hitId -HITTypeId $hitTypeId
+   Set-HITTypeOfHIT -HITId "ABCDEFG" -HITTypeId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -452,7 +451,7 @@ function Set-HitTypeOfHit {
 }
 
 #########################################################################################
-function Add-Hit {
+function Add-HIT {
 <# 
   .SYNOPSIS 
    Create a new HIT.
@@ -544,14 +543,14 @@ function Add-Hit {
    A HIT object.
   
   .EXAMPLE
-   Add-Hit -Title "President" -Description "Find name of president" -Reward 0.55  -Question "Who was the last president of the United States?" -MaxAssignments 5
+   Add-HIT -Title "President" -Description "Find name of president" -Reward 0.55  -Question "Who was the last president of the United States?" -MaxAssignments 5
   
    This is a simple hit asking for the last US president:
 
   .EXAMPLE
    # ...
    # For external questions, a HitType needs to be registered first:
-   $hitTypeId = Register-HitType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President"
+   $hitTypeId = Register-HITType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President"
 
    # Then define the external question:
    $q = $ExternalQuestionTemplate
@@ -559,7 +558,7 @@ function Add-Hit {
    $q.FrameHeight = 400
    
    # Finally, post the HIT:
-   Add-Hit -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $q  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
+   Add-HIT -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $q  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
    
   .LINK
    about_PsAmt
@@ -614,7 +613,7 @@ function Add-Hit {
 }
 
 #########################################################################################
-function Disable-Hit {
+function Disable-HIT {
 <# 
  .SYNOPSIS 
   Removes a HIT from the Amazon Mechanical Turk marketplace.
@@ -644,7 +643,7 @@ function Disable-Hit {
 }
 
 #########################################################################################
-function Remove-Hit {
+function Remove-HIT {
 <# 
  .SYNOPSIS 
   Dispose / delete a HIT.
@@ -846,7 +845,7 @@ function Remove-QualificationType {
 }
 
 #########################################################################################
-function Expand-Hit {
+function Expand-HIT {
 <# 
   .SYNOPSIS 
    Extend / expand a HIT.
@@ -871,8 +870,7 @@ function Expand-Hit {
    ExtendHIT -> Expand-Hit
   
   .EXAMPLE
-   $hitId = "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
-   Expand-Hit -HITId $hitId -M 20 -E 1000
+   Expand-HIT -HITId "ABCDEFG" -M 20 -E 1000
 
    This will add 20 assignments to the HIT and pushes the expiration
    time by 1000 seconds.
@@ -894,7 +892,7 @@ function Expand-Hit {
 }
 
 #########################################################################################
-function Stop-Hit {
+function Stop-HIT {
 <# 
   .SYNOPSIS 
    Stop / force expire a HIT.
@@ -911,7 +909,7 @@ function Stop-Hit {
    ForceExpireHIT -> Stop-Hit
   
   .EXAMPLE
-   Stop-Hit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Stop-HIT -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
    about_PsAmt
@@ -984,7 +982,7 @@ function Get-Assignment {
 }
 
 #########################################################################################
-function Get-AssignmentsForHit {
+function Get-AssignmentsForHIT {
 <# 
   .SYNOPSIS 
    Retrieves the details of assignments of the specified HIT.
@@ -1024,7 +1022,7 @@ function Get-AssignmentsForHit {
    Type: positive integer
   
   .EXAMPLE
-   Get-AssignmentsForHit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Get-AssignmentsForHIT -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
    about_PsAmt
@@ -1055,7 +1053,7 @@ function Get-AssignmentsForHit {
 }
 
 #########################################################################################
-function Get-AllAssignmentsForHit {
+function Get-AllAssignmentsForHIT {
 <# 
   .SYNOPSIS 
    Retrieves the details of assignments of the specified HIT.
@@ -1254,7 +1252,7 @@ function Get-FileUploadUrl {
 }
 
 #########################################################################################
-function Get-Hit {
+function Get-HIT {
 <# 
   .SYNOPSIS 
    Retrieves the details of the specified HIT.
@@ -1266,7 +1264,7 @@ function Get-Hit {
    The ID of the HIT to retrieve.
   
   .EXAMPLE
-   Get-Hit -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Get-HIT -HITId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
   
   .LINK
    about_PsAmt
@@ -1281,7 +1279,7 @@ function Get-Hit {
 }
 
 #########################################################################################
-function Get-AllHits {
+function Get-AllHITs {
 <# 
   .SYNOPSIS 
    Retrieves all active HITs in the system.
@@ -1290,7 +1288,7 @@ function Get-AllHits {
    Retrieves all active HITs in the system.
   
   .EXAMPLE
-   Get-AllHits
+   Get-AllHITs
   
   .LINK
    about_PsAmt
@@ -1300,7 +1298,7 @@ function Get-AllHits {
 }
 
 #########################################################################################
-function Get-HitsForQualificationType {
+function Get-HITsForQualificationType {
 <# 
   .SYNOPSIS 
    Retrieves the details of the specified HIT.
@@ -1323,8 +1321,7 @@ function Get-HitsForQualificationType {
    is divided into pages of this many HITs.
 
   .EXAMPLE
-   $qid = ""
-   Get-HitsForQualificationType -QualificationTypeId $qid
+   Get-HITsForQualificationType -QualificationTypeId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1370,8 +1367,7 @@ function Get-QualificationsForQualificationType {
    pages of size PageSize, it returns the page corresponding to PageNumber.
   
   .EXAMPLE
-   $qid = ""
-   Get-QualificationsForQualificationType -QualificationTypeId $qid
+   Get-QualificationsForQualificationType -QualificationTypeId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1431,7 +1427,7 @@ function Get-QualificationRequests {
    returns the page corresponding to the PageNumber parameter.
      
   .EXAMPLE
-   Get-QualificationRequests -QualificationTypeId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Get-QualificationRequests -QualificationTypeId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1473,9 +1469,7 @@ function Get-QualificationScore {
    The ID of the Worker whose Qualification is being returned.
   
   .EXAMPLE
-   $qid = ""
-   $wid = ""
-   Get-QualificationScore -QualificationTypeId $qid -WorkerId $wid
+   Get-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1504,8 +1498,7 @@ function Get-QualificationType {
    The ID of the Qualification type, as returned by the CreateQualificationType operation.
   
   .EXAMPLE
-   $qid = ""
-   Get-QualificationType -QualificationTypeId $qid
+   Get-QualificationType -QualificationTypeId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1539,7 +1532,7 @@ function Get-AllQualificationTypes {
 }
 
 #########################################################################################
-function Get-ReviewableHits {
+function Get-ReviewableHITs {
 <# 
   .SYNOPSIS 
    Retrieves requests for qualifications.
@@ -1573,7 +1566,7 @@ function Get-ReviewableHits {
    complete sorted result set is divided into pages of this many HITs.
      
   .EXAMPLE
-   Get-ReviewableHits -HITTypeId "3BBXDSS898KC7DKCH20Y2HIK6UVXLC"
+   Get-ReviewableHits -HITTypeId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1594,6 +1587,7 @@ function Get-ReviewableHits {
   )
 
   Throw "Not Implemented"
+
   # TODO: 
   # Implement Enum ReviewableHitStatus
   # Review PageNumber
@@ -1635,9 +1629,7 @@ function Get-ReviewResultsForHIT {
    Constraints: T or F
 
   .EXAMPLE
-   $qid = ""
-   $wid = ""
-   Get-QualificationScore -QualificationTypeId $qid -WorkerId $wid
+   Get-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -1772,6 +1764,10 @@ function Send-WorkerNotification {
 
   .EXAMPLE
    Send-Notification -WorkerId "ABCDEFG" -Subject "Hi" -MessageText "A new hit is online."
+
+  .EXAMPLE
+   $workers = "ABCDEFG1","ABCDEF2","ABCDEF3"
+   Send-Notification -WorkerId $workers -Subject "Hi" -MessageText "A new hit is online."
   
   .LINK
    about_PsAmt
@@ -1790,7 +1786,7 @@ function Send-WorkerNotification {
 }
 
 #########################################################################################
-function Register-HitType {
+function Register-HITType {
 <# 
   .SYNOPSIS 
    Register a HitType
@@ -1851,6 +1847,9 @@ function Register-HitType {
 	[Parameter(Position=6, Mandatory=$false)]
     $QualificationRequirement = $null
   )
+
+  # TODO:
+  # Add working example
 
   TestAmtApi
   return $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
@@ -1987,7 +1986,7 @@ function Unblock-Worker {
    The Worker does not see this message.
   
   .EXAMPLE
-   Unblock-Worker -WorkerId ABCDEFGHIKLM -Reason "Be nice!"
+   Unblock-Worker -WorkerId "ABCDEFG" -Reason "Be nice!"
   
   .LINK
    about_PsAmt
@@ -2344,6 +2343,7 @@ function New-QualificationRequirement {
 
   # TODO:
   # Tests if quals with integer values are properly set, e.g. percent assignments approved
+  # Add description of parameters
 }
 
 #########################################################################################
@@ -2363,7 +2363,7 @@ function New-ExternalQuestion {
   The height of the frame, in pixels.
   
  .EXAMPLE
-  New-ExternalHitQuestion -ExternalURL "http://mysite.com/" -FrameHeight 400 
+  New-ExternalQuestion -ExternalURL "https://mysite.com/" -FrameHeight 400 
   
  .LINK
   about_PsAmt
@@ -2461,7 +2461,7 @@ function NewHit {
 	New-Object HIT
 }
 
-function New-Hit {
+function New-HIT {
 <# 
  .SYNOPSIS 
   Setup a new HIT.
@@ -2526,7 +2526,7 @@ function New-Hit {
   Not all attributes of the AMT HIT data structure are settable via parameters.
 
  .EXAMPLE
-  New-Hit
+  New-HIT
   
  .LINK
   about_PsAmt
@@ -2590,6 +2590,9 @@ function New-Hit {
   if($RequesterAnnotation) { $hit.RequesterAnnotation = $RequesterAnnotation }
   if($QualificationRequirement) { $hit.QualificationRequirement = $QualificationRequirement }
   return $hit
+
+  # TODO:
+  # Provide a an example
 }
 
 #########################################################################################
@@ -2609,6 +2612,7 @@ function New-Price {
   .PARAMETER CurrencyCode
    A code that represents the country and units of the currency. Its value is
    Type an ISO 4217 currency code, such as USD for United States dollars.
+   Default is USD.
 
   .EXAMPLE
    New-Price -Amount 0.5
@@ -2669,7 +2673,7 @@ function New-Locale {
 }
 
 #########################################################################################
-function New-TestHit {
+function New-TestHIT {
 <# 
   .SYNOPSIS 
    Setup a new HIT object.
@@ -2678,7 +2682,7 @@ function New-TestHit {
    Setup a new HIT object with test entries:
 
    Title = "Test HIT"
-   Description = "This is test hit. Move along."
+   Description = "This is test HIT. Move along."
    Keywords = "Test, Testing"
    MaxAssignments = 5
    AssignmentDurationInSeconds = 3600
@@ -2688,7 +2692,7 @@ function New-TestHit {
    RequesterAnnotation = "A test question"
 
   .EXAMPLE
-   New-TestHit
+   New-TestHIT
   
   .LINK
    about_PsAmt
@@ -2710,19 +2714,19 @@ function New-TestHit {
 }
 
 #########################################################################################
-function Enter-Hit {
+function Enter-HIT {
 <# 
   .SYNOPSIS 
    Open the HIT in preview mode.
 
   .DESCRIPTION
-   Open the HIT in preview mode.
+   Open the HIT in preview mode. Default browser naviages to preview page.
 
   .PARAMETER HITGroupId
    The GroupId of the HIT
   
   .EXAMPLE
-   Enter-Hit -HITGroupId "ABCDEFG"
+   Enter-HIT -HITGroupId "ABCDEFG"
   
   .LINK
    about_PsAmt
@@ -2738,7 +2742,7 @@ function Enter-Hit {
 }
 
 #########################################################################################
-function Search-Hits {
+function Search-HITs {
   Throw "Not Implemented"
 }
 
@@ -2748,36 +2752,36 @@ function Send-TestEventNotification {
 }
 
 #########################################################################################
-function Set-HitAsReviewing {
+function Set-HITAsReviewing {
   Throw "Not Implemented"
 }
 
 #########################################################################################
-function Set-HitTypeNotification {
+function Set-HITTypeNotification {
   Throw "Not Implemented"
 }
 
 #########################################################################################
 # Exports
-Export-ModuleMember Connect-Amt, Disconnect-Amt, Get-AccountBalance
+Export-ModuleMember Connect-AMT, Disconnect-AMT, Get-AccountBalance
 #Export-ModuleMember Test-AmtApi
 
 # HITS
-Export-ModuleMember Add-Hit, Stop-Hit, Expand-Hit, Remove-Hit, Disable-Hit
-Export-ModuleMember Get-AllHits, Get-Hit, Get-ReviewableHits
+Export-ModuleMember Add-HIT, Stop-HIT, Expand-HIT, Remove-HIT, Disable-HIT
+Export-ModuleMember Get-AllHITs, Get-HIT, Get-ReviewableHITs
 # Not Implemented: Get-ReviewResultsForHIT, Get-HitsForQualificationType
 
 # Objects
-Export-ModuleMember New-Hit, New-ExternalQuestion, New-HtmlQuestion, New-QuestionForm
-Export-ModuleMember New-Price, New-Locale, New-TestHit, New-QualificationRequirement
+Export-ModuleMember New-HIT, New-ExternalQuestion, New-HtmlQuestion, New-QuestionForm
+Export-ModuleMember New-Price, New-Locale, New-TestHIT, New-QualificationRequirement
 
 # HITTypes
-Export-ModuleMember Register-HitType, Set-HITTypeOfHIT
+Export-ModuleMember Register-HITType, Set-HITTypeOfHIT
 
 # Assignments
 Export-ModuleMember Approve-Assignment, Deny-Assignment, Approve-RejectedAssignment
-Export-ModuleMember Get-AllAssignmentsForHit, Get-Assignment
-# Not Implemented: Get-AssignmentsForHit
+Export-ModuleMember Get-AllAssignmentsForHIT, Get-Assignment
+# Not Implemented: Get-AssignmentsForHIT
 
 # Qualifications
 Export-ModuleMember Get-AllQualificationTypes, Get-QualificationType
@@ -2791,6 +2795,6 @@ Export-ModuleMember Search-QualificationTypes
 # Misc
 Export-ModuleMember Block-Worker, Unblock-Worker, Get-BlockedWorkers
 Export-ModuleMember Grant-Bonus, Get-BonusPayments
-Export-ModuleMember Send-WorkerNotification, Get-FileUploadUrl, Enter-Hit
+Export-ModuleMember Send-WorkerNotification, Get-FileUploadUrl, Enter-HIT
 
 #########################################################################################
