@@ -162,9 +162,9 @@ function Connect-AMT {
 		[string]$AccessKeyId,
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$SecretKey,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$KeyFile="Amt.key",
 		[Parameter(Position=2, Mandatory=$false)]
+		[string]$KeyFile="Amt.key",
+		[Parameter(Position=3, Mandatory=$false)]
 		[switch]$Sandbox
 	)
   
