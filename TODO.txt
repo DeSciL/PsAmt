@@ -4,6 +4,7 @@ stwehrli@gmail.com
 Know Bugs / Issues
 - Connect-Amt: Definition of objects needs to be done on load
 - Connect-Amt: If wrong password is entered cannot connect anymore because password is stored!?!
+- Connect-Amt: If content of Amt.key is wrong, exceptions are thrown.
 - Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
 
 Priority 1
