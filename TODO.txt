@@ -8,6 +8,10 @@ Know Bugs / Issues
 - Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
 
 Priority 1
+- Review New-TestHit
+- Consider cleaning up .LINKS and move other links to .NOTES to allow for man about_* -online
+- Consider hiding dispose-hit. They get locked in a strange way.
+- Revisit Write-Output --> Change to Write-Host
 - Review pipeing: Approve-Assignment, Grant-Bonus, etc.
 - Add examples to Add-HIT, Add-QualificationTypeFull
 - Review PageNumber and PageSize for search functions, e.g.  Get-HitsForQualificationType
