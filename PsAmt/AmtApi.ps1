@@ -2322,11 +2322,11 @@ function New-QualificationRequirement {
 		[Parameter(Position=2, Mandatory=$false)]
 		$IntegerValue,
 		[Parameter(Position=3, Mandatory=$false)]
-		[string[]]$LocaleValue,
+		[string]$LocaleValue,
 		[Parameter(Position=4, Mandatory=$false)]
 		[bool]$RequiredToPreview,
 		[Parameter(Position=5, Mandatory=$false)]
-		[ValidateSet('Masters','CategorizationMasters','PhotoModerationMaster','NumberHITsApproved', 'Locale', 'Adult','PercentAssignmentsApproved')]
+		[ValidateSet('Masters','CategorizationMasters','PhotoModerationMasters','NumberHITsApproved', 'Locale', 'Adult','PercentAssignmentsApproved')]
 		[string]$BuiltIn, 
 		[Parameter(Position=6, Mandatory=$false)]
 		[Locale[]]$Locale,
@@ -2668,7 +2668,10 @@ function New-Price {
    Default is USD.
 
   .EXAMPLE
-   New-Price -Amount 0.5
+   New-Price 0.5
+
+  .EXAMPLE
+   New-Price -Amount 0.5 -CurrencyCode "USD"
   
   .LINK
    about_PsAmt
@@ -2676,8 +2679,8 @@ function New-Price {
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
 		[decimal]$Amount,
-		[Parameter(Position=0, Mandatory=$true)]
-		[decimal]$CurrencyCode="USD"
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$CurrencyCode="USD"
 	)
 	$price = New-Object Price
 	$price.Amount = $Amount
@@ -2715,8 +2718,8 @@ function New-Locale {
 
 	if($Country.IndexOf("-") -gt 0) {
 		$Both = $Country.Split("-")
-		$Country = $Both[0]
-		$Subdivision = $Both[1]
+		$Country = $Both[0].ToUpper()
+		$Subdivision = $Both[1].ToUpper()
 	}
 
 	$locale = New-Object Locale
@@ -2764,6 +2767,9 @@ function New-TestHIT {
 	$hit.Reward = New-Price 0
 	$hit.RequesterAnnotation = "Just a test question"
 	return $hit
+
+	# TODO: 
+	# Consider changing the question.
 }
 
 #########################################################################################
