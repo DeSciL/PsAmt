@@ -39,6 +39,7 @@
     <Folder Include="samples\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Amt.key" />
     <Content Include="templates\Qualification.answer" />
     <Content Include="templates\Qualification.question" />
     <Content Include="templates\Survey.question" />
