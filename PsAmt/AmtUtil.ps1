@@ -28,19 +28,19 @@ function Set-AMTKeys {
    connection requests, only the passphrase will be queried.
 
   .PARAMETER Passphrase
-   The passphrase to encrypt the keys.
+   Specifies the passphrase to encrypt the keys.
 
   .PARAMETER AccessKey
-   The Amazon Mechanical Turk AccessKey Id.
+   Specifies the Amazon Mechanical Turk AccessKey Id.
    
   .PARAMETER SecretKey
-   The Amazon Mechanical Turk SecretKey.
+   Specifies the Amazon Mechanical Turk SecretKey.
 
   .PARAMETER RequesterId
-   The Amazon Mechanical Turk Requester Id
+   Specifies the Amazon Mechanical Turk Requester Id
 
   .PARAMETER KeyFile
-   A file to store the encrypted keys. Default is Amt.key.
+   Specifies the file to store the encrypted keys. Default is Amt.key.
  
   .EXAMPLE 
    Set-AMTKeys -Passphrase "MyPassphrase" -AccessKey "MyAccessKey" -SecretKey "MySecretKey" -RequesterId "MyRequesterId"
@@ -99,20 +99,20 @@ function Get-AMTKeys {
    is not provided, script prompts to enter a passphrase as a secure string.
    Passphrase is stored in $Global:AmtPassphrase
 
-  .PARAMETER  Passphrase
-   The Passphrase to decrypt the keys
+  .PARAMETER Passphrase
+   Specifies the Passphrase to decrypt the keys
 
-  .PARAMETER  AccessKey
-   Return the Amazon Mechanical Turk AccessKey Id from secure store.
+  .PARAMETER AccessKey
+   Switch to request the Amazon Mechanical Turk AccessKey Id from secure store.
    
-  .PARAMETER  SecretKey
-   Return the Amazon Mechanical Turk SecretKey from secure store.
+  .PARAMETER SecretKey
+   Switch to request the Amazon Mechanical Turk SecretKey from secure store.
 
   .PARAMETER RequesterId
-   The Amazon Mechanical Turk Requester Id
+   Switch to request the Amazon Mechanical Turk Requester Id
 
-  .PARAMETER  KeyFile
-   A file to store the encrypted keys
+  .PARAMETER KeyFile
+   Specifies the file which stores the encrypted keys
    
   .EXAMPLE 
    Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -AccessKey
@@ -152,17 +152,29 @@ function Get-AMTKeys {
 		}
 	}
 
+	# Re-check if passphrase is stored in global, if not, add it
+	if(!$Global:AmtPassphrase) {
+		$Global:AmtPassphrase = ConvertTo-SecureString -String $Passphrase -AsPlainText -Force
+	}
+
 	# Test if key file exists
 	if(!(Test-Path $KeyFile)) {
 		$keyPath = Join-Path $Global:AmtKeyPath $KeyFile
 		if(!(Test-Path $keyPath)) {
+			$Global:AmtPassphrase = $null
 			Write-Error "Key file $KeyFile not found!" -ErrorAction Stop
 		}
 	}
 
 	# Decrypt and extract keys
 	$encrypted = Get-Content $keyPath
-	$joined = Unprotect-String $encrypted $Passphrase
+	Try {
+		$joined = Unprotect-String -EncryptedString $encrypted -Passphrase $Passphrase
+	}
+	Catch {
+		$Global:AmtPassphrase = $null
+		Write-Error -Message "Unable to decrypt encripted string." -ErrorAction Stop
+	}
 	$splitted = $joined.Split("~")
 	$accessKeyString = $splitted[0]
 	$secretKeyString = $splitted[1]
@@ -190,16 +202,16 @@ function Protect-String {
   Encrypts a string with Advanced Encryption Standard (AES/Rijndael).
 
  .PARAMETER  StringToProtect
-  The string that needs to be encrypted.
+  Specifies the string that needs to be encrypted.
 
  .PARAMETER  Passphrase
-  The passphrase to use with encryption.
+  Specifies the passphrase to use with encryption.
 
  .PARAMETER  Salt
-  The passphrase salt. You can take the default value.
+  Specifies the passphrase salt. You can take the default value.
 
  .PARAMETER  Init
-  The initial password. You can take the default value.
+  Specifies the initial password. You can take the default value.
   
  .EXAMPLE 
   Protect-String "The sentence that needs to be protected." "My passphrase"
@@ -258,17 +270,17 @@ function Unprotect-String {
  .DESCRIPTION
   Decrypts a string with Advanced Encryption Standard (AES/Rijndael).
   
- .PARAMETER  Encrypted
-  The string that needs to be decrypted.
+ .PARAMETER EncryptedString
+  Specifies the string that needs to be decrypted.
 
- .PARAMETER  Passphrase
-  The passphrase used to encrypt the string.
+ .PARAMETER Passphrase
+  Specifies the passphrase used to encrypt the string.
 
- .PARAMETER  Salt
-  The passphrase salt. You can take the default value.
+ .PARAMETER Salt
+  Specifies the passphrase salt. You can take the default value.
 
- .PARAMETER  Init
-  The initial password. You can take the default value.
+ .PARAMETER Init
+  Specifies the initial password. You can take the default value.
 
  .EXAMPLE 
   Unprotect-String "The encrypted string" "My passphrase"
@@ -282,9 +294,9 @@ function Unprotect-String {
 		[string]$EncryptedString,
 		[Parameter(Position=1, Mandatory=$True)]
 		[string]$Passphrase,
-		[Parameter(Mandatory=$False)]
+		[Parameter(Position=2, Mandatory=$False)]
 		[string]$Salt="My Voic3 is my P455W0RD!",
-		[Parameter(Mandatory=$false)]
+		[Parameter(Position=3, Mandatory=$false)]
 		[string]$Init="Y3t anoth3r k3y"
 	)
 
