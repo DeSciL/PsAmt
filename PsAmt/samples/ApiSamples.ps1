@@ -138,8 +138,8 @@ function HitTypes {
   # Question Form / Trouble Ticket
   
   $templateDir = Join-Path $AmtModulePath templates
-  $troubleTempate = gc (Join-Path $templateDir troubles.question)
-  $hit = Add-HIT -Title "ETH DeSciL Trouble Ticket" -Description "Trouble Ticket" -Reward 0 -Question $troubleTempate  -MaxAssignments 20
+  $troubleTemplate = Get-Content (Join-Path $templateDir troubles.question)
+  $hit = Add-HIT -Title "ETH DeSciL Trouble Ticket" -Description "Trouble Ticket" -Reward 0 -Question $troubleTemplate  -MaxAssignments 20
 
   Disable-HIT $hit.HITId
 
@@ -147,31 +147,41 @@ function HitTypes {
   # Question Form / Simple Questionnaire
   
   $templateDir = Join-Path $AmtModulePath templates
-  $troubleTempate = gc (Join-Path $templateDir trivia.question)
-  $hit = Add-HIT -Title "Trivia Test Qualification" -Description "A qualification test" -Reward 0 -Question $triviaTempate  -MaxAssignments 20
+  $triviaTemplate = Get-Content (Join-Path $templateDir trivia.question)
+  $hit = Add-HIT -Title "Trivia Test Qualification" -Description "A qualification test" -Reward 0 -Question $triviaTemplate  -MaxAssignments 20
 
   Disable-HIT $hit.HITId
 
   #----------------------------------------------------
   # HTML Questions / A more complex questionnaire
-  # Generate a HIT with the amt online tools, then export the hit template
+  # Generate a HIT with the AMT online tools, then export the HIT template
   # https://requestersandbox.mturk.com/create/projects
+  # The template is basically a HTML form that can be modified with a text editor.
 
   # Get the designed hit
-  $hit = Get-HIT (Read-Host "Enter the HITId of the designed hit.")
+  # $hit = Get-HIT (Read-Host "Enter the HITId of the designed hit.")
 
   # Export the template
-  $hit.Question | Out-File (Join-Path $templateDir MySurvey.question)
+  # $templateDir = Join-Path $AmtModulePath templates
+  # $hit.Question | Out-File (Join-Path $templateDir Survey.question)
+
+  # Read the HTML survey template back in
+  $templateDir = Join-Path $AmtModulePath templates
+  $questonnaire = Get-Content (Join-Path $templateDir Survey.question)
 
   # Add the template to a new HIT
-  $hit = Add-HIT -Title "Survey Test" -Description "Survey Test" -Reward 0 -Question $hit.Question  -MaxAssignments 20
+  $hit = Add-HIT -Title "Survey Test" -Description "Survey Test" -Reward 0 -Question $questonnaire  -MaxAssignments 20
   Disable-HIT $hit.HITId
 
 }
 
 #########################################################################################
 function Qualifications {
+
+  # Qualification are based on QualificationTypes. QualificationTypes are stored templates
+  # for qualifications.
   
+  # Your WorkerId is stored in the key file
   $myWorker = Get-AMTKeys -RequesterId
 
   Connect-AMT -Sandbox
@@ -191,35 +201,36 @@ function Qualifications {
   # Basic operations
 
   # Setup new qualification
-  $qt = Add-QualificationType -Name "TQ2" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword2"
+  $qt = Add-QualificationType -Name "TQ3" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword2"
   
   # Display
   $qt = Get-QualificationType $qt.QualificationTypeId
   $qt
 
   # Remove qualification, will only be set to inactive
-  # Better delete it on the web interface since it will 
-  # be deleted permanently there
+  # It can take up to 48 hours until the types are removed.
+
   # Remove-QualificationType $q.QualificationTypeId
 
   #----------------------------------------------------
   # Assign Qualification to HIT
 
   # Create a new Qualification Requirement
+  # [New comparators: DoesNotExist, In, and NotIn should work]
   $qr = New-QualificationRequirement -QualificationTypeId $qt.QualificationTypeId -Comparator Exists
   $qr
 
-  # Setup a new HIT using the 
+  # Setup a new HIT
   $h = New-HIT
-  $h.Title = $title
-  $h.Description = $desc
+  $h.Title = "Name of the president"
+  $h.Description = "Find the name of a president"
   $h.Keywords = "Keyword 1"
   $h.MaxAssignments = 5
   $h.MaxAssignmentsSpecified = $true
   $h.AssignmentDurationInSeconds = 3600
   $h.AssignmentDurationInSecondsSpecified = $true
   $h.RequesterAnnotation = "My Hit"
-  $h.Question = "Who was the last president?"
+  $h.Question = "What's the name of the last US president?"
   $h.Reward = New-Price 0.5
   $h.QualificationRequirement= $qr
   
@@ -241,7 +252,7 @@ function Qualifications {
   $qLocale = New-QualificationRequirement -BuiltIn Locale -LocaleValue "US"
   $qMaster = New-QualificationRequirement -BuiltIn Masters
   $qCat = New-QualificationRequirement -BuiltIn CategorizationMasters
-  $qPhoto = New-QualificationRequirement -BuiltIn PhotoModerationMaster
+  $qPhoto = New-QualificationRequirement -BuiltIn PhotoModerationMasters
   $qAdult = New-QualificationRequirement -BuiltIn Adult
   $qApprove = New-QualificationRequirement -BuiltIn NumberHITsApproved -IntegerValue 50 -Comparator GreaterThan
   $qPercent = New-QualificationRequirement -BuiltIn PercentAssignmentsApproved -IntegerValue 95 -Comparator GreaterThan
