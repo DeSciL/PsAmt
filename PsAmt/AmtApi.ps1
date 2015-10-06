@@ -251,7 +251,7 @@ function Disconnect-AMT {
 	$Global:AmtClient = $null
 	$Global:AmtPassphrase = $null
 	$Global:AmtClientConnected = $false
-	Write-Output "Disconnected from AMT. All passwords cleared."
+	Write-Host "Disconnected from AMT. All passwords cleared."
 }
 
 #########################################################################################
@@ -285,7 +285,7 @@ function Approve-Assignment {
 
 	TestAmtApi
 	$AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
-	Write-Verbose "Approved $AssignmentId"
+	Write-Host "Approved $AssignmentId"
 }
 
 #########################################################################################
@@ -321,7 +321,7 @@ function Approve-RejectedAssignment {
 
 	TestAmtApi
 	$AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
-	Write-Verbose "Approved rejected assignment $AssignmentId"
+	Write-Host "Approved rejected assignment $AssignmentId"
 }
 
 #########################################################################################
@@ -403,7 +403,7 @@ function Block-Worker {
 
 	TestAmtApi
 	$AmtClient.BlockWorker($WorkerId, $Reason)
-	Write-Verbose "Blocked worker $WorkerId"
+	Write-Host "Blocked worker $WorkerId"
 }
 
 #########################################################################################
@@ -635,7 +635,7 @@ function Disable-HIT {
 
 	TestAmtApi
 	$AmtClient.DisableHIT($HITId)
-	Write-Verbose "Disabled HIT $HITId"
+	Write-Host "Disabled HIT $HITId"
 }
 
 #########################################################################################
@@ -668,7 +668,7 @@ function Remove-HIT {
 
 	TestAmtApi
 	$AmtClient.DisposeHIT($HITId)
-	Write-Verbose "Removed HIT $HITId"
+	Write-Host "Removed HIT $HITId"
 }
 
 #########################################################################################
@@ -842,7 +842,7 @@ function Remove-QualificationType {
 
 	TestAmtApi
 	$AmtClient.DisposeQualificationType($QualificationTypeId)
-	Write-Verbose "Removed QualificationType $QualificationTypeId"
+	Write-Host "Removed QualificationType $QualificationTypeId"
 }
 
 #########################################################################################
@@ -921,7 +921,7 @@ function Stop-HIT {
 	
 	TestAmtApi
 	$AmtClient.ForceExpireHIT($HITId)
-	Write-Verbose "Forced expiration of HIT $HITId"
+	Write-Host "Forced expiration of HIT $HITId"
 }
 
 #########################################################################################
@@ -1919,7 +1919,7 @@ function Deny-Assignment {
 
 	TestAmtApi
 	$AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
-	Write-Verbose "Rejected assignment $AssignmentId"
+	Write-Host "Rejected assignment $AssignmentId"
 }
 
 #########################################################################################
@@ -2030,7 +2030,7 @@ function Unblock-Worker {
 
 	TestAmtApi
 	$AmtClient.UnblockWorker($WorkerId, $Reason)
-	Write-Verbose "Unblocked worker $WorkerId"
+	Write-Host "Unblocked worker $WorkerId"
 }
 
 #########################################################################################
