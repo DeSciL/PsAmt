@@ -271,8 +271,9 @@ function Qualifications {
   # Qualification Test
 
   # Get sources of question and answer
-  $testSource = gc C:\home\modules\PsAmt\templates\Qualification.question -Raw
-  $answerSource = gc C:\home\modules\PsAmt\templates\Qualification.answer -Raw
+  $templateDir = Join-Path $AmtModulePath templates
+  $testSource = Get-Content (Join-Path $templateDir Qualification.question) -Raw
+  $answerSource = Get-Content (Join-Path $templateDir Qualification.answer) -Raw
 
   # Add a qualification type
   $q = Add-QualificationTypeFull -Name "TQ12" -Keywords "Key 1" -Description "Desc" -QualificationTypeStatus Active -RetryDelayInSeconds 1000 -Test $testSource -AnswerKey $answerSource -TestDurationInSeconds 360
@@ -298,7 +299,7 @@ function Qualifications {
   # Qualification Updates
 
   # Setup new qualification
-  $qt = Add-QualificationType -Name "TQ2" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword 2"
+  $qt = Add-QualificationType -Name "TQ4" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword 2"
   $qt
 
   $qt = Get-QualificationType $qt.QualificationTypeId
@@ -310,7 +311,7 @@ function Qualifications {
   #----------------------------------------------------
   # Qualification Assignments and Value Updates
 
-  $myWorker = Get-AMTKeys -RequesterId
+  $MyWorkerId = Get-AMTKeys -RequesterId
 
   Grant-Qualification -QualificationTypeId $qt.QualificationTypeId -WorkerId $MyWorkerId -SendNotification $true
   Update-QualificationScore -QualificationTypeId $qt.QualificationTypeId -WorkerId  $MyWorkerId -IntegerValue 25
