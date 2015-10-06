@@ -277,20 +277,15 @@ function Approve-Assignment {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$AssignmentId,
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$RequesterFeedback
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.ApproveAssignment($_, $RequesterFeedback)
-		Write-Verbose "Approved $_"
-	}
+	TestAmtApi
+	$AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
+	Write-Verbose "Approved $AssignmentId"
 }
 
 #########################################################################################
@@ -318,20 +313,15 @@ function Approve-RejectedAssignment {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$AssignmentId,
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$RequesterFeedback
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.ApproveRejectedAssignment($_, $RequesterFeedback)
-		Write-Verbose "Approved rejected assignment $_"
-	}
+	TestAmtApi
+	$AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
+	Write-Verbose "Approved rejected assignment $AssignmentId"
 }
 
 #########################################################################################
@@ -405,20 +395,15 @@ function Block-Worker {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string[]]$WorkerId,
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$Reason
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.BlockWorker($_, $Reason)
-		Write-Verbose "Blocked worker $_"
-	}
+	TestAmtApi
+	$AmtClient.BlockWorker($WorkerId, $Reason)
+	Write-Verbose "Blocked worker $WorkerId"
 }
 
 #########################################################################################
@@ -644,18 +629,13 @@ function Disable-HIT {
   about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$HITId
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.DisableHIT($_)
-		Write-Verbose "Disabled HIT $_"
-	}
+	TestAmtApi
+	$AmtClient.DisableHIT($HITId)
+	Write-Verbose "Disabled HIT $HITId"
 }
 
 #########################################################################################
@@ -682,18 +662,13 @@ function Remove-HIT {
   about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$HITId
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.DisposeHIT($_)
-		Write-Verbose "Removed HIT $_"
-	}
+	TestAmtApi
+	$AmtClient.DisposeHIT($HITId)
+	Write-Verbose "Removed HIT $HITId"
 }
 
 #########################################################################################
@@ -861,18 +836,13 @@ function Remove-QualificationType {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$QualificationTypeId
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.DisposeQualificationType($_)
-		Write-Verbose "Removed QualificationType $_"
-	}
+	TestAmtApi
+	$AmtClient.DisposeQualificationType($QualificationTypeId)
+	Write-Verbose "Removed QualificationType $QualificationTypeId"
 }
 
 #########################################################################################
@@ -945,18 +915,13 @@ function Stop-HIT {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$HITId
 	)
 	
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.ForceExpireHIT($_)
-		Write-Verbose "Forced expiration of HIT $_"
-	}
+	TestAmtApi
+	$AmtClient.ForceExpireHIT($HITId)
+	Write-Verbose "Forced expiration of HIT $HITId"
 }
 
 #########################################################################################
@@ -1795,19 +1760,14 @@ function Grant-QualificationRequest {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$QualificationRequestId,
 		[Parameter(Position=1, Mandatory=$false)]
 		[int]$IntegerValue=1
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.GrantQualification($_, $IntegerValue)
-	}
+	TestAmtApi
+	$AmtClient.GrantQualification($QualificationRequestId, $IntegerValue)
 }
 
 #########################################################################################
@@ -1951,20 +1911,15 @@ function Deny-Assignment {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$AssignmentId,
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$RequesterFeedback
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.RejectAssignment($_, $RequesterFeedback)
-		Write-Verbose "Rejected assignment $_"
-	}
+	TestAmtApi
+	$AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
+	Write-Verbose "Rejected assignment $AssignmentId"
 }
 
 #########################################################################################
@@ -1993,19 +1948,14 @@ function Deny-QualificationRequest  {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$QualificationRequestId,
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$Reason
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.RejectQualificationRequest($_, $Reason)
-	}
+	TestAmtApi
+	$AmtClient.RejectQualificationRequest($QualificationRequestId, $Reason)
 }
 
 #########################################################################################
@@ -2072,20 +2022,15 @@ function Unblock-Worker {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Position=0, Mandatory=$true)]
 		[string]$WorkerId,
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$Reason
 	)
 
-	Begin {
-		TestAmtApi
-	}
-
-	Process {
-		$AmtClient.UnblockWorker($_, $Reason)
-		Write-Verbose "Unblocked worker $_"
-	}
+	TestAmtApi
+	$AmtClient.UnblockWorker($WorkerId, $Reason)
+	Write-Verbose "Unblocked worker $WorkerId"
 }
 
 #########################################################################################
