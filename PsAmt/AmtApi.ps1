@@ -979,7 +979,7 @@ function Get-Assignment {
 	[string[]]$ResponseGroup = $null
 
 	TestAmtApi
-	return $AmtClient.GetAssignment($AssignmentId, $ResponseGroup)
+	return $AmtClient.GetAssignment($AssignmentId, $ResponseGroup).Assignment
 }
 
 #########################################################################################
