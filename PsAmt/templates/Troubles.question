@@ -27,6 +27,6 @@
   </Question>
   <Overview>
     <Text>If we can confirm your problem, you will receive the reward by bonus. Sorry for any inconvenience!</Text>
-    <Text>Best regards, X.</Text>
+    <Text>Best regards, your requester</Text>
   </Overview>
 </QuestionForm>
