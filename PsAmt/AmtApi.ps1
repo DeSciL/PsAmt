@@ -140,13 +140,17 @@ function Connect-AMT {
    Connect to Amazom Mechanical Turk by means of the .Net SDK.
 
   .PARAMETER AccessKey
-   The Amazon Mechanical Turk access key.
+   Specifies the Amazon Mechanical Turk access key.
 
   .PARAMETER SecretKey
-   The Amazon Mechanical Turk secret key id.
+   Specifies the Amazon Mechanical Turk secret key id.
+
+  .PARAMETER Passphrase
+   Specifies the the passphrase. Try to avoid setting the
+   passphrase in code.
 
   .PARAMETER KeyFile
-   Specify the file with stored passwords.
+   Specifies the file with stored passwords.
    
   .PARAMETER Sandbox
    Switches between sandbox and production site.
@@ -163,15 +167,17 @@ function Connect-AMT {
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$SecretKey,
 		[Parameter(Position=2, Mandatory=$false)]
-		[string]$KeyFile="Amt.key",
+		[string]$Passphrase=$null,
 		[Parameter(Position=3, Mandatory=$false)]
+		[string]$KeyFile="Amt.key",
+		[Parameter(Position=4, Mandatory=$false)]
 		[switch]$Sandbox
 	)
   
 	if($Sandbox) {
-		ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -KeyFile $KeyFile -Sandbox
+		ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -Passphrase $Passphrase -KeyFile $KeyFile -Sandbox
 	} else {
-		ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -KeyFile $KeyFile
+		ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -Passphrase $Passphrase -KeyFile $KeyFile
 	}
 }
 
@@ -184,8 +190,10 @@ function ConnectAmt {
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$SecretKey,
 		[Parameter(Position=2, Mandatory=$false)]
-		[string]$KeyFile="Amt.key",
+		[string]$Passphrase=$null,
 		[Parameter(Position=3, Mandatory=$false)]
+		[string]$KeyFile="Amt.key",
+		[Parameter(Position=4, Mandatory=$false)]
 		[switch]$Sandbox
 	)
 
@@ -193,8 +201,8 @@ function ConnectAmt {
 	if(!$Global:AmtClientLoaded) { LoadAmt }
 
 	# Get WebService credentials from encrypted key file
-	if(!$AccessKeyId) { $AccessKeyId = Get-AMTKeys -AccessKey -KeyFile $KeyFile }
-	if(!$SecretKey) { $SecretKey = Get-AMTKeys -SecretKey -KeyFile $KeyFile }
+	if(!$AccessKeyId) { $AccessKeyId = Get-AMTKeys -AccessKey -Passphrase $Passphrase -KeyFile $KeyFile }
+	if(!$SecretKey) { $SecretKey = Get-AMTKeys -SecretKey -Passphrase $Passphrase -KeyFile $KeyFile }
 
 	# Check if sandbox
 	if($Sandbox.IsPresent) {
