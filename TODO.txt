@@ -3,15 +3,12 @@ stwehrli@gmail.com
 
 Know Bugs / Issues
 - Connect-Amt: Definition of objects needs to be done on load
-- Connect-Amt: If wrong password is entered cannot connect anymore because password is stored!?!
 - Connect-Amt: If content of Amt.key is wrong, exceptions are thrown.
 - Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
 
 Priority 1
+- Move all global vars into the module file
 - Review New-TestHit
-- Consider cleaning up .LINKS and move other links to .NOTES to allow for man about_* -online
-- Consider hiding dispose-hit. They get locked in a strange way.
-- Revisit Write-Output --> Change to Write-Host
 - Review pipeing: Approve-Assignment, Grant-Bonus, etc.
 - Add examples to Add-HIT, Add-QualificationTypeFull
 - Review PageNumber and PageSize for search functions, e.g.  Get-HitsForQualificationType
@@ -29,8 +26,8 @@ Priority 2
 
 Priority 3
 - Reproduce typical files like success file, etc. form command line tools
-- Split samples into sections
 - Add Typical workflows and documentation
+- Split samples into sections
 - Add Pester Unit Tests
 
 
