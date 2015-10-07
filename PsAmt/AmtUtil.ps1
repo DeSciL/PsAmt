@@ -5,7 +5,8 @@
 #########################################################################################
 #
 # CONTENTS
-# - Set-AAMTKeys
+# - Write-AMTError
+# - Set-AMTKeys
 # - Get-AMTKeys
 # - Protect-String
 # - Unprotect-String
@@ -13,6 +14,24 @@
 #########################################################################################
 # Settings
 [Security.SecureString]$Global:AmtPassphrase = $null
+
+#########################################################################################
+function Write-AMTError {
+<# 
+  .SYNOPSIS 
+   Return formated error
+   
+  .DESCRIPTION
+   Return formated error
+
+  .LINK
+   about_PsAmt
+#>
+	Write-Host $Error[0] -ForegroundColor Red
+
+	# TODO:
+	# Consider logging to file
+}
 
 #########################################################################################
 function Set-AMTKeys {
