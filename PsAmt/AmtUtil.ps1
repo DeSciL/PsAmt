@@ -189,7 +189,7 @@ function Get-AMTKeys {
 	}
 	Catch {
 		$Global:AmtPassphrase = $null
-		Write-Error -Message "Unable to decrypt encripted string." -ErrorAction Stop
+		Write-Error -Message "Unable to decrypt encripted strings." -ErrorAction Stop
 	}
 	$splitted = $joined.Split("~")
 	$accessKeyString = $splitted[0]
