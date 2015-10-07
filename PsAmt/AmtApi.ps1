@@ -628,18 +628,24 @@ function Add-HIT {
 	)
 
 	TestAmtApi
-	if($Hit) {
-		return $AmtClient.CreateHIT($Hit)
+	Try {
+		# Create with HIT object
+		if($Hit) {
+			$h = $AmtClient.CreateHIT($Hit)
+		}
+		# Create with parameteres
+		if($HITTypeId) {
+			[string[]]$ResponseGroup = $null
+			$h = $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
+		} else {
+			$h = $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
+		}
+		$h
+		Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
 	}
-	if($HITTypeId) {
-		[string[]]$ResponseGroup = $null
-		$AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
-	} else {
-		$AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
+	Catch {
+		Write-AMTError
 	}
-
-	# TODO:
-	# Adjust exit/return logic and add reporting
 }
 
 #########################################################################################
@@ -2733,10 +2739,6 @@ function New-HtmlQuestion {
 }
 
 #########################################################################################
-function NewHit {
-	New-Object HIT
-}
-
 function New-HIT {
 <# 
  .SYNOPSIS 
@@ -2976,7 +2978,7 @@ function New-TestHIT {
   .LINK
    about_PsAmt
 #>
-	$hit = NewHit
+	$hit = New-Object HIT
 	$hit.Title = "Test HIT"
 	$hit.Description = "This is just a test hit. Move along."
 	$hit.Keywords = "Test, Testing"
@@ -3078,5 +3080,7 @@ Export-ModuleMember Search-QualificationTypes
 Export-ModuleMember Block-Worker, Unblock-Worker, Get-BlockedWorkers
 Export-ModuleMember Grant-Bonus, Get-BonusPayments
 Export-ModuleMember Send-WorkerNotification, Get-FileUploadUrl, Enter-HIT
+
+# Not implemented: Search-HITs, Send-TestEventNotification, Set-HITAsReviewing, Set-HITTypeNotification
 
 #########################################################################################
