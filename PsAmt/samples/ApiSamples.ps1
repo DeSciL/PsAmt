@@ -53,7 +53,7 @@ function Hits {
   #----------------------------------------------------
   # Add a hit
 
-  $hit = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
+  $hit = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 10
   $hit
 
   # Get the Hit (now with createdate, and groupid)
@@ -64,9 +64,12 @@ function Hits {
   Stop-HIT -HITId $hit.HITId
 
   # Exend hit / add assignments and time
-  Expand-HIT -HITId $hit.HITId -MaxAssignmentsIncrement 5 -ExpirationIncrementInSeconds 180
+  # For HITs with assignments < 10, increments in assignment and time needs to be 1 and multiples of 60
+  # For HITs with assignments >= 10, increments can be chosen free and can also be $null
+  Expand-HIT -HITId $hit.HITId -MaxAssignmentsIncrement 0  -ExpirationIncrementInSeconds 180
 
-  # Delete
+  # Delete. Will only work if the HITstatus is reviewable, i.e. has been exipired before.
+  # To delete HITs that are still in status assignable, use Disable-HIT
   Remove-HIT -HITId $hit.HITId
 
   #----------------------------------------------------
