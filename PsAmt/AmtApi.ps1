@@ -2041,6 +2041,9 @@ function Register-HITType {
    A condition that a Worker's Qualifications must meet before the Worker is 
    allowed to accept and complete a HIT of this type.
 
+  .PARAMETER HITType
+   A predefined HITType object.
+
   .EXAMPLE
    [...]
   
@@ -2061,7 +2064,9 @@ function Register-HITType {
 		[Parameter(Position=5, Mandatory=$false)]
 		[string]$Keywords,
 		[Parameter(Position=6, Mandatory=$false)]
-		$QualificationRequirement = $null
+		$QualificationRequirement = $null,
+		[Parameter(Position=7, Mandatory=$false)]
+		$HITType = $null
 	)
 
 	TestAmtApi
@@ -2878,6 +2883,104 @@ function New-HIT {
 }
 
 #########################################################################################
+function New-HITType {
+<# 
+  .SYNOPSIS 
+   Setup a new HITType object.
+
+  .DESCRIPTION
+   Setup a new HITType object.
+
+  .PARAMETER Title
+   The title for HITs of this type.
+
+  .PARAMETER Description
+   A general description of HITs of this type.
+  
+  .PARAMETER Reward
+   The amount of money the Requester will pay a user for successfully 
+   completing a HIT of this type.
+
+  .PARAMETER AssignmentDurationInSeconds
+   The amount of time a Worker has to complete a HIT of this type after accepting it.
+
+  .PARAMETER Keywords
+   One or more words or phrases that describe a HIT of this type, separated by commas. 
+   Searches for words similar to the keywords are more likely to return the HIT in 
+   the search results.
+
+  .PARAMETER AutoApprovalDelayInSeconds
+   An amount of time, in seconds, after an assignment for a HIT of this type 
+   has been submitted, that the assignment becomes Approved automatically, 
+   unless the Requester explicitly rejects it.
+
+  .PARAMETER QualificationRequirement
+   A condition that a Worker's Qualifications must meet before the Worker is 
+   allowed to accept and complete a HIT of this type.
+
+  .PARAMETER QualificationRequirement
+   A predefined HITType object
+
+  .EXAMPLE
+   [...]
+  
+  .LINK
+   about_PsAmt
+#>
+	Param(
+		[Parameter(Position=0, Mandatory=$false)]
+		[string]$Title,
+		[Parameter(Position=1, Mandatory=$false)]
+		[string]$Description,
+		[Parameter(Position=2, Mandatory=$false)]
+		[string]$AutoApprovalDelayInSeconds,
+		[Parameter(Position=3, Mandatory=$false)]
+		[long]$AssignmentDurationInSeconds,
+		[Parameter(Position=4, Mandatory=$false)]
+		[decimal]$Reward,
+		[Parameter(Position=5, Mandatory=$false)]
+		[string]$Keywords,
+		[Parameter(Position=6, Mandatory=$false)]
+		$QualificationRequirement = $null,
+		[Parameter(Position=7, Mandatory=$false)]
+		$HITType = $null
+	)
+
+	$ht = New-Object Amazon.WebServices.MechanicalTurk.Domain.HITType
+
+	if($HITType) {
+		$ht = $HITType
+	}
+	if($Title) {
+		$ht.Title = $Title
+	}
+	if($Description) {
+		$ht.Description = $Description
+	}
+	if($AutoApprovalDelayInSeconds) {
+		$ht.AutoApprovalDelayInSeconds = $AutoApprovalDelayInSeconds
+	}
+	if($AssignmentDurationInSeconds) {
+		$ht.AssignmentDurationInSeconds = $AssignmentDurationInSeconds
+	}
+	if($Reward) {
+		$ht.Reward = New-Price $Reward
+	}
+	if($Keywords) {
+		$ht.Keywords = $Keywords
+	}
+	if($QualificationRequirement) {
+		$ht.QualificationRequirement = $QualificationRequirement
+	}
+
+	return $ht
+
+	# TODO:
+	# Provide a working example
+}
+
+
+#########################################################################################
 function New-Price {
 <# 
   .SYNOPSIS 
@@ -3064,7 +3167,7 @@ Export-ModuleMember New-HIT, New-ExternalQuestion, New-HtmlQuestion, New-Questio
 Export-ModuleMember New-Price, New-Locale, New-TestHIT, New-QualificationRequirement
 
 # HITTypes
-Export-ModuleMember Register-HITType, Set-HITTypeOfHIT
+Export-ModuleMember New-HITType, Register-HITType, Set-HITTypeOfHIT
 
 # Assignments
 Export-ModuleMember Approve-Assignment, Deny-Assignment, Approve-RejectedAssignment
