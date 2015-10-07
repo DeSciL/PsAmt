@@ -7,7 +7,9 @@
 # Global Settings
 [string]$Global:AmtModulePath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
 [string]$Global:AmtKeyPath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
+[bool]$Global:AmtSandbox = $true
 [string]$Global:AmtConsoleColor = "Cyan"
+[Security.SecureString]$Global:AmtPassphrase = $null
 
 #########################################################################################
 <# 
@@ -30,7 +32,7 @@
 
   Working with Hits:
   - Add-HIT
-  - Get-HHIT
+  - Get-HIT
   - Set-HITTypeOfHIT
   - Disable-HIT
   - Remove-HIT
@@ -83,11 +85,16 @@
   // SetHITAsReviewing
   // SetHITTypeNotification
 
- .LINK
-  https://github.com/descil/psamt
+ .NOTES
+  PowerShell scripts are based on .Net code and
+  infrastructure provided by:
   https://github.com/descil/dotnetmturk
   http://mturkdotnet.codeplex.com/
   http://www.mturk.com
+
+ .LINK
+  https://github.com/descil/psamt
+  
 #>
 function about_PsAmt {}
 
