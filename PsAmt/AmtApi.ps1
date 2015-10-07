@@ -234,6 +234,7 @@ function ConnectAmt {
 
 	# Get available balance
 	Write-Host "Current balance: " (GetBalance) -ForegroundColor $AmtConsoleColor
+	Write-Host
 }
 
 #########################################################################################
@@ -255,7 +256,7 @@ function Disconnect-AMT {
 	$Global:AmtClient = $null
 	$Global:AmtPassphrase = $null
 	$Global:AmtClientConnected = $false
-	Write-Host "Disconnected from AMT. All passwords cleared." -ForegroundColor $AmtConsoleColor
+	Write-Host "Disconnected from AMT. Cleared passwords." -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -383,7 +384,7 @@ function Grant-Qualification {
 	TestAmtApi
 	Try {
 		$AmtClient.AssignQualification($QualificationTypeId, $WorkerId, $IntegerValue, $SendNotification)
-		Write-Host "Qualification $QualificationTypeId granted to worker $WorkerId." -ForegroundColor $AmtConsoleColor
+		Write-Host "Granted Qualification $QualificationTypeId to worker $WorkerId" -ForegroundColor $AmtConsoleColor
 	}
 	Catch {
 		Write-AMTError
@@ -1983,7 +1984,7 @@ function Send-WorkerNotification {
 	TestAmtApi
 	Try {
 		$AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
-		Write-Host "Notified worker $WorkerId" -ForegroundColor $AmtConsoleColor
+		Write-Host "Notified worker(s) $WorkerId" -ForegroundColor $AmtConsoleColor
 	}
 	Catch {
 		Write-AMTError
@@ -2057,7 +2058,7 @@ function Register-HITType {
 	Try {
 		$ht = $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
 		$ht
-		Write-Host "Registered HITType" $ht.HITTypeId -ForegroundColor $AmtConsoleColor
+		Write-Host "Registered HITType" $ht -ForegroundColor $AmtConsoleColor
 	}
 	Catch {
 		Write-AMTError
