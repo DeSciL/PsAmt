@@ -23,7 +23,8 @@ function Write-AMTError {
   .LINK
    about_PsAmt
 #>
-	Write-Host $Error[0] -ForegroundColor Red
+	Write-Host $($_.Exception.Message) -ForegroundColor Red
+	Write-Host
 
 	# TODO:
 	# Consider logging to file
@@ -352,6 +353,7 @@ function Unprotect-String {
 
 #########################################################################################
 # Exports
+Export-ModuleMember Write-AMTError
 Export-ModuleMember Set-AMTKeys
 Export-ModuleMember Get-AMTKeys
 
