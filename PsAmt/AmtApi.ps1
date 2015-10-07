@@ -2051,12 +2051,12 @@ function Register-HITType {
    about_PsAmt
 #>
 	Param(
-		[Parameter(Position=0, Mandatory=$true)]
+		[Parameter(Position=0, Mandatory=$false)]
 		[string]$Title,
 		[Parameter(Position=1, Mandatory=$false)]
 		[string]$Description,
 		[Parameter(Position=2, Mandatory=$false)]
-		[string]$AutoApprovalDelayInSeconds=2592000,
+		[string]$AutoApprovalDelayInSeconds,
 		[Parameter(Position=3, Mandatory=$false)]
 		[long]$AssignmentDurationInSeconds,
 		[Parameter(Position=4, Mandatory=$false)]
@@ -2071,9 +2071,14 @@ function Register-HITType {
 
 	TestAmtApi
 	Try {
-		$ht = $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
+		# Create with HITType object
+		if($HITType) {
+			$ht = $AmtClient.RegisterHITType($HITType.Title, $HITType.Description, $HITType.AutoApprovalDelayInSeconds, $HITType.AssignmentDurationInSeconds, $HITType.Reward.Amount, $HITType.Keywords, $HITType.QualificationRequirement)			
+		} else {
+			$ht = $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
+		}
 		$ht
-		Write-Host "Registered HITType" $ht -ForegroundColor $AmtConsoleColor
+		Write-Host "Registered HIT" $ht -ForegroundColor $AmtConsoleColor
 	}
 	Catch {
 		Write-AMTError
