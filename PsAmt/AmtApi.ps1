@@ -259,7 +259,7 @@ function Disconnect-AMT {
 	$Global:AmtClient = $null
 	$Global:AmtPassphrase = $null
 	$Global:AmtClientConnected = $false
-	Write-Host "Disconnected from AMT. All passwords cleared."
+	Write-Host "Disconnected from AMT. All passwords cleared." -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -293,7 +293,7 @@ function Approve-Assignment {
 
 	TestAmtApi
 	$AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
-	Write-Host "Approved $AssignmentId"
+	Write-Host "Approved assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -329,7 +329,7 @@ function Approve-RejectedAssignment {
 
 	TestAmtApi
 	$AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
-	Write-Host "Approved rejected assignment $AssignmentId"
+	Write-Host "Approved rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -375,7 +375,8 @@ function Grant-Qualification {
 	)
 
 	TestAmtApi
-	return $AmtClient.AssignQualification($QualificationTypeId, $WorkerId, $IntegerValue, $SendNotification)
+	$AmtClient.AssignQualification($QualificationTypeId, $WorkerId, $IntegerValue, $SendNotification)
+	Write-Host "Qualification $QualificationTypeId granted to worker $WorkerId." -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -411,7 +412,7 @@ function Block-Worker {
 
 	TestAmtApi
 	$AmtClient.BlockWorker($WorkerId, $Reason)
-	Write-Host "Blocked worker $WorkerId"
+	Write-Host "Blocked worker $WorkerId" -ForegroundColor Cyan
 }
 
 #########################################################################################
@@ -450,7 +451,8 @@ function Set-HITTypeOfHIT {
 	)
 
 	TestAmtApi
-	return $AmtClient.ChangeHITTypeOfHIT($HITId, $HITTypeId)
+	$AmtClient.ChangeHITTypeOfHIT($HITId, $HITTypeId)
+	Write-Host "Change HITType of Hit $HITId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -609,10 +611,13 @@ function Add-HIT {
 	}
 	if($HITTypeId) {
 		[string[]]$ResponseGroup = $null
-		return $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
+		$AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
 	} else {
-		return $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
+		$AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
 	}
+
+	# TODO:
+	# Adjust exit logic and reporting
 }
 
 #########################################################################################
@@ -643,7 +648,9 @@ function Disable-HIT {
 
 	TestAmtApi
 	$AmtClient.DisableHIT($HITId)
-	Write-Host "Disabled HIT $HITId"
+	Write-Host "Disabled HIT $HITId" -ForegroundColor $AmtConsoleColor
+
+	ConsoleColor
 }
 
 #########################################################################################
@@ -675,8 +682,13 @@ function Remove-HIT {
 	)
 
 	TestAmtApi
-	$AmtClient.DisposeHIT($HITId)
-	Write-Host "Removed HIT $HITId"
+	Try { 
+		$AmtClient.DisposeHIT($HITId)
+		Write-Host "Removed HIT $HITId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-Host $Error[0] -ForegroundColor Red
+	}	
 }
 
 #########################################################################################
@@ -850,7 +862,7 @@ function Remove-QualificationType {
 
 	TestAmtApi
 	$AmtClient.DisposeQualificationType($QualificationTypeId)
-	Write-Host "Removed QualificationType $QualificationTypeId"
+	Write-Host "Removed QualificationType $QualificationTypeId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -929,7 +941,7 @@ function Stop-HIT {
 	
 	TestAmtApi
 	$AmtClient.ForceExpireHIT($HITId)
-	Write-Host "Forced expiration of HIT $HITId"
+	Write-Host "Forced expiration of HIT $HITId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -1776,6 +1788,7 @@ function Grant-QualificationRequest {
 
 	TestAmtApi
 	$AmtClient.GrantQualification($QualificationRequestId, $IntegerValue)
+	Write-Host "Granted qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -1820,6 +1833,7 @@ function Send-WorkerNotification {
 
 	TestAmtApi
 	return $AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
+	Write-Host "Notified worker $WorkerId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -1927,7 +1941,7 @@ function Deny-Assignment {
 
 	TestAmtApi
 	$AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
-	Write-Host "Rejected assignment $AssignmentId"
+	Write-Host "Rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -1964,6 +1978,7 @@ function Deny-QualificationRequest  {
 
 	TestAmtApi
 	$AmtClient.RejectQualificationRequest($QualificationRequestId, $Reason)
+	Write-Host "Rejected qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -2003,7 +2018,8 @@ function Revoke-Qualification {
 	)
 
 	TestAmtApi
-	return $AmtClient.RevokeQualification($QualificationTypeId, $WorkerId, $Reason)
+	$AmtClient.RevokeQualification($QualificationTypeId, $WorkerId, $Reason)
+	Write-Host "Revoked qualification $QualificationTypeId from worker $WorkerId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -2038,7 +2054,7 @@ function Unblock-Worker {
 
 	TestAmtApi
 	$AmtClient.UnblockWorker($WorkerId, $Reason)
-	Write-Host "Unblocked worker $WorkerId"
+	Write-Host "Unblocked worker $WorkerId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -2080,7 +2096,8 @@ function Update-QualificationScore {
 	)
 
 	TestAmtApi
-	return $AmtClient.UpdateQualificationScore($QualificationTypeId, $WorkerId, $IntegerValue)
+	$AmtClient.UpdateQualificationScore($QualificationTypeId, $WorkerId, $IntegerValue)
+	Write-Host "Updated qualification score of worker $WorkerId" -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -2206,6 +2223,10 @@ function Update-QualificationType {
 	} else {
 		return $AmtClient.UpdateQualificationType($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus)
 	}
+
+	# TODO:
+	# Consider not returning
+	# Consider reporting result
 }
 
 #########################################################################################
@@ -2475,7 +2496,8 @@ function New-QuestionForm {
 	Throw "Not implemented"
 
 	# TODO:
-	# Required for Trouble Tickets
+	# Required for complex forms. Check if this really required.
+	# At least trouble tickets seems to work without it.
 
 	$template = gc $TemplatePath
 	$qf = New-Object Amazon.WebServices.MechanicalTurk.Domain.QuestionForm
@@ -2511,10 +2533,10 @@ function New-HtmlQuestion {
 		[int]$FrameHeight=400
 	)
 
-	$hq = New-object HTMLQuestion
-	$hq.HTMLContent = $HTMLContent
-	$hq.FrameHeight = $FrameHeight
-	return $hq
+	$htmlQuestion = New-object HTMLQuestion
+	$htmlQuestion.HTMLContent = $HTMLContent
+	$htmlQuestion.FrameHeight = $FrameHeight
+	return $htmlQuestion
 }
 
 #########################################################################################
@@ -2777,7 +2799,7 @@ function New-TestHIT {
 	return $hit
 
 	# TODO: 
-	# Consider changing the question.
+	# Consider changing the example question.
 }
 
 #########################################################################################
