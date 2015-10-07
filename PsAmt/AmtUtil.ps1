@@ -12,10 +12,6 @@
 # - Unprotect-String
 #
 #########################################################################################
-# Settings
-[Security.SecureString]$Global:AmtPassphrase = $null
-
-#########################################################################################
 function Write-AMTError {
 <# 
   .SYNOPSIS 
