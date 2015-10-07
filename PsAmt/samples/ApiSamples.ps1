@@ -1,5 +1,5 @@
 #########################################################################################
-# PsAmt Module - AMT API Tests
+# PsAmt Module - AMT API Samples
 # stwehrli@gmail.com
 # 20sept2015
 #########################################################################################
@@ -7,14 +7,15 @@
 # CONTENTS
 # - Setup
 # - Hits
+# - Approval
 # - HitTypes
 # - Qualifications
 # - Blocks
+# - Bonus
 # - Notifications
 # - Api
 
 #########################################################################################
-
 function Setup {
 
   #----------------------------------------------------
@@ -36,6 +37,7 @@ function Setup {
 
   # Always your first api call
   Get-AccountBalance
+
 }
 
 #########################################################################################
@@ -48,70 +50,98 @@ function Hits {
   #----------------------------------------------------
   # List current Hits
   $hitlist = Get-AllHITs
-  $hitlist | Format-Table HITId, Title, HITStatus -AutoSize
+  $hitlist | Format-Table HITId, Title, HITStatus, HITReviewStatus -AutoSize
 
   #----------------------------------------------------
   # Add a hit
-
-  $hit = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 10
+  $hit = Add-HIT -Title "Meaning of Live" -Description "Answer a hard question." -Reward 0.5 -Question "What is the meaning of live?"  -MaxAssignments 10
+  
+  # Inspect the HIT object.
   $hit
 
-  # Get the Hit (now with createdate, and groupid)
+  # Query/get the HIT again from AMT. Same as above.
   $hit = Get-HIT $hit.HITId
   $hit
 
-  # Stop  a hit / force expiration
+  # Stop  a hit / force expiration / pause the HIT until it gets extended
   Stop-HIT -HITId $hit.HITId
 
   # Exend hit / add assignments and time
   # For HITs with assignments < 10, increments in assignment and time needs to be 1 and more than 60
-  # For HITs with assignments >= 10, increments can be chosen free and one of them can also be $null
+  # For HITs with assignments >= 10, increments can be chosen freely and one of them can also be $null
   Expand-HIT -HITId $hit.HITId -MaxAssignmentsIncrement 1  -ExpirationIncrementInSeconds 180
 
-  # Delete. Will only work if the HITstatus is reviewable, i.e. has been exipired before.
+  # Delete. Will only work if the HITstatus is reviewable, i.e., it the HIT has been exipired.
   # To delete HITs that are still in status assignable, use Disable-HIT
-  Remove-HIT -HITId $hit.HITId
+  # NOTE: If you remove or dispose the HIT, all data on AMT is gone!
+  
+  #Remove-HIT -HITId $hit.HITId
+  Disable-HIT -HITId $hit.HITId
 
   #----------------------------------------------------
-  # Add a hit, accept it, fill out, and approve
+  # Alternative way to setup HITs
 
-  $hit = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the last US president?"  -MaxAssignments 5
+  # Setup with a HIT object instead of parameters in Add-HIT
+  $hit = New-HIT
+  $hit.Title = "Meaning of Live"
+  $hit.Description = "Answer a hard question."
+  $hit.Question = "What is the meaning of live?"
+  $hit.Reward = New-Price 0.5
+  $hit.MaxAssignments = 10
+  $hit.MaxAssignmentsSpecified = $true
+  $hit.AssignmentDurationInSeconds = 3600
+  $hit.AssignmentDurationInSecondsSpecified = $true
+  $hit.AutoApprovalDelayInSeconds = 0
+  $hit.AutoApprovalDelayInSecondsSpecified = $true
+
+  # Inspect the object, same as above
   $hit
 
-  # Get the Hit
-  $hit = Get-HIT $hit.HITId
+  # Upload by adding HIT object to Add-HIT
+  $hit = Add-HIT -HIT $hit
 
-  # Preview the Hit
+  # Cleanup
+  Disable-HIT -HITId $hit.HITId
+
+}
+
+function Approval {
+
+  Connect-AMT -Sandbox
+
+  #----------------------------------------------------
+  # Add a hit, go fill out, and approve or reject
+
+  $hit = New-TestHIT
+  $hit = Add-HIT -HIT $hit
+
+  # Go preview, accept, and complete the HIT on the website.
   Enter-HIT $hit.HITGroupId
 
   # Get all assignments
   $assigns = Get-AllAssignmentsForHIT -HITId $hit.HITId
-  $assigns | ft WorkerId, AssignmentStatus, SubmitTime -AutoSize
+  $assigns | Format-Table WorkerId, AssignmentStatus, SubmitTime -AutoSize
 
-  # Get the first assignment
+  # Get a single assignment
   $assign  = Get-Assignment -AssignmentId $assigns[0].AssignmentId
+  $assign
+
+  # Extract answer value from Assignment
+  [XML]$answer = $assign.Answer
+  $answer.QuestionFormAnswers.Answer
 
   # Approve assignment
-  Approve-Assignment -AssignmentId $assigns[0].AssignmentId -RequesterFeedback "Well done"
+  Approve-Assignment -AssignmentId $assign.AssignmentId -RequesterFeedback "Well done"
 
-  # Disable
-  Disable-HIT -HITId $hit.HITId
-
-  #----------------------------------------------------
-  # Add a hit, accept it, fill out on website, reject it, and approve after rejection
-
-  $hit = Add-HIT -Title "Name of the president" -Description "Find the name of a president" -Reward 0.5 -Question "What's the name of the 4th US president?"  -MaxAssignments 5
-  $hit = Get-HIT $hit.HITId
-  Enter-HIT $hit.HITGroupId
-  $assigns = Get-AllAssignmentsForHIT -HITId $hit.HITId
-  $assign  = Get-Assignment -AssignmentId $assigns[0].AssignmentId
-
-  # Reject and then approve
+  # You could also reject it
   Deny-Assignment -AssignmentId $assign.AssignmentId -RequesterFeedback "Not good work"
-  Approve-RejectedAssignment -AssignmentId $assign.AssignmentId -RequesterFeedback "You were right."
 
-  # Disable
+  # In case you have mistakenly rejected it, say sorry.
+  Approve-RejectedAssignment -AssignmentId $assign.AssignmentId -RequesterFeedback "Sorry, you were right."
+
+  # Cleanup
   Disable-HIT -HITId $hit.HITId
+
 }
 
 #########################################################################################
@@ -120,14 +150,30 @@ function HitTypes {
   Connect-AMT -Sandbox
 
   #----------------------------------------------------
-  # Register a HitType
+  # Register a HITType
 
-  $title = "Name of the president"
-  $desc = "Find the name of a president"
-  $q = "What's the name of the last US president?"
+  $title = "Meaning of Live"
+  $desc = "Answer a hard question."
+  $question = "What is the meaning of live?"
+  $keywords = "Live, Meaning, Question"
 
-  $hitTypeId = Register-HITType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President"
+  $hitTypeId = Register-HITType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords $keywords
   $hitTypeId
+
+  #----------------------------------------------------
+  # Alternatively, register a HITType object
+
+  $ht = New-HITType
+  $ht.Title = $title
+  $ht.Description = $desc
+  $ht.Keywords = $keywords
+  $ht.AssignmentDurationInSeconds = 3600
+  $ht.AutoApprovalDelayInSeconds = 1296000
+  $ht.Reward = New-Price 0.5
+  $ht
+
+  $hittypeId = Register-HITType -HITType $ht
+  $hittypeId
 
   #----------------------------------------------------
   # External HIT with HitType
@@ -137,6 +183,7 @@ function HitTypes {
   $hit = Add-HIT -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $eq  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
   $hit = Get-HIT $hit.HITId
 
+  # Cleanup
   Disable-HIT $hit.HITId
 
   #----------------------------------------------------
@@ -146,6 +193,7 @@ function HitTypes {
   $troubleTemplate = Get-Content (Join-Path $templateDir troubles.question)
   $hit = Add-HIT -Title "ETH DeSciL Trouble Ticket" -Description "Trouble Ticket" -Reward 0 -Question $troubleTemplate  -MaxAssignments 20
 
+  # Cleanup
   Disable-HIT $hit.HITId
 
   #----------------------------------------------------
@@ -155,6 +203,7 @@ function HitTypes {
   $triviaTemplate = Get-Content (Join-Path $templateDir trivia.question)
   $hit = Add-HIT -Title "Trivia Test Qualification" -Description "A qualification test" -Reward 0 -Question $triviaTemplate  -MaxAssignments 20
 
+  # Cleanup
   Disable-HIT $hit.HITId
 
   #----------------------------------------------------
@@ -177,6 +226,7 @@ function HitTypes {
   # Add the template to a new HIT
   $hit = Add-HIT -Title "Survey Test" -Description "Survey Test" -Reward 0 -Question $questonnaire  -MaxAssignments 20
   
+  # Cleanup
   Disable-HIT $hit.HITId
 
 }
@@ -186,11 +236,11 @@ function Qualifications {
 
   # Qualification are based on QualificationTypes. QualificationTypes are stored templates
   # for qualifications.
+
+  Connect-AMT -Sandbox
   
   # Your WorkerId is stored in the key file
   $myWorker = Get-AMTKeys -RequesterId
-
-  Connect-AMT -Sandbox
 
   #----------------------------------------------------
   # Retrieve operations
@@ -223,24 +273,14 @@ function Qualifications {
 
   # Create a new Qualification Requirement
   # Note: New comparators like DoesNotExist, In, and NotIn should work
-  $qt = Add-QualificationType -Name "TQ5" -Description "A Qualification For a HIT"
+  $qt = Add-QualificationType -Name "TQ11" -Description "A Qualification For a HIT"
   $qt
 
   $qr = New-QualificationRequirement -QualificationTypeId $qt.QualificationTypeId -Comparator Exists
   $qr
 
   # Setup a new HIT
-  $h = New-HIT
-  $h.Title = "Name of the president"
-  $h.Description = "Find the name of a president"
-  $h.Keywords = "Keyword 1"
-  $h.MaxAssignments = 5
-  $h.MaxAssignmentsSpecified = $true
-  $h.AssignmentDurationInSeconds = 3600
-  $h.AssignmentDurationInSecondsSpecified = $true
-  $h.RequesterAnnotation = "My Hit"
-  $h.Question = "What's the name of the last US president?"
-  $h.Reward = New-Price 0.5
+  $h = New-TestHIT
   $h.QualificationRequirement= $qr
   
   # Setup the HIT by providing the object
@@ -298,21 +338,20 @@ function Qualifications {
   $qr = New-QualificationRequirement -QualificationTypeId $q.QualificationTypeId -Comparator Exists
   $qr
 
-  # Setup external question
+  # Setup the actual question for the HIT. It's a (non-functional) external question
   $extUrl = "https://www.yoursite.com/yourtreatment.html"
   $eq = New-ExternalQuestion -ExternalURL $extUrl -FrameHeight 400
 
   # Register a HitType
-  $title = "Name of the president"
-  $desc = "Find the name of a president"
-  $hitTypeId = Register-HITType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President" -QualificationRequirement $qr
-  $hitTypeId
+  $title = "Meaning of Live"
+  $desc = "Answer a hard question."
+  $hitTypeId = Register-HITType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "Live, Meaning" -QualificationRequirement $qr
 
   # Upload HIT
-  $hit = Add-HIT -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $eq  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
+  $hit = Add-HIT -HITTypeId $hitTypeId -Question $eq  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "MyHitWithQualificationTest"
   $hit = Get-HIT $hit.HITId
 
-  # Inspect if Qualification Test works
+  # Inspect if qualification test works
   Enter-HIT $hit.HitId
 
   #----------------------------------------------------
@@ -352,7 +391,7 @@ function Blocking {
   # Get your WorkerId stored in the key file
   $myWorker = Get-AMTKeys -RequesterId
 
-  # Block yourself from accepting HITs
+  # Block yourself from accepting HITs. Works only if you have already worked for yourself.
   Block-Worker -WorkerId $myWorker -Reason "Don't do this again!"
 
   # List all blocked workers
@@ -360,6 +399,28 @@ function Blocking {
   
   # Unblock yourself
   Unblock-Worker -WorkerId $myWorker -Reason "Be nice!"
+
+}
+
+#########################################################################################
+function Bonus {
+
+	# Connect and do this on the sandbox
+    Connect-AMT -Sandbox
+
+    # Setup a HIT and fill it online
+    $hit = Add-HIT -HIT (New-TestHIT)
+    Enter-HIT $hit.HITId
+
+    # Approve your own assignment
+    $assigns = Get-AllAssignmentsForHIT -HITId $hit.HITId
+    $aid = $assigns[0].AssignmentId
+    $wid = $assigns[0].WorkerId
+    Approve-Assignment -AssignmentId $assigns[0].AssignmentId
+
+    # After aproval, bonus can be granted
+    Grant-Bonus -AssignmentId $aid -WorkerId $wid -BonusAmount 1.01 -Reason "Well done"
+
 }
 
 #########################################################################################
@@ -368,14 +429,15 @@ function Notifications {
   Connect-AMT -Sandbox
   $myWorker = Get-AmtKeys -RequesterId
 
-  $subject = "Hello there" 
-  $message = "This is the message"
+  $subject = "Surprise!" 
+  $message = "Oh snap, this is just a test message. Delete me!"
  
-  # Send yourself an email
+  # Send yourself an email. Works only if you have already worked for yourself.
   Send-WorkerNotification -WorkerId $myWorker -Subject $subject -MessageText $message
 
   # Note: Parameter WorkerId takes an array of max length 100, 
   # i.e. you can send identical mails in batches
+
 }
 
 #########################################################################################
@@ -388,6 +450,7 @@ function Api {
 
   # Example: Get the Balance
   $AmtClient.GetAccountBalance()
+
 }
 
 #########################################################################################
