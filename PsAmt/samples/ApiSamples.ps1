@@ -64,9 +64,9 @@ function Hits {
   Stop-HIT -HITId $hit.HITId
 
   # Exend hit / add assignments and time
-  # For HITs with assignments < 10, increments in assignment and time needs to be 1 and multiples of 60
-  # For HITs with assignments >= 10, increments can be chosen free and can also be $null
-  Expand-HIT -HITId $hit.HITId -MaxAssignmentsIncrement 0  -ExpirationIncrementInSeconds 180
+  # For HITs with assignments < 10, increments in assignment and time needs to be 1 and more than 60
+  # For HITs with assignments >= 10, increments can be chosen free and one of them can also be $null
+  Expand-HIT -HITId $hit.HITId -MaxAssignmentsIncrement 1  -ExpirationIncrementInSeconds 180
 
   # Delete. Will only work if the HITstatus is reviewable, i.e. has been exipired before.
   # To delete HITs that are still in status assignable, use Disable-HIT
@@ -107,8 +107,8 @@ function Hits {
   $assign  = Get-Assignment -AssignmentId $assigns[0].AssignmentId
 
   # Reject and then approve
-  Deny-Assignment -AssignmentId $assign.Assignment.AssignmentId -RequesterFeedback "Not good work"
-  Approve-RejectedAssignment -AssignmentId $assign.Assignment.AssignmentId -RequesterFeedback "You were right."
+  Deny-Assignment -AssignmentId $assign.AssignmentId -RequesterFeedback "Not good work"
+  Approve-RejectedAssignment -AssignmentId $assign.AssignmentId -RequesterFeedback "You were right."
 
   # Disable
   Disable-HIT -HITId $hit.HITId
@@ -136,6 +136,8 @@ function HitTypes {
 
   $hit = Add-HIT -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $eq  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
   $hit = Get-HIT $hit.HITId
+
+  Disable-HIT $hit.HITId
 
   #----------------------------------------------------
   # Question Form / Trouble Ticket
@@ -174,6 +176,7 @@ function HitTypes {
 
   # Add the template to a new HIT
   $hit = Add-HIT -Title "Survey Test" -Description "Survey Test" -Reward 0 -Question $questonnaire  -MaxAssignments 20
+  
   Disable-HIT $hit.HITId
 
 }
@@ -198,7 +201,7 @@ function Qualifications {
 
   # Search
   $qs = Search-QualificationTypes -Query "TQ"
-  $qs.QualificationType
+  $qs.QualificationType.Name
 
   #----------------------------------------------------
   # Basic operations
@@ -210,16 +213,19 @@ function Qualifications {
   $qt = Get-QualificationType $qt.QualificationTypeId
   $qt
 
-  # Remove qualification, will only be set to inactive
+  # Note:
+  # Remove qualification, will only set it to inactive
   # It can take up to 48 hours until the types are removed.
-
-  # Remove-QualificationType $q.QualificationTypeId
+  Remove-QualificationType $qt.QualificationTypeId
 
   #----------------------------------------------------
   # Assign Qualification to HIT
 
   # Create a new Qualification Requirement
-  # [New comparators: DoesNotExist, In, and NotIn should work]
+  # Note: New comparators like DoesNotExist, In, and NotIn should work
+  $qt = Add-QualificationType -Name "TQ5" -Description "A Qualification For a HIT"
+  $qt
+
   $qr = New-QualificationRequirement -QualificationTypeId $qt.QualificationTypeId -Comparator Exists
   $qr
 
@@ -237,6 +243,7 @@ function Qualifications {
   $h.Reward = New-Price 0.5
   $h.QualificationRequirement= $qr
   
+  # Setup the HIT by providing the object
   Add-HIT -HIT $h
 
   # --> Now search the HIT on the website and request the qualification
@@ -245,7 +252,7 @@ function Qualifications {
   $qq = Get-QualificationRequests -QualificationTypeId $qt.QualificationTypeId
   $qq
 
-  # Grant the qualification requests
+  # Grant the qualification requests. This will generate a notification.
   $qq1 = $qq.QualificationRequest[0]
   Grant-QualificationRequest -QualificationRequestId $qq1.QualificationRequestId
 
@@ -264,11 +271,15 @@ function Qualifications {
   $h = New-TestHIT
   $h.QualificationRequirement = $qLocale
 
-  # Add muliple qualifications
+  # Add muliple qualifications into the array
   $h.QualificationRequirement = @($qLocale, $qApprove)
 
   # Upload
-  Add-HIT -HIT $h
+  $h = Add-HIT -HIT $h
+
+  # Inspect the HIT to see the listed qualifications
+  $h = Get-HIT $h.HITId
+  $h.QualificationRequirement
 
   #----------------------------------------------------
   # Qualification Test
@@ -279,10 +290,13 @@ function Qualifications {
   $answerSource = Get-Content (Join-Path $templateDir Qualification.answer) -Raw
 
   # Add a qualification type
+  # Note: The full verions ins requried, i.e. Add-Qual...Full
+  # Test and answer sources are provied as parameteres
   $q = Add-QualificationTypeFull -Name "TQ12" -Keywords "Key 1" -Description "Desc" -QualificationTypeStatus Active -RetryDelayInSeconds 1000 -Test $testSource -AnswerKey $answerSource -TestDurationInSeconds 360
 
   # Create a new Qualification Requirement
   $qr = New-QualificationRequirement -QualificationTypeId $q.QualificationTypeId -Comparator Exists
+  $qr
 
   # Setup external question
   $extUrl = "https://www.yoursite.com/yourtreatment.html"
@@ -294,15 +308,18 @@ function Qualifications {
   $hitTypeId = Register-HITType -Title $title -Description $desc -AutoApprovalDelayInSeconds 1000 -AssignmentDurationInSeconds 3600 -Reward 0.5 -Keywords "President" -QualificationRequirement $qr
   $hitTypeId
 
-  # Publish HIT
+  # Upload HIT
   $hit = Add-HIT -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $eq  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
   $hit = Get-HIT $hit.HITId
+
+  # Inspect if Qualification Test works
+  Enter-HIT $hit.HitId
 
   #----------------------------------------------------
   # Qualification Updates
 
   # Setup new qualification
-  $qt = Add-QualificationType -Name "TQ4" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword 2"
+  $qt = Add-QualificationType -Name "TQ6" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword 2"
   $qt
 
   $qt = Get-QualificationType $qt.QualificationTypeId
@@ -314,12 +331,16 @@ function Qualifications {
   #----------------------------------------------------
   # Qualification Assignments and Value Updates
 
-  $MyWorkerId = Get-AMTKeys -RequesterId
+  # Note:
+  # Revoke generates notification. For Grant a bool can be specified.
 
-  Grant-Qualification -QualificationTypeId $qt.QualificationTypeId -WorkerId $MyWorkerId -SendNotification $true
-  Update-QualificationScore -QualificationTypeId $qt.QualificationTypeId -WorkerId  $MyWorkerId -IntegerValue 25
-  Get-QualificationScore -QualificationTypeId $qt.QualificationTypeId -WorkerId $MyWorkerId
-  Revoke-Qualification -QualificationTypeId $qt.QualificationTypeId -WorkerId $MyWorkerId -Reason "Not good enough."
+  $myWorkerId = Get-AMTKeys -RequesterId
+
+  Grant-Qualification -QualificationTypeId $qt.QualificationTypeId -WorkerId $myWorkerId -SendNotification $true
+  Update-QualificationScore -QualificationTypeId $qt.QualificationTypeId -WorkerId  $myWorkerId -IntegerValue 25
+  Get-QualificationScore -QualificationTypeId $qt.QualificationTypeId -WorkerId $myWorkerId
+  Revoke-Qualification -QualificationTypeId $qt.QualificationTypeId -WorkerId $myWorkerId -Reason "Not good enough."
+
 }
 
 #########################################################################################
@@ -351,21 +372,21 @@ function Notifications {
   $message = "This is the message"
  
   # Send yourself an email
-  Send-WorkerNotification -WorkerIds $myWorker -Subject $subject -MessageText $message
+  Send-WorkerNotification -WorkerId $myWorker -Subject $subject -MessageText $message
 
-  # Parameter WorkerId takes an array of max length 100, 
+  # Note: Parameter WorkerId takes an array of max length 100, 
   # i.e. you can send identical mails in batches
 }
 
 #########################################################################################
 function Api {
 
-  # Working directly with API simple client. The client object is $AmtClient.
+  # Working directly with API client. The client object is $AmtClient.
 
   # List all members properties and function
   $Global:AmtClient | Get-Member
 
-  # Balance
+  # Example: Get the Balance
   $AmtClient.GetAccountBalance()
 }
 
