@@ -227,17 +227,17 @@ function ConnectAmt {
 	# Report back
 	if($AmtSandbox) {
 		Write-Host ""
-		Write-Host "Connected to AMT Sandbox Site"
+		Write-Host "Connected to AMT Sandbox Site" -ForegroundColor $AmtConsoleColor
 	} else {
 		Write-Host ""
-		Write-Host "Connected to AMT Production Site"
+		Write-Host "Connected to AMT Production Site" -ForegroundColor $AmtConsoleColor
 	}
 
 	# Set connected
 	$Global:AmtClientConnected = $true
 
 	# Get available balance
-	Write-Host "Current balance: " (GetBalance)
+	Write-Host "Current balance: " (GetBalance) -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
@@ -292,8 +292,13 @@ function Approve-Assignment {
 	)
 
 	TestAmtApi
-	$AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
-	Write-Host "Approved assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
+		Write-Host "Approved assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -328,8 +333,13 @@ function Approve-RejectedAssignment {
 	)
 
 	TestAmtApi
-	$AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
-	Write-Host "Approved rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
+		Write-Host "Approved rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -375,8 +385,13 @@ function Grant-Qualification {
 	)
 
 	TestAmtApi
-	$AmtClient.AssignQualification($QualificationTypeId, $WorkerId, $IntegerValue, $SendNotification)
-	Write-Host "Qualification $QualificationTypeId granted to worker $WorkerId." -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.AssignQualification($QualificationTypeId, $WorkerId, $IntegerValue, $SendNotification)
+		Write-Host "Qualification $QualificationTypeId granted to worker $WorkerId." -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -411,8 +426,13 @@ function Block-Worker {
 	)
 
 	TestAmtApi
-	$AmtClient.BlockWorker($WorkerId, $Reason)
-	Write-Host "Blocked worker $WorkerId" -ForegroundColor Cyan
+	Try {
+		$AmtClient.BlockWorker($WorkerId, $Reason)
+		Write-Host "Blocked worker $WorkerId" -ForegroundColor Cyan
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -451,8 +471,13 @@ function Set-HITTypeOfHIT {
 	)
 
 	TestAmtApi
-	$AmtClient.ChangeHITTypeOfHIT($HITId, $HITTypeId)
-	Write-Host "Change HITType of Hit $HITId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.ChangeHITTypeOfHIT($HITId, $HITTypeId)
+		Write-Host "Change HITType of Hit $HITId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -617,7 +642,7 @@ function Add-HIT {
 	}
 
 	# TODO:
-	# Adjust exit logic and reporting
+	# Adjust exit/return logic and add reporting
 }
 
 #########################################################################################
@@ -647,10 +672,13 @@ function Disable-HIT {
 	)
 
 	TestAmtApi
-	$AmtClient.DisableHIT($HITId)
-	Write-Host "Disabled HIT $HITId" -ForegroundColor $AmtConsoleColor
-
-	ConsoleColor
+	Try {
+		$AmtClient.DisableHIT($HITId)
+		Write-Host "Disabled HIT $HITId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -687,7 +715,7 @@ function Remove-HIT {
 		Write-Host "Removed HIT $HITId" -ForegroundColor $AmtConsoleColor
 	}
 	Catch {
-		Write-Host $Error[0] -ForegroundColor Red
+		Write-AMTError
 	}	
 }
 
@@ -777,7 +805,14 @@ function Add-QualificationTypeFull {
 	)
 
 	TestAmtApi
-	return $AmtClient.CreateQualificationType($Name, $Keywords, $Description, $QualificationTypeStatus, $RetryDelayInSeconds, $Test, $AnswerKey, $TestDurationInSeconds, $AutoGranted, $null)
+	Try {
+		$qt = $AmtClient.CreateQualificationType($Name, $Keywords, $Description, $QualificationTypeStatus, $RetryDelayInSeconds, $Test, $AnswerKey, $TestDurationInSeconds, $AutoGranted, $null)
+		$qt
+		Write-Host "Added QualificationTpye" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 
 	# TODO:
 	# Add an example
@@ -828,7 +863,14 @@ function Add-QualificationType {
 	)
 
 	TestAmtApi
-	return $AmtClient.CreateQualificationType($Name, $Keywords, $Description)
+	Try {
+		$qt = $AmtClient.CreateQualificationType($Name, $Keywords, $Description)
+		$qt
+		Write-Host "Added QualificationType" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -861,8 +903,13 @@ function Remove-QualificationType {
 	)
 
 	TestAmtApi
-	$AmtClient.DisposeQualificationType($QualificationTypeId)
-	Write-Host "Removed QualificationType $QualificationTypeId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.DisposeQualificationType($QualificationTypeId)
+		Write-Host "Removed QualificationType $QualificationTypeId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -908,7 +955,13 @@ function Expand-HIT {
 	)
 
 	TestAmtApi
-	return $AmtClient.ExtendHIT($HITId, $MaxAssignmentsIncrement, $ExpirationIncrementInSeconds)
+	Try {
+		$AmtClient.ExtendHIT($HITId, $MaxAssignmentsIncrement, $ExpirationIncrementInSeconds)
+		Write-Host "Extended HIT $HITId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -940,8 +993,13 @@ function Stop-HIT {
 	)
 	
 	TestAmtApi
-	$AmtClient.ForceExpireHIT($HITId)
-	Write-Host "Forced expiration of HIT $HITId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.ForceExpireHIT($HITId)
+		Write-Host "Forced expiration of HIT $HITId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -967,7 +1025,12 @@ function Get-AccountBalance {
   about_PsAmt
 #>
 	TestAmtApi
-	return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
+	Try {
+		$AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -997,9 +1060,13 @@ function Get-Assignment {
 	)
 
 	[string[]]$ResponseGroup = $null
-
 	TestAmtApi
-	return $AmtClient.GetAssignment($AssignmentId, $ResponseGroup).Assignment
+	Try {
+		$AmtClient.GetAssignment($AssignmentId, $ResponseGroup).Assignment
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1066,7 +1133,12 @@ function Get-AssignmentsForHIT {
 	Throw "Not Implemented"
 
 	TestAmtApi
-	return $AmtClient.GetAssignmentsForHIT($HITId, $SortDirection, $AssignmentStatus, $SortProperty, $PageNumber, $PageSize, $null)
+	Try {
+		$AmtClient.GetAssignmentsForHIT($HITId, $SortDirection, $AssignmentStatus, $SortProperty, $PageNumber, $PageSize, $null)
+	}
+	Catch {
+		Write-AMTError
+	}
 
 	# TODO:
 	# Implement AssignmentStatus
@@ -1100,7 +1172,12 @@ function Get-AllAssignmentsForHIT {
 	)
 
 	TestAmtApi
-	return $AmtClient.GetAllAssignmentsForHIT($HITId)
+	Try {
+		$AmtClient.GetAllAssignmentsForHIT($HITId)
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1120,7 +1197,12 @@ function Get-BlockedWorkers {
    about_PsAmt
 #>
 	TestAmtApi
-	return $AmtClient.GetAllBlockedWorkersIterator()
+	Try {
+		$AmtClient.GetAllBlockedWorkersIterator()
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1209,10 +1291,12 @@ $AmtBonus = @"
 	if($AssignmentId) {
 		$assign = Get-Assignment -AssignmentId $AssignmentId
 		$ret = $AmtClient.GetBonusPaymentsByAssignment($AssignmentId, $PageNumber, $PageSize)
-		if($ret.TotalNumResults -gt 100) { Write-Error "Can only parse 100 entries." -ErrorAction Stop }
+		if($ret.TotalNumResults -gt 100) { Write-Error "Can only parse 100 entries per assignment." -ErrorAction Stop }
 		$bonuslist = Format-BonusList -BonusPaymentResult $ret -HITId $assign.Assignment.HITId
 		return $bonuslist
 	}
+
+	# Add proper error reporting logic
 }
 
 #########################################################################################
@@ -1262,6 +1346,9 @@ function Format-BonusList {
 		$bl.Add($bo)
     }
 	return $bl
+
+	# TODO:
+	# Consider renaming objects
 }
 
 #########################################################################################
@@ -1296,7 +1383,12 @@ function Get-FileUploadUrl {
 	)
 
 	TestAmtApi
-	return $AmtClient.GetFileUploadURL($AssignmentId, $QuestionIdentifier)
+	Try {
+		$AmtClient.GetFileUploadURL($AssignmentId, $QuestionIdentifier)
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1323,7 +1415,12 @@ function Get-HIT {
 	)
 
 	TestAmtApi
-	return $AmtClient.GetHIT($HITId, $null)
+	Try {
+		$AmtClient.GetHIT($HITId, $null)
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1342,7 +1439,12 @@ function Get-AllHITs {
    about_PsAmt
 #>
 	TestAmtApi
-	return $AmtClient.GetAllHITs()
+	Try {
+		$AmtClient.GetAllHITs()
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1386,7 +1488,12 @@ function Get-HITsForQualificationType {
 	Throw "Not implemented"
 
 	TestAmtApi
-	return $AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageNumber, $PageSize)
+	Try {
+		$AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageNumber, $PageSize)
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1434,7 +1541,12 @@ function Get-QualificationsForQualificationType {
 	Throw "Not Implemented"
 
 	TestAmtApi
-	return $AmtClient.GetQualificationsForQualificationType($QualificationTypeId, $Status, $PageNumber, $PageSize)
+	Try {
+		$AmtClient.GetQualificationsForQualificationType($QualificationTypeId, $Status, $PageNumber, $PageSize)
+	}
+	Catch {
+		Write-AMTError
+	}
 
 	# TODO:
 	# Implement Enum QualificationStatus
@@ -1495,7 +1607,12 @@ function Get-QualificationRequests {
 	)
 
 	TestAmtApi
-	return $AmtClient.GetQualificationRequests($QualificationTypeId, $null, $null, $null, $null)
+	Try {
+		$AmtClient.GetQualificationRequests($QualificationTypeId, $null, $null, $null, $null)
+	}
+	Catch {
+		Write-AMTError
+	}
 
 	# TODO:
 	# Implement missing parameters
@@ -1531,7 +1648,12 @@ function Get-QualificationScore {
 	)
 
 	TestAmtApi
-	return $AmtClient.GetQualificationScore($QualificationTypeId, $WorkerId)
+	Try {
+		$AmtClient.GetQualificationScore($QualificationTypeId, $WorkerId)
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1558,7 +1680,12 @@ function Get-QualificationType {
 	)
 
 	TestAmtApi
-	return $AmtClient.GetQualificationType($QualificationTypeId)
+	Try {
+		$AmtClient.GetQualificationType($QualificationTypeId)
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1577,7 +1704,12 @@ function Get-AllQualificationTypes {
    about_PsAmt
 #>
 	TestAmtApi
-	return $AmtClient.GetAllQualificationTypes()
+	Try {
+		$AmtClient.GetAllQualificationTypes()
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1638,9 +1770,14 @@ function Get-ReviewableHITs {
 	Throw "Not Implemented"
 
 	TestAmtApi
-	#return $AmtClient.GetReviewableHITs($HITTypeId, $Status, $SortProperty, $SortDirection, $PageSize, $PageNumber)
-	return $AmtClient.GetReviewableHITs($HITTypeId, $null, $null, $null, $null, $null)
-
+	Try {
+		#$AmtClient.GetReviewableHITs($HITTypeId, $Status, $SortProperty, $SortDirection, $PageSize, $PageNumber)
+		$AmtClient.GetReviewableHITs($HITTypeId, $null, $null, $null, $null, $null)
+	}
+	Catch {
+		Write-AMTError
+	}
+	
 	# TODO: 
 	# Implement Enum ReviewableHitStatus
 	# Review PageNumber
@@ -1699,7 +1836,12 @@ function Get-ReviewResultsForHIT {
 	Throw "Not Implemented"
 
 	TestAmtApi
-	return $AmtClient.GetReviewResultsForHIT($HITId, $PolicyLevel, $AssignmentId, $RetrieveActions, $RetrieveResults)
+	Try {
+		$AmtClient.GetReviewResultsForHIT($HITId, $PolicyLevel, $AssignmentId, $RetrieveActions, $RetrieveResults)
+	}
+	Catch {
+		Write-AMTError
+	}
 
 	# TODO:
 	# PolicyLevels not implemented in API
@@ -1750,7 +1892,13 @@ function Grant-Bonus {
 	)
 
 	TestAmtApi
-	return $AmtClient.GrantBonus($WorkerId, $BonusAmount, $AssignmentId, $Reason)
+	Try {
+		$AmtClient.GrantBonus($WorkerId, $BonusAmount, $AssignmentId, $Reason)
+		Write-Host "Granted $BonusAmount bonus to worker $WorkerId"
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1787,8 +1935,13 @@ function Grant-QualificationRequest {
 	)
 
 	TestAmtApi
-	$AmtClient.GrantQualification($QualificationRequestId, $IntegerValue)
-	Write-Host "Granted qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.GrantQualification($QualificationRequestId, $IntegerValue)
+		Write-Host "Granted qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1832,8 +1985,13 @@ function Send-WorkerNotification {
 	)
 
 	TestAmtApi
-	return $AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
-	Write-Host "Notified worker $WorkerId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
+		Write-Host "Notified worker $WorkerId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1900,7 +2058,14 @@ function Register-HITType {
 	)
 
 	TestAmtApi
-	return $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
+	Try {
+		$ht = $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
+		$ht
+		Write-Host "Registered HITType" $ht.HITTypeId -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 
 	# TODO:
 	# Add working example
@@ -1940,8 +2105,13 @@ function Deny-Assignment {
 	)
 
 	TestAmtApi
-	$AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
-	Write-Host "Rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
+		Write-Host "Rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -1977,8 +2147,13 @@ function Deny-QualificationRequest  {
 	)
 
 	TestAmtApi
-	$AmtClient.RejectQualificationRequest($QualificationRequestId, $Reason)
-	Write-Host "Rejected qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.RejectQualificationRequest($QualificationRequestId, $Reason)
+		Write-Host "Rejected qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -2018,8 +2193,13 @@ function Revoke-Qualification {
 	)
 
 	TestAmtApi
-	$AmtClient.RevokeQualification($QualificationTypeId, $WorkerId, $Reason)
-	Write-Host "Revoked qualification $QualificationTypeId from worker $WorkerId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.RevokeQualification($QualificationTypeId, $WorkerId, $Reason)
+		Write-Host "Revoked qualification $QualificationTypeId from worker $WorkerId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -2053,8 +2233,13 @@ function Unblock-Worker {
 	)
 
 	TestAmtApi
-	$AmtClient.UnblockWorker($WorkerId, $Reason)
-	Write-Host "Unblocked worker $WorkerId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.UnblockWorker($WorkerId, $Reason)
+		Write-Host "Unblocked worker $WorkerId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -2096,8 +2281,13 @@ function Update-QualificationScore {
 	)
 
 	TestAmtApi
-	$AmtClient.UpdateQualificationScore($QualificationTypeId, $WorkerId, $IntegerValue)
-	Write-Host "Updated qualification score of worker $WorkerId" -ForegroundColor $AmtConsoleColor
+	Try {
+		$AmtClient.UpdateQualificationScore($QualificationTypeId, $WorkerId, $IntegerValue)
+		Write-Host "Updated qualification score of worker $WorkerId" -ForegroundColor $AmtConsoleColor
+	}
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -2218,15 +2408,17 @@ function Update-QualificationType {
 	}
 
 	TestAmtApi
-	if($Test) {
-		return $AmtClient.UpdateQualificationTypeFull($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus, $qt.Test, $qt.AnswerKey, $qt.TestDurationInSeconds, $qt.RetryDelayInSeconds, $null, $null) 
-	} else {
-		return $AmtClient.UpdateQualificationType($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus)
+	Try {
+		if($Test) {
+			$AmtClient.UpdateQualificationTypeFull($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus, $qt.Test, $qt.AnswerKey, $qt.TestDurationInSeconds, $qt.RetryDelayInSeconds, $null, $null) 
+		} else {
+			$AmtClient.UpdateQualificationType($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus)
+		}
+		Write-Host "Updated QualificationType" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
 	}
-
-	# TODO:
-	# Consider not returning
-	# Consider reporting result
+	Catch {
+		Write-AMTError
+	}
 }
 
 #########################################################################################
@@ -2287,7 +2479,12 @@ function Search-QualificationTypes {
 	)
 
 	TestAmtApi
-	return $AmtClient.SearchQualificationTypes($Query, $MustBeRequestable, $MustBeOwnedByCaller, $null, $null, $null, $null)
+	Try {
+		$AmtClient.SearchQualificationTypes($Query, $MustBeRequestable, $MustBeOwnedByCaller, $null, $null, $null, $null)
+	}
+	Catch {
+		Write-AMTError
+	}
 
 	# TODO:
 	# Review order of PageNumber, PageSize and maximal values
@@ -2448,7 +2645,6 @@ function New-ExternalQuestion {
  .LINK
   about_PsAmt
 #>
-    
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
 		[string]$ExternalURL,
@@ -2495,13 +2691,13 @@ function New-QuestionForm {
 
 	Throw "Not implemented"
 
-	# TODO:
-	# Required for complex forms. Check if this really required.
-	# At least trouble tickets seems to work without it.
-
 	$template = gc $TemplatePath
 	$qf = New-Object Amazon.WebServices.MechanicalTurk.Domain.QuestionForm
 	return $qf
+
+	# TODO:
+	# Required for complex forms. Check if this really required.
+	# At least trouble tickets seems to work without it.
 }
 
 #########################################################################################
