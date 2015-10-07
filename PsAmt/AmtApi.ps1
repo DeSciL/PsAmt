@@ -632,15 +632,19 @@ function Add-HIT {
 		# Create with HIT object
 		if($Hit) {
 			$h = $AmtClient.CreateHIT($Hit)
+			$AmtClient.GetHIT($h.HITId, $null)
+			Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
+			return
 		}
 		# Create with parameteres
 		if($HITTypeId) {
 			[string[]]$ResponseGroup = $null
 			$h = $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
+			$AmtClient.GetHIT($h.HITId, $null)
 		} else {
 			$h = $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
+			$AmtClient.GetHIT($h.HITId, $null)
 		}
-		$h
 		Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
 	}
 	Catch {
@@ -2979,18 +2983,18 @@ function New-TestHIT {
    about_PsAmt
 #>
 	$hit = New-Object HIT
-	$hit.Title = "Test HIT"
-	$hit.Description = "This is just a test hit. Move along."
-	$hit.Keywords = "Test, Testing"
-	$hit.MaxAssignments = 5
+	$hit.Title = "Meaning of Live"
+	$hit.Description = "Answer a hard question."
+	$hit.Keywords = "Question, Testing"
+	$hit.Question = "What is the meaning of live?"
+	$hit.MaxAssignments = 10
 	$hit.MaxAssignmentsSpecified = $true
 	$hit.AssignmentDurationInSeconds = 3600
 	$hit.AssignmentDurationInSecondsSpecified = $true
 	$hit.AutoApprovalDelayInSeconds = 0
 	$hit.AutoApprovalDelayInSecondsSpecified = $true
-	$hit.Question = "What is the answer to the mother of all test questions?"
 	$hit.Reward = New-Price 0
-	$hit.RequesterAnnotation = "Just a test question"
+	$hit.RequesterAnnotation = "LiveHIT-1"
 	return $hit
 
 	# TODO: 
