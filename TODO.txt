@@ -7,8 +7,9 @@ Know Bugs / Issues
 - Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
 
 Priority 1
-- Move all global vars into the module file
 - Review New-TestHit
+- Consider moving the type BonusAmount to another file
+- Add overload for Add-QualificationType and allow to provide object
 - Review pipeing: Approve-Assignment, Grant-Bonus, etc.
 - Add examples to Add-HIT, Add-QualificationTypeFull
 - Review PageNumber and PageSize for search functions, e.g.  Get-HitsForQualificationType
