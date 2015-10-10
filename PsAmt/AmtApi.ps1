@@ -606,15 +606,15 @@ function Add-HIT {
 		[Parameter(Position=6, Mandatory=$false)]
 		[decimal]$Reward = $null,
 		[Parameter(Position=7, Mandatory=$false)]
-		[long]$AssignmentDurationInSeconds = $null,
+		[long]$AssignmentDurationInSeconds = 3600,
 		[Parameter(Position=8, Mandatory=$false)]
-		[long]$LifetimeInSeconds,
+		[long]$LifetimeInSeconds=259200,
 		[Parameter(Position=9, Mandatory=$false)]
 		[string]$Keywords,
 		[Parameter(Position=10, Mandatory=$false)]
 		[long]$MaxAssignments = $null,
 		[Parameter(Position=11, Mandatory=$false)]
-		[long]$AutoApprovalDelayInSeconds = $null,
+		[long]$AutoApprovalDelayInSeconds = 1296000,
 		[Parameter(Position=12, Mandatory=$false)]
 		$QualificationRequirement = $null,
 		[Parameter(Position=13, Mandatory=$false)]
@@ -636,13 +636,19 @@ function Add-HIT {
 			Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
 			return
 		}
+		
+
 		# Create with parameteres
 		if($HITTypeId) {
 			[string[]]$ResponseGroup = $null
 			$h = $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
 			$AmtClient.GetHIT($h.HITId, $null)
 		} else {
-			$h = $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
+			# Need to register HITType to add requester annotation.
+			$hitTypeId = Register-HITType -Title $Title -Description $Description -AutoApprovalDelayInSeconds $AutoApprovalDelayInSeconds -AssignmentDurationInSeconds $AssignmentDurationInSeconds -Reward $Reward -Keywords $keywords
+			$h = $AmtClient.CreateHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
+			# Old implementation
+			# $h = $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
 			$AmtClient.GetHIT($h.HITId, $null)
 		}
 		Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
