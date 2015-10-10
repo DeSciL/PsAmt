@@ -7,6 +7,8 @@ Know Bugs / Issues
 - Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
 
 Priority 1
+- Check parameter default values. At some methods, string="" are set even if probably not needed.
+- Check consequences for new implementation of Add-HIT. 
 - Review New-TestHit
 - Consider moving the type BonusAmount to another file
 - Add overload for Add-QualificationType and allow to provide object
