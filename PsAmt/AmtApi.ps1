@@ -637,7 +637,6 @@ function Add-HIT {
 			return
 		}
 		
-
 		# Create with parameteres
 		if($HITTypeId) {
 			[string[]]$ResponseGroup = $null
@@ -2084,7 +2083,7 @@ function Register-HITType {
 			$ht = $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
 		}
 		$ht
-		Write-Host "Registered HIT" $ht -ForegroundColor $AmtConsoleColor
+		Write-Host "Registered HITType" $ht -ForegroundColor $AmtConsoleColor
 	}
 	Catch {
 		Write-AMTError
