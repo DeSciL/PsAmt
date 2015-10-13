@@ -59,6 +59,8 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
      Function     Get-QualificationScore                     PsAmt
      Function     Get-QualificationsForQualificationType     PsAmt
      Function     Get-QualificationType                      PsAmt
+     Function     Get-RequesterStatistic                     PsAmt
+	 Function     Get-RequesterWorkerStatistc                PsAmt
      Function     Get-ReviewableHITs                         PsAmt
      Function     Grant-Bonus                                PsAmt
      Function     Grant-Qualification                        PsAmt
