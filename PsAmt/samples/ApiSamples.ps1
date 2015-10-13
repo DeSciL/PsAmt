@@ -13,6 +13,7 @@
 # - Blocks
 # - Bonus
 # - Notifications
+# - Statistics
 # - Api
 
 #########################################################################################
@@ -438,6 +439,25 @@ function Notifications {
   # Note: Parameter WorkerId takes an array of max length 100, 
   # i.e. you can send identical mails in batches
 
+}
+
+#########################################################################################
+function Statistics {
+
+ # Get the Requester Id
+
+	Connect-AMT -Sandbox
+    $myWorkerId = Get-AmtKeys -RequesterId
+
+	# List a requester statistics
+	Get-RequesterStatistic -Statistic NumberHITsCreated
+
+	# List a worker statistic
+	Get-RequesterWorkerStatistic -WorkerId $myWorkerId -Statistic NumberAssignmentsApproved
+
+	# If parameter TimePeriod is 'OneDay', you can specify the number of days to 
+	# display by count, i.e., it shows the last 30 days.
+	Get-RequesterStatistic -Statistic NumberHITsCreated -TimePeriod OneDay -Count 30
 }
 
 #########################################################################################
