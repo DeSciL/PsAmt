@@ -3143,6 +3143,263 @@ function Enter-HIT {
 }
 
 #########################################################################################
+function Get-RequesterStatistic {
+<# 
+  .SYNOPSIS 
+   Retrieves requester statistics.
+
+  .DESCRIPTION
+   The GetRequesterStatistic operation retrieves statistics about the Requester calling 
+   the operation. The list below shows the available statistics. See the AMT API
+   documentation for details.
+
+   - NumberHITsAssignable
+   - NumberHITsReviewable
+   - NumberHITsCreated
+   - NumberHITsCompleted
+   - TotalRewardPayout
+   - TotalRewardFeePayout
+   - TotalFeePayout
+   - TotalRewardAndFeePayout
+   - TotalBonusPayout
+   - TotalBonusFeePayout
+   - EstimatedFeeLiability
+   - EstimatedRewardLiability
+   - EstimatedTotalLiability
+   - NumberAssignmentsAvailable
+   - NumberAssignmentsAccepted
+   - NumberAssignmentsPending
+   - NumberAssignmentsApproved
+   - NumberAssignmentsRejected
+   - NumberAssignmentsReturned
+   - NumberAssignmentsAbandoned
+   - AverageRewardAmount
+   - PercentAssignmentsApproved
+   - PercentAssignmentsRejected
+
+  .PARAMETER Statistic
+   Specifies the statistic to return.
+
+  .PARAMETER $TimePeriod
+   Soecifies the time period of the statistic to return.
+
+  .PARAMETER Count
+   Specifies the number of data points to return.
+  
+  .EXAMPLE
+   Get-RequesterStatistic -s NumberHITsCompleted -t LifeToDate
+  
+  .LINK
+   about_PsAmt
+#>
+	Param(
+		[Parameter(Position=0, Mandatory=$true)]
+        [ValidateSet('NumberHITsAssignable', `
+                     'NumberHITsReviewable', `
+                     'NumberHITsCreated', `
+                     'NumberHITsCompleted', `
+                     'TotalRewardPayout', `
+                     'TotalRewardFeePayout', `
+                     'TotalFeePayout', `
+                     'TotalRewardAndFeePayout', `
+                     'TotalBonusPayout', `
+                     'TotalBonusFeePayout', `
+                     'EstimatedFeeLiability', `
+                     'EstimatedRewardLiability', `
+                     'EstimatedTotalLiability', `
+                     'NumberAssignmentsAvailable', `
+                     'NumberAssignmentsAccepted', `
+                     'NumberAssignmentsPending', `
+                     'NumberAssignmentsApproved', `
+                     'NumberAssignmentsRejected', `
+                     'NumberAssignmentsReturned', `
+                     'NumberAssignmentsAbandoned', `
+                     'AverageRewardAmount', `
+                     'PercentAssignmentsApproved', `
+                     'PercentAssignmentsRejected')]
+		[string]$Statistic,
+		[Parameter(Position=1, Mandatory=$false)]
+        [ValidateSet('OneDay', `
+                     'SevenDays', `
+                     'ThirtyDays', `
+                     'LifeToDate')]
+		[string]$TimePeriod = "LifeToDate",
+        [Parameter(Position=1, Mandatory=$false)]
+        [string]$DataPoints = $null
+	)
+
+    TestAmtApi
+    Try {
+		$AmtClient.GetRequesterStatistic($Statistic, $TimePeriod, $DataPoints)
+	}
+	Catch {
+		Write-AMTError
+	}    
+}
+
+#########################################################################################
+function Get-RequesterStatistic {
+<# 
+  .SYNOPSIS 
+   Retrieves requester statistics.
+
+  .DESCRIPTION
+   The GetRequesterWorkerStatistic operation retrieves statistics about a specific Worker 
+   who has completed Human Intelligence Tasks (HITs) for you. If you have used Review 
+   Policies with known answers or plurality, Mechanical Turk will summarize the following 
+   statistics about the Worker's known answers and agreement level. These statistics are 
+   only for your Requester account. For more information about Review Policies, see Review 
+   Policies. The following list describes the available statistics:
+
+   - NumberAssignmentsApproved
+   - NumberAssignmentsRejected
+   - PercentAssignmentsApproved
+   - PercentAssignmentsRejected
+   - NumberKnownAnswersCorrect
+   - NumberKnownAnswersIncorrect
+   - NumberKnownAnswersEvaluated
+   - PercentKnownAnswersCorrect
+   - NumberPluralityAnswersCorrect
+   - NumberPluralityAnswersIncorrect
+   - NumberPluralityAnswersEvaluated
+   - PercentPluralityAnswersCorrect
+
+  .PARAMETER WorkerId
+   Specifies the Id of the worker.
+
+  .PARAMETER Statistic
+   Specifies the statistic to return.
+
+  .PARAMETER $TimePeriod
+   Soecifies the time period of the statistic to return.
+
+  .PARAMETER Count
+   Specifies the number of data points to return.
+  
+  .EXAMPLE
+   Get-RequesterStatistic -w "ABCDEFG" -s NumberAssignmentsApproved -t LifeToDate
+  
+  .LINK
+   about_PsAmt
+#>
+	Param(
+		[Parameter(Position=0, Mandatory=$true)]
+        [string]$WorkerId,
+		[Parameter(Position=1, Mandatory=$true)]
+        [ValidateSet('NumberAssignmentsApproved', `
+                     'NumberAssignmentsRejected', `
+					 'PercentAssignmentsApproved', `
+					 'PercentAssignmentsRejected', `
+                     'NumberKnownAnswersCorrect', `
+                     'NumberKnownAnswersIncorrect', `
+                     'NumberKnownAnswersEvaluated', `
+                     'PercentKnownAnswersCorrect', `
+                     'NumberPluralityAnswersCorrect', `
+                     'NumberPluralityAnswersIncorrect', `
+                     'NumberPluralityAnswersEvaluated', `
+                     'PercentPluralityAnswersCorrect')]
+		[string]$Statistic,
+		[Parameter(Position=2, Mandatory=$false)]
+        [ValidateSet('OneDay', `
+                     'SevenDays', `
+                     'ThirtyDays', `
+                     'LifeToDate')]
+		[string]$TimePeriod = "LifeToDate",
+        [Parameter(Position=3, Mandatory=$false)]
+        [string]$DataPoints = $null
+	)
+
+    TestAmtApi
+    Try {
+		$AmtClient.GetRequesterWorkerStatistic($WorkerId, $Statistic, $TimePeriod, $DataPoints)
+	}
+	Catch {
+		Write-AMTError
+	}    
+}
+
+#########################################################################################
+function Get-RequesterWorkerStatistic {
+<# 
+  .SYNOPSIS 
+   Retrieves requester statistics.
+
+  .DESCRIPTION
+   The GetRequesterWorkerStatistic operation retrieves statistics about a specific Worker 
+   who has completed Human Intelligence Tasks (HITs) for you. If you have used Review 
+   Policies with known answers or plurality, Mechanical Turk will summarize the following 
+   statistics about the Worker's known answers and agreement level. These statistics are 
+   only for your Requester account. For more information about Review Policies, see Review 
+   Policies. The following list describes the available statistics:
+
+   - NumberAssignmentsApproved
+   - NumberAssignmentsRejected
+   - PercentAssignmentsApproved
+   - PercentAssignmentsRejected
+   - NumberKnownAnswersCorrect
+   - NumberKnownAnswersIncorrect
+   - NumberKnownAnswersEvaluated
+   - PercentKnownAnswersCorrect
+   - NumberPluralityAnswersCorrect
+   - NumberPluralityAnswersIncorrect
+   - NumberPluralityAnswersEvaluated
+   - PercentPluralityAnswersCorrect
+
+  .PARAMETER WorkerId
+   Specifies the Id of the worker.
+
+  .PARAMETER Statistic
+   Specifies the statistic to return.
+
+  .PARAMETER $TimePeriod
+   Soecifies the time period of the statistic to return.
+
+  .PARAMETER Count
+   Specifies the number of data points to return.
+  
+  .EXAMPLE
+   Get-RequesterStatistic -w "ABCDEFG" -s NumberAssignmentsApproved -t LifeToDate
+  
+  .LINK
+   about_PsAmt
+#>
+	Param(
+		[Parameter(Position=0, Mandatory=$true)]
+        [string]$WorkerId,
+		[Parameter(Position=1, Mandatory=$true)]
+        [ValidateSet('NumberAssignmentsApproved', `
+                     'NumberAssignmentsRejected', `
+					 'PercentAssignmentsApproved', `
+					 'PercentAssignmentsRejected', `
+                     'NumberKnownAnswersCorrect', `
+                     'NumberKnownAnswersIncorrect', `
+                     'NumberKnownAnswersEvaluated', `
+                     'PercentKnownAnswersCorrect', `
+                     'NumberPluralityAnswersCorrect', `
+                     'NumberPluralityAnswersIncorrect', `
+                     'NumberPluralityAnswersEvaluated', `
+                     'PercentPluralityAnswersCorrect')]
+		[string]$Statistic,
+		[Parameter(Position=2, Mandatory=$false)]
+        [ValidateSet('OneDay', `
+                     'SevenDays', `
+                     'ThirtyDays', `
+                     'LifeToDate')]
+		[string]$TimePeriod = "LifeToDate",
+        [Parameter(Position=3, Mandatory=$false)]
+        [string]$Count = 1
+	)
+
+	TestAmtApi
+    Try {
+		$AmtClient.GetRequesterWorkerStatistic($WorkerId, $Statistic, $TimePeriod, $Count)
+	}
+	Catch {
+		Write-AMTError
+	}    
+}
+
+#########################################################################################
 function Search-HITs {
 	Throw "Not Implemented"
 }
@@ -3197,6 +3454,7 @@ Export-ModuleMember Search-QualificationTypes
 Export-ModuleMember Block-Worker, Unblock-Worker, Get-BlockedWorkers
 Export-ModuleMember Grant-Bonus, Get-BonusPayments
 Export-ModuleMember Send-WorkerNotification, Get-FileUploadUrl, Enter-HIT
+Export-ModuleMember Get-RequesterStatistic, Get-RequesterWorkerStatistic
 
 # Not implemented: Search-HITs, Send-TestEventNotification, Set-HITAsReviewing, Set-HITTypeNotification
 
