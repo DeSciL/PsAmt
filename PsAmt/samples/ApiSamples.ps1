@@ -21,14 +21,17 @@ function Setup {
 
 	#----------------------------------------------------
 	# Setup and store AMT keys
-	# Asks for AccessKeyID, SecretAccessKey, RequesterId, and a passphrase
+	# Asks for AccessKeyID, SecretAccessKey, RequesterId, and a password
 	Set-AMTKeys
 
-	# After keys have been stored, connecting to amt requires only the passphrase
+	# After keys have been stored, connecting to amt requires only the password
 	Connect-AMT
 
-	# Set sandbox globally on all the following commands
-	Connect-AMT -sandbox
+	# Keys can also be provied by parameter
+    Connect-AMT -AccessKeyId "MyAccessKey" -SecretKey "MySecretKey"
+
+	# Set sandbox globally on all the the commands to follow
+	Connect-AMT -Sandbox
 
 	# Use another account
 	Connect-AMT -Keyfile "SecondAccount.key"
@@ -68,12 +71,13 @@ function Hits {
 	Stop-HIT -HITId $hit.HITId
 
 	# Exend hit / add assignments and time
-	# For HITs with assignments < 10, increments in assignment and time needs to be 1 and more than 60
-	# For HITs with assignments >= 10, increments can be chosen freely and one of them can also be $null
+	# - For HITs with assignments < 10, increments in assignment and time needs to be 1 and more than 60
+	# - For HITs with assignments >= 10, increments can be chosen freely and one of them can also be $null
 	Expand-HIT -HITId $hit.HITId -MaxAssignmentsIncrement 1  -ExpirationIncrementInSeconds 180
 
-	# Delete. Will only work if the HITstatus is reviewable, i.e., it the HIT has been exipired.
-	# To delete HITs that are still in status assignable, use Disable-HIT
+	# Delete the HIT. Will only work if the HITstatus is reviewable, i.e., it the HIT has been exipired.
+	# To remove HITs that are still in status assignable, use Disable-HIT. This will first approve all submitte work.
+	# If all assignemnts have been approved, Remove-HIT will work as well.
 	# NOTE: If you remove or dispose the HIT, all data on AMT is gone!
   
 	#Remove-HIT -HITId $hit.HITId
@@ -127,7 +131,7 @@ function Approval {
 	$assign  = Get-Assignment -AssignmentId $assigns[0].AssignmentId
 	$assign
 
-	# Extract answer value from Assignment
+	# Extract answer value from assignment
 	[XML]$answer = $assign.Answer
 	$answer.QuestionFormAnswers.Answer
 
@@ -235,8 +239,8 @@ function HitTypes {
 #########################################################################################
 function Qualifications {
 
-	# Qualification are based on QualificationTypes. QualificationTypes are stored templates
-	# for qualifications.
+	# Qualification are based on QualificationTypes. QualificationTypes are essentially
+	# stored templates for qualifications.
 
 	Connect-AMT -Sandbox
   
@@ -251,21 +255,21 @@ function Qualifications {
 	$qt.Name
 
 	# Search
-	$qs = Search-QualificationTypes -Query "TQ"
+	$qs = Search-QualificationTypes -Query "YourQualificationName"
 	$qs.QualificationType.Name
 
 	#----------------------------------------------------
 	# Basic operations
 
 	# Setup new qualification
-	$qt = Add-QualificationType -Name "TQ3" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword2"
+	$qt = Add-QualificationType -Name "Q1" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword2"
   
 	# Display
 	$qt = Get-QualificationType $qt.QualificationTypeId
 	$qt
 
 	# Note:
-	# Remove qualification, will only set it to inactive
+	# Remove-QualificationType, will only set it to inactive
 	# It can take up to 48 hours until the types are removed.
 	Remove-QualificationType $qt.QualificationTypeId
 
@@ -274,7 +278,7 @@ function Qualifications {
 
 	# Create a new Qualification Requirement
 	# Note: New comparators like DoesNotExist, In, and NotIn should work
-	$qt = Add-QualificationType -Name "TQ11" -Description "A Qualification For a HIT"
+	$qt = Add-QualificationType -Name "Q2" -Description "A Qualification For a HIT"
 	$qt
 
 	$qr = New-QualificationRequirement -QualificationTypeId $qt.QualificationTypeId -Comparator Exists
@@ -359,7 +363,7 @@ function Qualifications {
 	# Qualification Updates
 
 	# Setup new qualification
-	$qt = Add-QualificationType -Name "TQ6" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword 2"
+	$qt = Add-QualificationType -Name "Q3" -Description "A Test Qualification" -Keywords "Keyword 1, Keyword 2"
 	$qt
 
 	$qt = Get-QualificationType $qt.QualificationTypeId
@@ -386,7 +390,6 @@ function Qualifications {
 #########################################################################################
 function Blocking {
 
-	# Connect and do this on the sandbox
 	Connect-AMT -Sandbox
 
 	# Get your WorkerId stored in the key file
@@ -406,12 +409,11 @@ function Blocking {
 #########################################################################################
 function Bonus {
 
-	# Connect and do this on the sandbox
     Connect-AMT -Sandbox
 
-    # Setup a HIT and fill it online
+    # Setup a HIT. Go and compete it online.
     $hit = Add-HIT -HIT (New-TestHIT)
-    Enter-HIT $hit.HITId
+    Enter-HIT $hit.HITGroupId
 
     # Approve your own assignment
     $assigns = Get-AllAssignmentsForHIT -HITId $hit.HITId
@@ -419,7 +421,7 @@ function Bonus {
     $wid = $assigns[0].WorkerId
     Approve-Assignment -AssignmentId $assigns[0].AssignmentId
 
-    # After aproval, bonus can be granted
+    # After approval, bonus can be granted
     Grant-Bonus -AssignmentId $aid -WorkerId $wid -BonusAmount 1.01 -Reason "Well done"
 
 }
@@ -428,8 +430,11 @@ function Bonus {
 function Notifications {
 
 	Connect-AMT -Sandbox
+
+	# Get a WorkerID, yours...
 	$myWorker = Get-AmtKeys -RequesterId
 
+	# Setup the message
 	$subject = "Surprise!" 
 	$message = "Oh snap, this is just a test message. Delete me!"
  
@@ -437,7 +442,7 @@ function Notifications {
 	Send-WorkerNotification -WorkerId $myWorker -Subject $subject -MessageText $message
 
 	# Note: Parameter WorkerId takes an array of max length 100, 
-	# i.e. you can send identical mails in batches
+	# i.e. you can send identical mails in batches.
 
 }
 
@@ -447,16 +452,18 @@ function Statistics {
  # Get the Requester Id
 
 	Connect-AMT -Sandbox
-    $myWorkerId = Get-AmtKeys -RequesterId
+
+	# Get a RequesterID, yours...
+    $requesterId = Get-AmtKeys -RequesterId
 
 	# List a requester statistics
 	Get-RequesterStatistic -Statistic NumberHITsCreated
 
 	# List a worker statistic
-	Get-RequesterWorkerStatistic -WorkerId $myWorkerId -Statistic NumberAssignmentsApproved
+	Get-RequesterWorkerStatistic -WorkerId $requesterId -Statistic NumberAssignmentsApproved
 
 	# If parameter TimePeriod is 'OneDay', you can specify the number of days to 
-	# display by count, i.e., it shows the last 30 days.
+	# display by parameter count, i.e., it shows the last 30 days.
 	Get-RequesterStatistic -Statistic NumberHITsCreated -TimePeriod OneDay -Count 30
 }
 
@@ -464,6 +471,7 @@ function Statistics {
 function Api {
 
 	# Working directly with API client. The client object is $AmtClient.
+	# Especially for more involved scripts, working against $AmtClient is recommended.
 
 	# List all members properties and function
 	$Global:AmtClient | Get-Member
