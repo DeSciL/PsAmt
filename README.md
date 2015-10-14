@@ -5,7 +5,7 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 ### Features
 
 - Makes it easier to script solutions leveraging Amazon Mechanical Turk.
-- A replacement for the [AMT Command Line Tools](https://requester.mturk.com/developer/tools/clt).
+- An alternative for the [AMT Command Line Tools](https://requester.mturk.com/developer/tools/clt).
 - Working with strongly-typed objects (query, pipe, output to CSV, etc.)
 
 ### Example
@@ -26,7 +26,6 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 ### Methods
 
-     # List methods of $AmtClient
      Get-Command -Module PsAmt
 
      CommandType  Name                                       ModuleName
@@ -88,21 +87,20 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 ### Prerequisites
 
-- Windows 7, 8, 10
 - Windows Management Framework 3 (.NET 4, PowerShell 3)
 - Amazon Mechanical Turk Requester Account
 - Amazon WebService Account
 
 ### Install
 
-- Clone and copy PsAmt subfolder to your module directory, i.e. to $Evn:PsModulePath. Add DLL from modified [dotnetmturk](https://github.com/descil/dotnetmturk/releases).
-- Or download and put the latest [full package](https://github.com/descil/psamt/releases) into your module directory.
+- Download and copy the latest release [PsAmt-v*.zip](https://github.com/descil/psamt/releases) to your module directory.
+- Alternatively, clone and copy PsAmt subfolder to your module directory. Additionally, add DLL from modified [dotnetmturk](https://github.com/descil/dotnetmturk/releases).
 
 ### Documentation
 
-- PowerShell functions have comment-based help, i.e., type `help Get-HIT`
-- Functions follow the [Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html)
-- See the walk-through examples in the sample folder.
+- PowerShell functions have comment-based help, i.e., type `help about_PsAmt`
+- Functions follow closely operations from the [Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html)
+- See walk-through [examples](https://github.com/DeSciL/PsAmt/blob/master/PsAmt/samples/ApiSamples.ps1) in the sample folder.
 
 ### License
 
