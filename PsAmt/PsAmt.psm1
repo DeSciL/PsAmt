@@ -71,14 +71,14 @@
   - Unblock-Worker
   - Get-FileUploadURL
   - Send-WorkerNotification
+  - Get-RequesterStatistic
+  - Get-RequesterWorkerStatistic
 	
   Currently not implemented:
   // GetHITsForQualificationType
   // GetQualificationsForQualificationType
   // GetReviewableHITs
   // GetReviewResultsForHIT
-  // GetRequesterStatistic
-  // GetRequesterWorkerStatistic
   // Help
   // SearchHITs
   // SendTestEventNotification
