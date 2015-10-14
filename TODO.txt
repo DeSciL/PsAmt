@@ -3,7 +3,6 @@ stwehrli@gmail.com
 
 Know Bugs / Issues
 - Connect-Amt: Definition of objects needs to be done on load
-- Connect-Amt: If content of Amt.key is wrong, exceptions are thrown.
 - Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
 
 Priority 1
@@ -12,24 +11,19 @@ Priority 1
 - Review New-TestHit
 - Consider moving the type BonusAmount to another file
 - Add overload for Add-QualificationType and allow to provide object
-- Review pipeing: Approve-Assignment, Grant-Bonus, etc.
 - Add examples to Add-HIT, Add-QualificationTypeFull
 - Review PageNumber and PageSize for search functions, e.g.  Get-HitsForQualificationType
 - New-HIT: long for Expiration? Needs casting?
-- Get-Assignment -> What is the response group?
+
+Priority 2
+- Enable pipeline
 - Implement rest of the functionality / missing and throwing functions
   Get-AssignmentsForHit, Get-HitsForQualificationType, Get-QualificationsForQualificationType
   Get-ReviewableHits, Get-ReviewResultsForHIT, New-QuestionForm,
   Search-Hits, Send-TestEventNotification, Set-HitAsReviewing, Set-HitTypeNotification
 
-Priority 2
-- Add common status report functions including nice headers:
-  Get-AllHits | ft Title, HitStatus, NumberOfAssignmentsCompleted
-  $hit | Get-AllAssignmentForHit | ft workerId, assignmentstatus, submittime
-
 Priority 3
 - Reproduce typical files like success file, etc. form command line tools
-- Add Typical workflows and documentation
 - Split samples into sections
 - Add Pester Unit Tests
 
