@@ -352,9 +352,3 @@ function Unprotect-String {
 }
 
 #########################################################################################
-# Exports
-Export-ModuleMember Write-AMTError
-Export-ModuleMember Set-AMTKeys
-Export-ModuleMember Get-AMTKeys
-
-#########################################################################################

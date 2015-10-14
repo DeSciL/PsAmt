@@ -99,13 +99,56 @@
 function about_PsAmt {}
 
 #########################################################################################
-# Exports 
+# Exports
 Export-ModuleMember about_PsAmt
 
+#########################################################################################
 # AmtApi
-# Exports in AmtApi.ps1
+# Exports from AmtApi.ps1
 
+Export-ModuleMember Connect-AMT, Disconnect-AMT, Get-AccountBalance
+#Export-ModuleMember Test-AmtApi
+
+# HITS
+Export-ModuleMember Add-HIT, Stop-HIT, Expand-HIT, Remove-HIT, Disable-HIT
+Export-ModuleMember Get-AllHITs, Get-HIT, Get-ReviewableHITs
+# Not Implemented: Get-ReviewResultsForHIT, Get-HitsForQualificationType
+
+# Objects
+Export-ModuleMember New-HIT, New-ExternalQuestion, New-HtmlQuestion, New-QuestionForm
+Export-ModuleMember New-Price, New-Locale, New-TestHIT, New-QualificationRequirement
+
+# HITTypes
+Export-ModuleMember New-HITType, Register-HITType, Set-HITTypeOfHIT
+
+# Assignments
+Export-ModuleMember Approve-Assignment, Deny-Assignment, Approve-RejectedAssignment
+Export-ModuleMember Get-AllAssignmentsForHIT, Get-Assignment
+# Not Implemented: Get-AssignmentsForHIT
+
+# Qualifications
+Export-ModuleMember Get-AllQualificationTypes, Get-QualificationType
+Export-ModuleMember Add-QualificationType, Remove-QualificationType, Update-QualificationType
+Export-ModuleMember Grant-Qualification, Revoke-Qualification
+Export-ModuleMember Get-QualificationScore, Update-QualificationScore
+Export-ModuleMember Get-QualificationRequests, Grant-QualificationRequest, Deny-QualificationRequest
+Export-ModuleMember Add-QualificationTypeFull, Get-QualificationsForQualificationType
+Export-ModuleMember Search-QualificationTypes
+
+# Misc
+Export-ModuleMember Block-Worker, Unblock-Worker, Get-BlockedWorkers
+Export-ModuleMember Grant-Bonus, Get-BonusPayments
+Export-ModuleMember Send-WorkerNotification, Get-FileUploadUrl, Enter-HIT
+Export-ModuleMember Get-RequesterStatistic, Get-RequesterWorkerStatistic
+
+# Not yet implemented: Search-HITs, Send-TestEventNotification, Set-HITAsReviewing, Set-HITTypeNotification
+
+#########################################################################################
 # AmtUtil
 # Exports in AmtUtil.ps1
+
+Export-ModuleMember Write-AMTError
+Export-ModuleMember Set-AMTKeys
+Export-ModuleMember Get-AMTKeys
 
 #########################################################################################
