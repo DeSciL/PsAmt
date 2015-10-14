@@ -31,7 +31,6 @@
     <Compile Include="PsAmt.psd1" />
     <Compile Include="PsAmt.psm1" />
     <Compile Include="AmtApi.ps1" />
-    <Compile Include="PsAmt.tests.ps1" />
     <Compile Include="samples\ApiSamples.ps1" />
   </ItemGroup>
   <ItemGroup>
