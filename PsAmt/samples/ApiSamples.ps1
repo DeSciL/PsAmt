@@ -28,7 +28,7 @@ function Setup {
 	Connect-AMT
 
 	# Keys can also be provied by parameter
-    Connect-AMT -AccessKeyId "MyAccessKey" -SecretKey "MySecretKey"
+	Connect-AMT -AccessKeyId "MyAccessKey" -SecretKey "MySecretKey"
 
 	# Set sandbox globally on all the the commands to follow
 	Connect-AMT -Sandbox
