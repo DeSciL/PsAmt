@@ -3180,7 +3180,7 @@ function Get-RequesterStatistic {
   .PARAMETER Statistic
    Specifies the statistic to return.
 
-  .PARAMETER $TimePeriod
+  .PARAMETER TimePeriod
    Soecifies the time period of the statistic to return.
 
   .PARAMETER Count
@@ -3224,13 +3224,13 @@ function Get-RequesterStatistic {
                      'ThirtyDays', `
                      'LifeToDate')]
 		[string]$TimePeriod = "LifeToDate",
-        [Parameter(Position=1, Mandatory=$false)]
-        [string]$DataPoints = $null
+        [Parameter(Position=2, Mandatory=$false)]
+        [string]$Count = 1
 	)
 
     TestAmtApi
     Try {
-		$AmtClient.GetRequesterStatistic($Statistic, $TimePeriod, $DataPoints)
+		$AmtClient.GetRequesterStatistic($Statistic, $TimePeriod, $Count)
 	}
 	Catch {
 		Write-AMTError
