@@ -409,20 +409,20 @@ function Blocking {
 #########################################################################################
 function Bonus {
 
-    Connect-AMT -Sandbox
+	Connect-AMT -Sandbox
 
-    # Setup a HIT. Go and compete it online.
-    $hit = Add-HIT -HIT (New-TestHIT)
-    Enter-HIT $hit.HITGroupId
+	# Setup a HIT. Go and compete it online.
+	$hit = Add-HIT -HIT (New-TestHIT)
+	Enter-HIT $hit.HITGroupId
 
-    # Approve your own assignment
-    $assigns = Get-AllAssignmentsForHIT -HITId $hit.HITId
-    $aid = $assigns[0].AssignmentId
-    $wid = $assigns[0].WorkerId
-    Approve-Assignment -AssignmentId $assigns[0].AssignmentId
+	# Approve your own assignment
+	$assigns = Get-AllAssignmentsForHIT -HITId $hit.HITId
+	$aid = $assigns[0].AssignmentId
+	$wid = $assigns[0].WorkerId
+	Approve-Assignment -AssignmentId $assigns[0].AssignmentId
 
-    # After approval, bonus can be granted
-    Grant-Bonus -AssignmentId $aid -WorkerId $wid -BonusAmount 1.01 -Reason "Well done"
+	# After approval, bonus can be granted
+	Grant-Bonus -AssignmentId $aid -WorkerId $wid -BonusAmount 1.01 -Reason "Well done"
 
 }
 
@@ -449,12 +449,10 @@ function Notifications {
 #########################################################################################
 function Statistics {
 
- # Get the Requester Id
-
 	Connect-AMT -Sandbox
 
 	# Get a RequesterID, yours...
-    $requesterId = Get-AmtKeys -RequesterId
+	$requesterId = Get-AmtKeys -RequesterId
 
 	# List a requester statistics
 	Get-RequesterStatistic -Statistic NumberHITsCreated
@@ -465,6 +463,7 @@ function Statistics {
 	# If parameter TimePeriod is 'OneDay', you can specify the number of days to 
 	# display by parameter count, i.e., it shows the last 30 days.
 	Get-RequesterStatistic -Statistic NumberHITsCreated -TimePeriod OneDay -Count 30
+
 }
 
 #########################################################################################
