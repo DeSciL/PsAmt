@@ -2638,6 +2638,7 @@ function New-QualificationRequirement {
 	if($LocaleValue) { $qr.LocaleValue = New-Locale $LocaleValue }
 	if($Locale) { $qr.LocaleValue = $Locale }
 	if($RequiredToPreview) { $qr.RequiredToPreview = $RequiredToPreview }
+	if($RequiredToPreview) { $qr.RequiredToPreviewSpecified = $RequiredToPreview }
 	return $qr
 
 	# TODO:
