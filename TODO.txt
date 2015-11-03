@@ -4,6 +4,8 @@ stwehrli@gmail.com
 Know Bugs / Issues
 - Connect-Amt: Definition of objects needs to be done on load
 - Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
+- Reference AWS Tools for Windows PowerShell in Readme (http://aws.amazon.com/powershell/)
+- Hide Write-AMTError
 
 Priority 1
 - Check parameter default values. At some methods, string="" are set even if probably not needed.
