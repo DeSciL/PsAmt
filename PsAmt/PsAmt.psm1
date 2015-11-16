@@ -147,7 +147,7 @@ Export-ModuleMember Get-RequesterStatistic, Get-RequesterWorkerStatistic
 # AmtUtil
 # Exports in AmtUtil.ps1
 
-Export-ModuleMember Write-AMTError
+# Export-ModuleMember Write-AMTError
 Export-ModuleMember Set-AMTKeys
 Export-ModuleMember Get-AMTKeys
 
