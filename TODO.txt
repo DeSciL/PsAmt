@@ -2,6 +2,7 @@ TODO PsAmt
 stwehrli@gmail.com
 
 Know Bugs / Issues
+- Connect-Amt: Needs to be able to set the requester id.
 - Connect-Amt: Definition of objects needs to be done on load
 - Invoke-Hit: Cannot override question. Add-Hit is linked to external question.
 - Reference AWS Tools for Windows PowerShell in Readme (http://aws.amazon.com/powershell/)
