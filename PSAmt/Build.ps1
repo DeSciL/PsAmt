@@ -11,7 +11,10 @@ function PSAmt_Assets {
     $assets += "PSAmt.psd1"
     $assets += "PSAmt.psm1"
 
+    $assets += "lib\Amazon.WebServices.MechanicalTurk.dll"
+
     $assets += "\samples\ApiSamples.ps1"
+    
     $assets += "\templates\Qualification.answer"
     $assets += "\templates\Qualification.question"
     $assets += "\templates\Survey.question"
