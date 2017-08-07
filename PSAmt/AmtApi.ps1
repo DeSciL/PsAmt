@@ -74,326 +74,330 @@
 #            
 #########################################################################################
 function LoadAmt {
-<# 
- .SYNOPSIS 
-  Loads Mturk .Net SDK
+    <# 
+    .SYNOPSIS 
+        Loads Mturk .Net SDK
 
- .DESCRIPTION
-  Loads Mturk .Net SDK dll and prepares required objects.
+    .DESCRIPTION
+        Loads Mturk .Net SDK dll and prepares required objects.
 
- .LINK
-  about_PSAmt
-#>
-	# Set assembly location
-	$assembly = "Amazon.WebServices.MechanicalTurk.dll"
-	$modulePath = $Global:AmtModulePath
-	$assemblyPath = Join-Path $modulePath $assembly
+    .LINK
+        about_PSAmt
+    #>
+    # Set assembly location
+    $assembly = "Amazon.WebServices.MechanicalTurk.dll"
+    $modulePath = $Global:AmtModulePath
+    $assemblyPath = Join-Path $modulePath $assembly
 
-	# Test
-	if(!(Test-Path($assemblyPath))) {
-			Write-Error "Amazon Mechanical Turk assembly not found." -ErrorAction Stop
-	}
+    # Test
+    if (!(Test-Path($assemblyPath))) {
+        Write-Error "Amazon Mechanical Turk assembly not found." -ErrorAction Stop
+    }
 
-	# Setup config and simple client
-	$Global:AmtAssembly = [Reflection.Assembly]::LoadFile($assemblyPath)
-	$Global:AmtQuestionUtil = [Amazon.WebServices.MechanicalTurk.QuestionUtil]
-	$Global:AmtQrList = New-Object 'System.Collections.Generic.List[QualificationRequirement]'
-	$Global:AmtLocaleList = New-Object 'System.Collections.Generic.List[Locale]'
-	$Global:AmtClientConnected = $false
-	$Global:AmtClientLoaded = $true
+    # Setup config and simple client
+    $Global:AmtAssembly = [Reflection.Assembly]::LoadFile($assemblyPath)
+    $Global:AmtQuestionUtil = [Amazon.WebServices.MechanicalTurk.QuestionUtil]
+    $Global:AmtQrList = New-Object 'System.Collections.Generic.List[QualificationRequirement]'
+    $Global:AmtLocaleList = New-Object 'System.Collections.Generic.List[Locale]'
+    $Global:AmtClientConnected = $false
+    $Global:AmtClientLoaded = $true
 }
 
 #########################################################################################
 function Test-AmtApi {
-<# 
- .SYNOPSIS 
-  Test if AMT simple client is ready.
+    <# 
+    .SYNOPSIS 
+        Test if AMT simple client is ready.
 
- .DESCRIPTION
-  Test if AMT simple client is ready. If $AmtClient is not loaded,
-  objects will be prepared. If $AmtClient is no connected,
-  a connection is established.
+    .DESCRIPTION
+        Test if AMT simple client is ready. If $AmtClient is not loaded,
+        objects will be prepared. If $AmtClient is no connected,
+        a connection is established.
 
- .LINK
-  about_PSAmt
-#>
-	TestAmtApi
+    .LINK
+      about_PSAmt
+    #>
+    TestAmtApi
 }
 
 function TestAmtApi {
-	# Internal function for Test-AmtApi
-	if(!$Global:AmtClientLoaded) { LoadAmt }
-	if(!$Global:AmtClientConnected) { ConnectAmt }
+    # Internal function for Test-AmtApi
+    if (!$Global:AmtClientLoaded) { LoadAmt }
+    if (!$Global:AmtClientConnected) { ConnectAmt }
 }
 
 #########################################################################################
 function Connect-AMT {
-<# 
-  .SYNOPSIS 
-   Connect to Amazom Mechanical Turk
+    <# 
+    .SYNOPSIS 
+        Connect to Amazom Mechanical Turk
+
+    .DESCRIPTION
+        Connect to Amazom Mechanical Turk by means of the .Net SDK.
+
+    .PARAMETER AccessKey
+        Specifies the Amazon Mechanical Turk access key.
+
+    .PARAMETER SecretKey
+        Specifies the Amazon Mechanical Turk secret key id.
+
+    .PARAMETER Passphrase
+        Specifies the the passphrase. Try to avoid setting the
+        passphrase in code.
+
+    .PARAMETER KeyFile
+        Specifies the file with stored passwords.
+
+    .PARAMETER Sandbox
+        Switches between sandbox and production site.
+
+    .EXAMPLE 
+        Connect-AMT -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
+
+    .LINK
+        about_PSAmt
+    #>
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$AccessKeyId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$SecretKey,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$Passphrase = $null,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [string]$KeyFile = "Amt.key",
+        [Parameter(Position = 4, Mandatory = $false)]
+        [switch]$Sandbox
+    )
   
-  .DESCRIPTION
-   Connect to Amazom Mechanical Turk by means of the .Net SDK.
-
-  .PARAMETER AccessKey
-   Specifies the Amazon Mechanical Turk access key.
-
-  .PARAMETER SecretKey
-   Specifies the Amazon Mechanical Turk secret key id.
-
-  .PARAMETER Passphrase
-   Specifies the the passphrase. Try to avoid setting the
-   passphrase in code.
-
-  .PARAMETER KeyFile
-   Specifies the file with stored passwords.
-   
-  .PARAMETER Sandbox
-   Switches between sandbox and production site.
- 
-  .EXAMPLE 
-   Connect-AMT -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
-
-  .LINK
-   about_PSAmt
-#>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$AccessKeyId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$SecretKey,
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$Passphrase=$null,
-		[Parameter(Position=3, Mandatory=$false)]
-		[string]$KeyFile="Amt.key",
-		[Parameter(Position=4, Mandatory=$false)]
-		[switch]$Sandbox
-	)
-  
-	if($Sandbox) {
-		ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -Passphrase $Passphrase -KeyFile $KeyFile -Sandbox
-	} else {
-		ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -Passphrase $Passphrase -KeyFile $KeyFile
-	}
+    if ($Sandbox) {
+        ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -Passphrase $Passphrase -KeyFile $KeyFile -Sandbox
+    }
+    else {
+        ConnectAmt -AccessKeyId $AccessKeyId -SecretKey $SecretKey -Passphrase $Passphrase -KeyFile $KeyFile
+    }
 }
 
 #########################################################################################
 function ConnectAmt {
-	# Internal function for Connect-Amt
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$AccessKeyId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$SecretKey,
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$Passphrase=$null,
-		[Parameter(Position=3, Mandatory=$false)]
-		[string]$KeyFile="Amt.key",
-		[Parameter(Position=4, Mandatory=$false)]
-		[switch]$Sandbox
-	)
+    # Internal function for Connect-Amt
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$AccessKeyId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$SecretKey,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$Passphrase = $null,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [string]$KeyFile = "Amt.key",
+        [Parameter(Position = 4, Mandatory = $false)]
+        [switch]$Sandbox
+    )
 
-	# Make sure assembly is loaded
-	if(!$Global:AmtClientLoaded) { LoadAmt }
+    # Make sure assembly is loaded
+    if (!$Global:AmtClientLoaded) { LoadAmt }
 
-	# Get WebService credentials from encrypted key file
-	if(!$AccessKeyId) { $AccessKeyId = Get-AMTKeys -AccessKey -Passphrase $Passphrase -KeyFile $KeyFile }
-	if(!$SecretKey) { $SecretKey = Get-AMTKeys -SecretKey -Passphrase $Passphrase -KeyFile $KeyFile }
+    # Get WebService credentials from encrypted key file
+    if (!$AccessKeyId) { $AccessKeyId = Get-AMTKeys -AccessKey -Passphrase $Passphrase -KeyFile $KeyFile }
+    if (!$SecretKey) { $SecretKey = Get-AMTKeys -SecretKey -Passphrase $Passphrase -KeyFile $KeyFile }
 
-	# Check if sandbox
-	if($Sandbox.IsPresent) {
-		$Global:AmtSandbox = $true
-	} else {
-		$Global:AmtSandbox = $false
-	}
+    # Check if sandbox
+    if ($Sandbox.IsPresent) {
+        $Global:AmtSandbox = $true
+    }
+    else {
+        $Global:AmtSandbox = $false
+    }
 
-	# Set Endpoint and URL
-	if($AmtSandbox) {
-		$AmtServiceEndpoint = "https://mechanicalturk.sandbox.amazonaws.com?Service=AWSMechanicalTurkRequester"
-		$AmtWebsiteUrl = "https://mechanicalturk.sandbox.amazonaws.com" 
-	} else {
-		$AmtServiceEndpoint = "https://mechanicalturk.amazonaws.com?Service=AWSMechanicalTurkRequester"
-		$AmtWebsiteUrl = "https://mechanicalturk.amazonaws.com"
-	}
+    # Set Endpoint and URL
+    if ($AmtSandbox) {
+        $AmtServiceEndpoint = "https://mechanicalturk.sandbox.amazonaws.com?Service=AWSMechanicalTurkRequester"
+        $AmtWebsiteUrl = "https://mechanicalturk.sandbox.amazonaws.com" 
+    }
+    else {
+        $AmtServiceEndpoint = "https://mechanicalturk.amazonaws.com?Service=AWSMechanicalTurkRequester"
+        $AmtWebsiteUrl = "https://mechanicalturk.amazonaws.com"
+    }
 
-	# Setup Client
-	$Global:AmtConfig = New-Object Amazon.WebServices.MechanicalTurk.MTurkConfig($AmtServiceEndpoint, $AccessKeyId, $SecretKey)
-	$Global:AmtClient = New-Object Amazon.WebServices.MechanicalTurk.SimpleClient($AmtConfig)
+    # Setup Client
+    $Global:AmtConfig = New-Object Amazon.WebServices.MechanicalTurk.MTurkConfig($AmtServiceEndpoint, $AccessKeyId, $SecretKey)
+    $Global:AmtClient = New-Object Amazon.WebServices.MechanicalTurk.SimpleClient($AmtConfig)
 
-	# Report back
-	if($AmtSandbox) {
-		Write-Host ""
-		Write-Host "Connected to AMT Sandbox Site" -ForegroundColor $AmtConsoleColor
-	} else {
-		Write-Host ""
-		Write-Host "Connected to AMT Production Site" -ForegroundColor $AmtConsoleColor
-	}
+    # Report back
+    if ($AmtSandbox) {
+        Write-Host ""
+        Write-Host "Connected to AMT Sandbox Site" -ForegroundColor $AmtConsoleColor
+    }
+    else {
+        Write-Host ""
+        Write-Host "Connected to AMT Production Site" -ForegroundColor $AmtConsoleColor
+    }
 
-	# Set connected
-	$Global:AmtClientConnected = $true
+    # Set connected
+    $Global:AmtClientConnected = $true
 
-	# Get available balance
-	Write-Host "Current balance: " (GetBalance) -ForegroundColor $AmtConsoleColor
-	Write-Host
+    # Get available balance
+    Write-Host "Current balance: " (GetBalance) -ForegroundColor $AmtConsoleColor
+    Write-Host
 }
 
 #########################################################################################
 function Disconnect-AMT {
-<# 
-  .SYNOPSIS 
-   Disconnects from AMT
-  
-  .DESCRIPTION
-   Disconnects from AMT, clears all password and key usage.
- 
-  .EXAMPLE 
-   Disconnect-AMT
+    <# 
+    .SYNOPSIS 
+        Disconnects from AMT
 
-  .LINK
-   about_PSAmt
-#>
-	$Global:AmtConfig = $null
-	$Global:AmtClient = $null
-	$Global:AmtPassphrase = $null
-	$Global:AmtClientConnected = $false
-	Write-Host "Disconnected from AMT. Cleared passwords." -ForegroundColor $AmtConsoleColor
+    .DESCRIPTION
+        Disconnects from AMT, clears all password and key usage.
+
+    .EXAMPLE 
+        Disconnect-AMT
+
+    .LINK
+        about_PSAmt
+    #>
+    $Global:AmtConfig = $null
+    $Global:AmtClient = $null
+    $Global:AmtPassphrase = $null
+    $Global:AmtClientConnected = $false
+    Write-Host "Disconnected from AMT. Cleared passwords." -ForegroundColor $AmtConsoleColor
 }
 
 #########################################################################################
 function Approve-Assignment {
-<# 
-  .SYNOPSIS 
-   Approves results of an assignment.
+    <# 
+    .SYNOPSIS 
+        Approves results of an assignment.
 
-  .DESCRIPTION
-   The ApproveAssignment operation approves the results of a completed assignment.
+    .DESCRIPTION
+        The ApproveAssignment operation approves the results of a completed assignment.
 
-  .PARAMETER AssignmentId
-   The ID of the assignment. This parameter must correspond to a HIT created by the Requester.
+    .PARAMETER AssignmentId
+        The ID of the assignment. This parameter must correspond to a HIT created by the Requester.
 
-  .PARAMETER RequesterFeedback
-   A message for the Worker, which the Worker can see in the status section of the web site.
-   Constraints: Can be up to 1024 characters.
-  
-  .EXAMPLE
-   Approve-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Well done."
-  
-  .LINK
-   about_PSAmt
-#>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$AssignmentId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$RequesterFeedback
-	)
+    .PARAMETER RequesterFeedback
+        A message for the Worker, which the Worker can see in the status section of the web site.
+        Constraints: Can be up to 1024 characters.
 
-	TestAmtApi
-	Try {
-		$AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
-		Write-Host "Approved assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    .EXAMPLE
+        Approve-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Well done."
+
+    .LINK
+        about_PSAmt
+    #>
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$AssignmentId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$RequesterFeedback
+    )
+
+    TestAmtApi
+    Try {
+        $AmtClient.ApproveAssignment($AssignmentId, $RequesterFeedback)
+        Write-Host "Approved assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Approve-RejectedAssignment {
-<# 
-  .SYNOPSIS 
-   Approves results of a rejected assignment.
+    <# 
+    .SYNOPSIS 
+        Approves results of a rejected assignment.
 
-  .DESCRIPTION
-   The ApproveRejectedAssignment operation approves an assignment that was previously rejected. 
-   ApproveRejectedAssignment works only on rejected assignments that were submitted within the 
-   previous 30 days and only if the assignment's related HIT has not been disposed.
+    .DESCRIPTION
+        The ApproveRejectedAssignment operation approves an assignment that was previously rejected. 
+        ApproveRejectedAssignment works only on rejected assignments that were submitted within the 
+        previous 30 days and only if the assignment's related HIT has not been disposed.
 
-  .PARAMETER AssignmentId
-   The ID of the assignment. This parameter must correspond to a HIT created by the Requester.
+    .PARAMETER AssignmentId
+        The ID of the assignment. This parameter must correspond to a HIT created by the Requester.
 
-  .PARAMETER RequesterFeedback
-   A message for the Worker, which the Worker can see in the status section of the web site.
-   Constraints: Can be up to 1024 characters.
-  
-  .EXAMPLE
-   Approve-RejectedAssignment -AssignmentId "ABCDEFG" -RequesterFeedback "Sorry, now approved."
-  
-  .LINK
-   about_PSAmt
-#>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$AssignmentId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$RequesterFeedback
-	)
+    .PARAMETER RequesterFeedback
+        A message for the Worker, which the Worker can see in the status section of the web site.
+        Constraints: Can be up to 1024 characters.
 
-	TestAmtApi
-	Try {
-		$AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
-		Write-Host "Approved rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    .EXAMPLE
+        Approve-RejectedAssignment -AssignmentId "ABCDEFG" -RequesterFeedback "Sorry, now approved."
+
+    .LINK
+        about_PSAmt
+    #>
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$AssignmentId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$RequesterFeedback
+    )
+
+    TestAmtApi
+    Try {
+        $AmtClient.ApproveRejectedAssignment($AssignmentId, $RequesterFeedback)
+        Write-Host "Approved rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Grant-Qualification {
-<# 
-  .SYNOPSIS 
-   Approves results of an assignment.
+    <# 
+    .SYNOPSIS 
+        Approves results of an assignment.
 
-  .DESCRIPTION
-   The AssignQualification operation gives a Worker a Qualification. AssignQualification 
-   does not require that the Worker submits a Qualification request. 
-   It gives the Qualification directly to the Worker.
+    .DESCRIPTION
+        The AssignQualification operation gives a Worker a Qualification. AssignQualification 
+        does not require that the Worker submits a Qualification request. 
+        It gives the Qualification directly to the Worker.
 
-  .PARAMETER QualificationTypeId
-   The ID of the Qualification type to use for the assigned Qualification.
+    .PARAMETER QualificationTypeId
+        The ID of the Qualification type to use for the assigned Qualification.
 
-  .PARAMETER WorkerId
-   The ID of the Worker to whom the Qualification is being assigned. 
+    .PARAMETER WorkerId
+        The ID of the Worker to whom the Qualification is being assigned. 
 
-  .PARAMETER IntegerValue
-   The value of the Qualification to assign. This could be a performance
-   level between 0-100.
+    .PARAMETER IntegerValue
+        The value of the Qualification to assign. This could be a performance
+        level between 0-100.
 
-  .PARAMETER SendNotification
-   Specifies whether to send a notification email message to the Worker saying that 
-   the qualification was assigned to the Worker. Default is $false.
+    .PARAMETER SendNotification
+        Specifies whether to send a notification email message to the Worker saying that 
+        the qualification was assigned to the Worker. Default is $false.
 
-  .EXAMPLE
-   Grant-Qualification -QualificationTypeId "ABCDEFG" -WorkerId "ABCEDFG"
-  
-  .LINK
-   about_PSAmt
-#>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationTypeId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$WorkerId,
-		[Parameter(Position=2, Mandatory=$false)]
-		[int]$IntegerValue=$null,
-		[Parameter(Position=3, Mandatory=$false)]
-		[bool]$SendNotification=$false
-	)
+    .EXAMPLE
+        Grant-Qualification -QualificationTypeId "ABCDEFG" -WorkerId "ABCEDFG"
 
-	TestAmtApi
-	Try {
-		$AmtClient.AssignQualification($QualificationTypeId, $WorkerId, $IntegerValue, $SendNotification)
-		Write-Host "Granted Qualification $QualificationTypeId to worker $WorkerId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    .LINK
+        about_PSAmt
+    #>
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationTypeId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$WorkerId,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [int]$IntegerValue = $null,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [bool]$SendNotification = $false
+    )
+
+    TestAmtApi
+    Try {
+        $AmtClient.AssignQualification($QualificationTypeId, $WorkerId, $IntegerValue, $SendNotification)
+        Write-Host "Granted Qualification $QualificationTypeId to worker $WorkerId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Block-Worker {
-<# 
+    <# 
   .SYNOPSIS 
    Block a worker.
 
@@ -415,26 +419,26 @@ function Block-Worker {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string[]]$WorkerId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$Reason
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string[]]$WorkerId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$Reason
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.BlockWorker($WorkerId, $Reason)
-		Write-Host "Blocked worker $WorkerId" -ForegroundColor Cyan
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.BlockWorker($WorkerId, $Reason)
+        Write-Host "Blocked worker $WorkerId" -ForegroundColor Cyan
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Set-HITTypeOfHIT {
-<# 
+    <# 
   .SYNOPSIS 
    Change / set the HitType of a HIT.
 
@@ -460,26 +464,26 @@ function Set-HITTypeOfHIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$HITTypeId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$HITTypeId
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.ChangeHITTypeOfHIT($HITId, $HITTypeId)
-		Write-Host "Change HITType of Hit $HITId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.ChangeHITTypeOfHIT($HITId, $HITTypeId)
+        Write-Host "Change HITType of Hit $HITId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Add-HIT {
-<# 
+    <# 
   .SYNOPSIS 
    Create a new HIT.
 
@@ -590,76 +594,77 @@ function Add-HIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$HITTypeId = "",
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$Title = "",
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$Description = "",
-		[Parameter(Position=3, Mandatory=$false)]
-		$Question,
-		[Parameter(Position=4, Mandatory=$false)]
-		[string]$HITLayoutId,
-		[Parameter(Position=5, Mandatory=$false)]
-		[string]$HITLayoutParameter,
-		[Parameter(Position=6, Mandatory=$false)]
-		[decimal]$Reward = $null,
-		[Parameter(Position=7, Mandatory=$false)]
-		[long]$AssignmentDurationInSeconds = 3600,
-		[Parameter(Position=8, Mandatory=$false)]
-		[long]$LifetimeInSeconds=259200,
-		[Parameter(Position=9, Mandatory=$false)]
-		[string]$Keywords,
-		[Parameter(Position=10, Mandatory=$false)]
-		[long]$MaxAssignments = $null,
-		[Parameter(Position=11, Mandatory=$false)]
-		[long]$AutoApprovalDelayInSeconds = 1296000,
-		[Parameter(Position=12, Mandatory=$false)]
-		$QualificationRequirement = $null,
-		[Parameter(Position=13, Mandatory=$false)]
-		[string]$AssignmentReviewPolicy = "",
-		[Parameter(Position=14, Mandatory=$false)]
-		[string]$HITReviewPolicy = "",
-		[Parameter(Position=15, Mandatory=$false)]
-		[string]$RequesterAnnotation = "",
-		[Parameter(Position=16, Mandatory=$false)]
-		[HIT]$HIT
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$HITTypeId = "",
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$Title = "",
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$Description = "",
+        [Parameter(Position = 3, Mandatory = $false)]
+        $Question,
+        [Parameter(Position = 4, Mandatory = $false)]
+        [string]$HITLayoutId,
+        [Parameter(Position = 5, Mandatory = $false)]
+        [string]$HITLayoutParameter,
+        [Parameter(Position = 6, Mandatory = $false)]
+        [decimal]$Reward = $null,
+        [Parameter(Position = 7, Mandatory = $false)]
+        [long]$AssignmentDurationInSeconds = 3600,
+        [Parameter(Position = 8, Mandatory = $false)]
+        [long]$LifetimeInSeconds = 259200,
+        [Parameter(Position = 9, Mandatory = $false)]
+        [string]$Keywords,
+        [Parameter(Position = 10, Mandatory = $false)]
+        [long]$MaxAssignments = $null,
+        [Parameter(Position = 11, Mandatory = $false)]
+        [long]$AutoApprovalDelayInSeconds = 1296000,
+        [Parameter(Position = 12, Mandatory = $false)]
+        $QualificationRequirement = $null,
+        [Parameter(Position = 13, Mandatory = $false)]
+        [string]$AssignmentReviewPolicy = "",
+        [Parameter(Position = 14, Mandatory = $false)]
+        [string]$HITReviewPolicy = "",
+        [Parameter(Position = 15, Mandatory = $false)]
+        [string]$RequesterAnnotation = "",
+        [Parameter(Position = 16, Mandatory = $false)]
+        [HIT]$HIT
+    )
 
-	TestAmtApi
-	Try {
-		# Create with HIT object
-		if($Hit) {
-			$h = $AmtClient.CreateHIT($Hit)
-			$AmtClient.GetHIT($h.HITId, $null)
-			Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
-			return
-		}
+    TestAmtApi
+    Try {
+        # Create with HIT object
+        if ($Hit) {
+            $h = $AmtClient.CreateHIT($Hit)
+            $AmtClient.GetHIT($h.HITId, $null)
+            Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
+            return
+        }
 		
-		# Create with parameteres
-		if($HITTypeId) {
-			[string[]]$ResponseGroup = $null
-			$h = $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
-			$AmtClient.GetHIT($h.HITId, $null)
-		} else {
-			# Need to register HITType to add requester annotation.
-			$hitTypeId = Register-HITType -Title $Title -Description $Description -AutoApprovalDelayInSeconds $AutoApprovalDelayInSeconds -AssignmentDurationInSeconds $AssignmentDurationInSeconds -Reward $Reward -Keywords $keywords
-			$h = $AmtClient.CreateHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
-			# Old implementation
-			# $h = $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
-			$AmtClient.GetHIT($h.HITId, $null)
-		}
-		Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+        # Create with parameteres
+        if ($HITTypeId) {
+            [string[]]$ResponseGroup = $null
+            $h = $AmtClient.CreateExternalHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
+            $AmtClient.GetHIT($h.HITId, $null)
+        }
+        else {
+            # Need to register HITType to add requester annotation.
+            $hitTypeId = Register-HITType -Title $Title -Description $Description -AutoApprovalDelayInSeconds $AutoApprovalDelayInSeconds -AssignmentDurationInSeconds $AssignmentDurationInSeconds -Reward $Reward -Keywords $keywords
+            $h = $AmtClient.CreateHIT($HITTypeId, $Title , $Description, $Keywords, $Question, $Reward, $AssignmentDurationInSeconds, $AutoApprovalDelayInSeconds, $LifetimeInSeconds, $MaxAssignments, $RequesterAnnotation, $QualificationRequirement, $null)
+            # Old implementation
+            # $h = $AmtClient.CreateHIT($Title, $Description, $Reward, $Question, $MaxAssignments)
+            $AmtClient.GetHIT($h.HITId, $null)
+        }
+        Write-Host "Created HIT" $h.HITId -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Disable-HIT {
-<# 
+    <# 
  .SYNOPSIS 
   Removes a HIT from the Amazon Mechanical Turk marketplace.
 
@@ -678,24 +683,24 @@ function Disable-HIT {
  .LINK
   about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.DisableHIT($HITId)
-		Write-Host "Disabled HIT $HITId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.DisableHIT($HITId)
+        Write-Host "Disabled HIT $HITId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Remove-HIT {
-<# 
+    <# 
  .SYNOPSIS 
   Dispose / delete a HIT.
 
@@ -716,24 +721,24 @@ function Remove-HIT {
  .LINK
   about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId
+    )
 
-	TestAmtApi
-	Try { 
-		$AmtClient.DisposeHIT($HITId)
-		Write-Host "Removed HIT $HITId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}	
+    TestAmtApi
+    Try { 
+        $AmtClient.DisposeHIT($HITId)
+        Write-Host "Removed HIT $HITId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }	
 }
 
 #########################################################################################
 function Add-QualificationTypeFull {
-<# 
+    <# 
   .SYNOPSIS 
    Create a new qualification type.
 
@@ -792,47 +797,47 @@ function Add-QualificationTypeFull {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$Name,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$Keywords,
-		[Parameter(Position=2, Mandatory=$true)]
-		[string]$Description,
-		[Parameter(Position=3, Mandatory=$true)]
-		[ValidateSet('Active','Inactive')]
-		[string]$QualificationTypeStatus,
-		[Parameter(Position=4, Mandatory=$false)]
-		[long]$RetryDelayInSeconds,
-		[Parameter(Position=5, Mandatory=$false)]
-		$Test,
-		[Parameter(Position=6, Mandatory=$false)]
-		[string]$AnswerKey,
-		[Parameter(Position=7, Mandatory=$false)]
-		[long]$TestDurationInSeconds,
-		[Parameter(Position=8, Mandatory=$false)]
-		[bool]$AutoGranted,
-		[Parameter(Position=9, Mandatory=$false)]
-		[int]$AutoGrantedValue = 1
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$Name,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$Keywords,
+        [Parameter(Position = 2, Mandatory = $true)]
+        [string]$Description,
+        [Parameter(Position = 3, Mandatory = $true)]
+        [ValidateSet('Active', 'Inactive')]
+        [string]$QualificationTypeStatus,
+        [Parameter(Position = 4, Mandatory = $false)]
+        [long]$RetryDelayInSeconds,
+        [Parameter(Position = 5, Mandatory = $false)]
+        $Test,
+        [Parameter(Position = 6, Mandatory = $false)]
+        [string]$AnswerKey,
+        [Parameter(Position = 7, Mandatory = $false)]
+        [long]$TestDurationInSeconds,
+        [Parameter(Position = 8, Mandatory = $false)]
+        [bool]$AutoGranted,
+        [Parameter(Position = 9, Mandatory = $false)]
+        [int]$AutoGrantedValue = 1
+    )
 
-	TestAmtApi
-	Try {
-		$qt = $AmtClient.CreateQualificationType($Name, $Keywords, $Description, $QualificationTypeStatus, $RetryDelayInSeconds, $Test, $AnswerKey, $TestDurationInSeconds, $AutoGranted, $null)
-		$qt
-		Write-Host "Added QualificationTpye" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $qt = $AmtClient.CreateQualificationType($Name, $Keywords, $Description, $QualificationTypeStatus, $RetryDelayInSeconds, $Test, $AnswerKey, $TestDurationInSeconds, $AutoGranted, $null)
+        $qt
+        Write-Host "Added QualificationTpye" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 
-	# TODO:
-	# Add an example
+    # TODO:
+    # Add an example
 }
 
 #########################################################################################
 function Add-QualificationType {
-<# 
+    <# 
   .SYNOPSIS 
    Create a new qualification type.
 
@@ -865,29 +870,29 @@ function Add-QualificationType {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$Name,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$Description,
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$Keywords = ""
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$Name,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$Description,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$Keywords = ""
+    )
 
-	TestAmtApi
-	Try {
-		$qt = $AmtClient.CreateQualificationType($Name, $Keywords, $Description)
-		$qt
-		Write-Host "Added QualificationType" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $qt = $AmtClient.CreateQualificationType($Name, $Keywords, $Description)
+        $qt
+        Write-Host "Added QualificationType" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Remove-QualificationType {
-<# 
+    <# 
   .SYNOPSIS 
    Dispose / delete a QualificationType.
 
@@ -909,24 +914,24 @@ function Remove-QualificationType {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationTypeId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationTypeId
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.DisposeQualificationType($QualificationTypeId)
-		Write-Host "Removed QualificationType $QualificationTypeId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.DisposeQualificationType($QualificationTypeId)
+        Write-Host "Removed QualificationType $QualificationTypeId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Expand-HIT {
-<# 
+    <# 
   .SYNOPSIS 
    Extend / expand a HIT.
 
@@ -957,28 +962,28 @@ function Expand-HIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[int]$MaxAssignmentsIncrement=$null,
-		[Parameter(Position=2, Mandatory=$false)]
-		[long]$ExpirationIncrementInSeconds=$null
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [int]$MaxAssignmentsIncrement = $null,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [long]$ExpirationIncrementInSeconds = $null
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.ExtendHIT($HITId, $MaxAssignmentsIncrement, $ExpirationIncrementInSeconds)
-		Write-Host "Extended HIT $HITId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.ExtendHIT($HITId, $MaxAssignmentsIncrement, $ExpirationIncrementInSeconds)
+        Write-Host "Extended HIT $HITId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Stop-HIT {
-<# 
+    <# 
   .SYNOPSIS 
    Stop / force expire a HIT.
 
@@ -999,30 +1004,30 @@ function Stop-HIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId
+    )
 	
-	TestAmtApi
-	Try {
-		$AmtClient.ForceExpireHIT($HITId)
-		Write-Host "Forced expiration of HIT $HITId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.ForceExpireHIT($HITId)
+        Write-Host "Forced expiration of HIT $HITId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function GetBalance {
-  # Helper function
-  TestAmtApi
-  return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
+    # Helper function
+    TestAmtApi
+    return $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
 }
 
 function Get-AccountBalance {
-<# 
+    <# 
  .SYNOPSIS 
   Get the current account balance.
 
@@ -1036,18 +1041,18 @@ function Get-AccountBalance {
  .LINK
   about_PSAmt
 #>
-	TestAmtApi
-	Try {
-		$AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetAccountBalance().AvailableBalance.FormattedPrice
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-Assignment {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of an assignment.
 
@@ -1066,24 +1071,24 @@ function Get-Assignment {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$AssignmentId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$AssignmentId
+    )
 
-	[string[]]$ResponseGroup = $null
-	TestAmtApi
-	Try {
-		$AmtClient.GetAssignment($AssignmentId, $ResponseGroup).Assignment
-	}
-	Catch {
-		Write-AMTError
-	}
+    [string[]]$ResponseGroup = $null
+    TestAmtApi
+    Try {
+        $AmtClient.GetAssignment($AssignmentId, $ResponseGroup).Assignment
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-AssignmentsForHIT {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of assignments of the specified HIT.
 
@@ -1127,40 +1132,40 @@ function Get-AssignmentsForHIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId,
-		[Parameter(Position=1, Mandatory=$true)]
-		$SortDirection=$null,
-		[Parameter(Position=2, Mandatory=$true)]
-		[string]$AssignmentStatus,
-		[Parameter(Position=3, Mandatory=$true)]
-		$SortProperty=$null,
-		[Parameter(Position=4, Mandatory=$true)]
-		[string]$PageNumber=$null,
-		[Parameter(Position=5, Mandatory=$true)]
-		[string]$PageSize=$null
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        $SortDirection = $null,
+        [Parameter(Position = 2, Mandatory = $true)]
+        [string]$AssignmentStatus,
+        [Parameter(Position = 3, Mandatory = $true)]
+        $SortProperty = $null,
+        [Parameter(Position = 4, Mandatory = $true)]
+        [string]$PageNumber = $null,
+        [Parameter(Position = 5, Mandatory = $true)]
+        [string]$PageSize = $null
+    )
 
-	Throw "Not Implemented"
+    Throw "Not Implemented"
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetAssignmentsForHIT($HITId, $SortDirection, $AssignmentStatus, $SortProperty, $PageNumber, $PageSize, $null)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetAssignmentsForHIT($HITId, $SortDirection, $AssignmentStatus, $SortProperty, $PageNumber, $PageSize, $null)
+    }
+    Catch {
+        Write-AMTError
+    }
 
-	# TODO:
-	# Implement AssignmentStatus
-	# Implement ResponseGroup
-	# Alternative Get-AllAssignmentsForHit
+    # TODO:
+    # Implement AssignmentStatus
+    # Implement ResponseGroup
+    # Alternative Get-AllAssignmentsForHit
 }
 
 #########################################################################################
 function Get-AllAssignmentsForHIT {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of assignments of the specified HIT.
 
@@ -1178,23 +1183,23 @@ function Get-AllAssignmentsForHIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetAllAssignmentsForHIT($HITId)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetAllAssignmentsForHIT($HITId)
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-BlockedWorkers {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves list of blocked workers.
 
@@ -1208,18 +1213,18 @@ function Get-BlockedWorkers {
   .LINK
    about_PSAmt
 #>
-	TestAmtApi
-	Try {
-		$AmtClient.GetAllBlockedWorkersIterator()
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetAllBlockedWorkersIterator()
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-BonusPayments {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of bonus payments.
 
@@ -1254,24 +1259,24 @@ function Get-BonusPayments {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$HITId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$AssignmentId,
-		[Parameter(Position=2, Mandatory=$false)]
-		[int]$PageNumber=1,
-		[Parameter(Position=3, Mandatory=$false)]
-		[int]$PageSize=100
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$HITId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$AssignmentId,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [int]$PageNumber = 1,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [int]$PageSize = 100
+    )
 
-	TestAmtApi
+    TestAmtApi
 
-	if($HITId -and $AssignmentId) {
-		Write-Error "You can only specify HITId OR AssignmentId." -ErrorAction Stop
-	}
+    if ($HITId -and $AssignmentId) {
+        Write-Error "You can only specify HITId OR AssignmentId." -ErrorAction Stop
+    }
 
-$AmtBonus = @" 
+    $AmtBonus = @" 
     public class AmtBonus 
     {
       public string WorkerId { get; set; }
@@ -1283,37 +1288,36 @@ $AmtBonus = @"
     }
 "@
 
-	Add-Type -TypeDefinition $AmtBonus
-	$bonuslist = New-object 'System.Collections.Generic.List[AmtBonus]'
+    Add-Type -TypeDefinition $AmtBonus
+    $bonuslist = New-object 'System.Collections.Generic.List[AmtBonus]'
 
-	if($HITId) {
-		$ret = $AmtClient.GetBonusPaymentsByHit($HITId, $PageNumber, $PageSize)
-		$bonuslist = Format-BonusList -BonusPaymentResult $ret -HITId $HITId
-		if($ret.TotalNumResults -gt 100) {
-			$pageCount =  [Math]::Floor(($ret.TotalNumResults / 100))
-			for ($i = 1; $i -le $pageCount; $i++)
-			{ 
-			$ret = $AmtClient.GetBonusPaymentsByHit($HITId, ($i+1), $PageSize)
-			$bonuslist = Format-BonusList -BonusPaymentResult $ret -ListToAppend $bonuslist
-			}
-		}
-		return $bonuslist
-	}
+    if ($HITId) {
+        $ret = $AmtClient.GetBonusPaymentsByHit($HITId, $PageNumber, $PageSize)
+        $bonuslist = Format-BonusList -BonusPaymentResult $ret -HITId $HITId
+        if ($ret.TotalNumResults -gt 100) {
+            $pageCount = [Math]::Floor(($ret.TotalNumResults / 100))
+            for ($i = 1; $i -le $pageCount; $i++) { 
+                $ret = $AmtClient.GetBonusPaymentsByHit($HITId, ($i + 1), $PageSize)
+                $bonuslist = Format-BonusList -BonusPaymentResult $ret -ListToAppend $bonuslist
+            }
+        }
+        return $bonuslist
+    }
 
-	if($AssignmentId) {
-		$assign = Get-Assignment -AssignmentId $AssignmentId
-		$ret = $AmtClient.GetBonusPaymentsByAssignment($AssignmentId, $PageNumber, $PageSize)
-		if($ret.TotalNumResults -gt 100) { Write-Error "Can only parse 100 entries per assignment." -ErrorAction Stop }
-		$bonuslist = Format-BonusList -BonusPaymentResult $ret -HITId $assign.Assignment.HITId
-		return $bonuslist
-	}
+    if ($AssignmentId) {
+        $assign = Get-Assignment -AssignmentId $AssignmentId
+        $ret = $AmtClient.GetBonusPaymentsByAssignment($AssignmentId, $PageNumber, $PageSize)
+        if ($ret.TotalNumResults -gt 100) { Write-Error "Can only parse 100 entries per assignment." -ErrorAction Stop }
+        $bonuslist = Format-BonusList -BonusPaymentResult $ret -HITId $assign.Assignment.HITId
+        return $bonuslist
+    }
 
-	# Add proper error reporting logic
+    # Add proper error reporting logic
 }
 
 #########################################################################################
 function Format-BonusList {
-<# 
+    <# 
   .SYNOPSIS 
    Format a BonusPayment Result
 
@@ -1332,40 +1336,40 @@ function Format-BonusList {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		$BonusPaymentResult,
-		[Parameter(Position=1, Mandatory=$false)]
-		[System.Collections.Generic.List[AmtBonus]]$ListToAppend,
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$HITId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        $BonusPaymentResult,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [System.Collections.Generic.List[AmtBonus]]$ListToAppend,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$HITId
+    )
 
-	$bl = New-object 'System.Collections.Generic.List[AmtBonus]'
-	if($ListToAppend -ne $null) {
-		$bl = $ListToAppend
-	}
-
-	$elements = $BonusPaymentResult.BonusPayment
-    foreach($i in $elements) {
-		$bo = New-Object -TypeName AmtBonus
-		$bo.WorkerId = $i.WorkerId
-		$bo.BonusAmount = $i.BonusAmount.Amount
-		$bo.AssignmentId = $i.AssignmentId
-		$bo.HITId = $HITId
-		$bo.Reason = $i.Reason
-		$bo.GrantTime = $i.GrantTime
-		$bl.Add($bo)
+    $bl = New-object 'System.Collections.Generic.List[AmtBonus]'
+    if ($ListToAppend -ne $null) {
+        $bl = $ListToAppend
     }
-	return $bl
 
-	# TODO:
-	# Consider renaming objects
+    $elements = $BonusPaymentResult.BonusPayment
+    foreach ($i in $elements) {
+        $bo = New-Object -TypeName AmtBonus
+        $bo.WorkerId = $i.WorkerId
+        $bo.BonusAmount = $i.BonusAmount.Amount
+        $bo.AssignmentId = $i.AssignmentId
+        $bo.HITId = $HITId
+        $bo.Reason = $i.Reason
+        $bo.GrantTime = $i.GrantTime
+        $bl.Add($bo)
+    }
+    return $bl
+
+    # TODO:
+    # Consider renaming objects
 }
 
 #########################################################################################
 function Get-FileUploadUrl {
-<# 
+    <# 
   .SYNOPSIS 
    Returns a temporary URL to upload a file.
 
@@ -1387,25 +1391,25 @@ function Get-FileUploadUrl {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$AssignmentId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$QuestionIdentifier
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$AssignmentId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$QuestionIdentifier
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetFileUploadURL($AssignmentId, $QuestionIdentifier)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetFileUploadURL($AssignmentId, $QuestionIdentifier)
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-HIT {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of the specified HIT.
 
@@ -1421,23 +1425,23 @@ function Get-HIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetHIT($HITId, $null)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetHIT($HITId, $null)
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-AllHITs {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves all active HITs in the system.
 
@@ -1450,18 +1454,18 @@ function Get-AllHITs {
   .LINK
    about_PSAmt
 #>
-	TestAmtApi
-	Try {
-		$AmtClient.GetAllHITs()
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetAllHITs()
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-HITsForQualificationType {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of the specified HIT.
 
@@ -1488,29 +1492,29 @@ function Get-HITsForQualificationType {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationTypeId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$PageNumber=1,
-		[Parameter(Position=2, Mandatory=$true)]
-		[string]$PageSize=10
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationTypeId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$PageNumber = 1,
+        [Parameter(Position = 2, Mandatory = $true)]
+        [string]$PageSize = 10
+    )
 
-	Throw "Not implemented"
+    Throw "Not implemented"
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageNumber, $PageSize)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetHITsForQualificationType($QualificationTypeId, $PageNumber, $PageSize)
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-QualificationsForQualificationType {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of the specified HIT.
 
@@ -1539,35 +1543,35 @@ function Get-QualificationsForQualificationType {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationTypeId,
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$Status="Granted",
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$PageNumber=1,
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$PageSize=100
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationTypeId,
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$Status = "Granted",
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$PageNumber = 1,
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$PageSize = 100
+    )
 
-	Throw "Not Implemented"
+    Throw "Not Implemented"
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetQualificationsForQualificationType($QualificationTypeId, $Status, $PageNumber, $PageSize)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetQualificationsForQualificationType($QualificationTypeId, $Status, $PageNumber, $PageSize)
+    }
+    Catch {
+        Write-AMTError
+    }
 
-	# TODO:
-	# Implement Enum QualificationStatus
-	# Review order of PageNumber and PageSize
+    # TODO:
+    # Implement Enum QualificationStatus
+    # Review order of PageNumber and PageSize
 }
 
 #########################################################################################
 function Get-QualificationRequests {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves requests for qualifications.
 
@@ -1605,34 +1609,34 @@ function Get-QualificationRequests {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationTypeId
-		#[Parameter(Position=0, Mandatory=$true)]
-		#[string]$SortProperty="SubmitTime",
-		#[Parameter(Position=0, Mandatory=$true)]
-		#[string]$SortDirection="Ascending",
-		#[Parameter(Position=0, Mandatory=$true)]
-		#[string]$PageSize=10,
-		#[Parameter(Position=0, Mandatory=$true)]
-		#[string]$PageNumber=1
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationTypeId
+        #[Parameter(Position=0, Mandatory=$true)]
+        #[string]$SortProperty="SubmitTime",
+        #[Parameter(Position=0, Mandatory=$true)]
+        #[string]$SortDirection="Ascending",
+        #[Parameter(Position=0, Mandatory=$true)]
+        #[string]$PageSize=10,
+        #[Parameter(Position=0, Mandatory=$true)]
+        #[string]$PageNumber=1
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetQualificationRequests($QualificationTypeId, $null, $null, $null, $null)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetQualificationRequests($QualificationTypeId, $null, $null, $null, $null)
+    }
+    Catch {
+        Write-AMTError
+    }
 
-	# TODO:
-	# Implement missing parameters
+    # TODO:
+    # Implement missing parameters
 }
 
 #########################################################################################
 function Get-QualificationScore {
-<# 
+    <# 
   .SYNOPSIS 
    Returns a qualification score
 
@@ -1652,25 +1656,25 @@ function Get-QualificationScore {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationTypeId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$WorkerId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationTypeId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$WorkerId
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetQualificationScore($QualificationTypeId, $WorkerId)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetQualificationScore($QualificationTypeId, $WorkerId)
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-QualificationType {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of a qualification type.
 
@@ -1686,23 +1690,23 @@ function Get-QualificationType {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
-		[string]$QualificationTypeId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
+        [string]$QualificationTypeId
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetQualificationType($QualificationTypeId)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetQualificationType($QualificationTypeId)
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-AllQualificationTypes {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves the details of all qualification types.
 
@@ -1715,18 +1719,18 @@ function Get-AllQualificationTypes {
   .LINK
    about_PSAmt
 #>
-	TestAmtApi
-	Try {
-		$AmtClient.GetAllQualificationTypes()
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetAllQualificationTypes()
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Get-ReviewableHITs {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves requests for qualifications.
 
@@ -1764,40 +1768,40 @@ function Get-ReviewableHITs {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$HITTypeId,
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$Status="Reviewable",
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$SortProperty="Expiration",
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$SortDirection="Descending",
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$PageNumber=1,
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$PageSize=100
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$HITTypeId,
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$Status = "Reviewable",
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$SortProperty = "Expiration",
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$SortDirection = "Descending",
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$PageNumber = 1,
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$PageSize = 100
+    )
 
-	Throw "Not Implemented"
+    Throw "Not Implemented"
 
-	TestAmtApi
-	Try {
-		#$AmtClient.GetReviewableHITs($HITTypeId, $Status, $SortProperty, $SortDirection, $PageSize, $PageNumber)
-		$AmtClient.GetReviewableHITs($HITTypeId, $null, $null, $null, $null, $null)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        #$AmtClient.GetReviewableHITs($HITTypeId, $Status, $SortProperty, $SortDirection, $PageSize, $PageNumber)
+        $AmtClient.GetReviewableHITs($HITTypeId, $null, $null, $null, $null, $null)
+    }
+    Catch {
+        Write-AMTError
+    }
 	
-	# TODO: 
-	# Implement Enum ReviewableHitStatus
-	# Review PageNumber
+    # TODO: 
+    # Implement Enum ReviewableHitStatus
+    # Review PageNumber
 }
 
 #########################################################################################
 function Get-ReviewResultsForHIT {
-<# 
+    <# 
   .SYNOPSIS 
    Returns a qualification score
 
@@ -1832,36 +1836,36 @@ function Get-ReviewResultsForHIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$PolicyLevel,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$AssignmentId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$RetrieveActions,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$RetrieveResults
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$PolicyLevel,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$AssignmentId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$RetrieveActions,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$RetrieveResults
+    )
 
-	Throw "Not Implemented"
+    Throw "Not Implemented"
 
-	TestAmtApi
-	Try {
-		$AmtClient.GetReviewResultsForHIT($HITId, $PolicyLevel, $AssignmentId, $RetrieveActions, $RetrieveResults)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GetReviewResultsForHIT($HITId, $PolicyLevel, $AssignmentId, $RetrieveActions, $RetrieveResults)
+    }
+    Catch {
+        Write-AMTError
+    }
 
-	# TODO:
-	# PolicyLevels not implemented in API
+    # TODO:
+    # PolicyLevels not implemented in API
 }
 
 #########################################################################################
 function Grant-Bonus {
-<# 
+    <# 
   .SYNOPSIS 
    Grant a bonus.
 
@@ -1892,30 +1896,30 @@ function Grant-Bonus {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$WorkerId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$AssignmentId,
-		[Parameter(Position=2, Mandatory=$true)]
-		[decimal]$BonusAmount,
-		[Parameter(Position=3, Mandatory=$true)]
-		[string]$Reason
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$WorkerId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$AssignmentId,
+        [Parameter(Position = 2, Mandatory = $true)]
+        [decimal]$BonusAmount,
+        [Parameter(Position = 3, Mandatory = $true)]
+        [string]$Reason
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.GrantBonus($WorkerId, $BonusAmount, $AssignmentId, $Reason)
-		Write-Host "Granted $BonusAmount bonus to worker $WorkerId"
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GrantBonus($WorkerId, $BonusAmount, $AssignmentId, $Reason)
+        Write-Host "Granted $BonusAmount bonus to worker $WorkerId"
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Grant-QualificationRequest {
-<# 
+    <# 
   .SYNOPSIS 
    Grant a qualification.
 
@@ -1939,26 +1943,26 @@ function Grant-QualificationRequest {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationRequestId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[int]$IntegerValue=1
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationRequestId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [int]$IntegerValue = 1
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.GrantQualification($QualificationRequestId, $IntegerValue)
-		Write-Host "Granted qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.GrantQualification($QualificationRequestId, $IntegerValue)
+        Write-Host "Granted qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Send-WorkerNotification {
-<# 
+    <# 
   .SYNOPSIS 
    Send a notification.
 
@@ -1987,28 +1991,28 @@ function Send-WorkerNotification {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string[]]$WorkerId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$Subject,
-		[Parameter(Position=2, Mandatory=$true)]
-		[string]$MessageText
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string[]]$WorkerId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$Subject,
+        [Parameter(Position = 2, Mandatory = $true)]
+        [string]$MessageText
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
-		Write-Host "Notified worker(s) $WorkerId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.NotifyWorkers($Subject, $MessageText, $WorkerId)
+        Write-Host "Notified worker(s) $WorkerId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Register-HITType {
-<# 
+    <# 
   .SYNOPSIS 
    Register a HitType
 
@@ -2055,47 +2059,48 @@ function Register-HITType {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$Title,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$Description,
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$AutoApprovalDelayInSeconds,
-		[Parameter(Position=3, Mandatory=$false)]
-		[long]$AssignmentDurationInSeconds,
-		[Parameter(Position=4, Mandatory=$false)]
-		[decimal]$Reward,
-		[Parameter(Position=5, Mandatory=$false)]
-		[string]$Keywords,
-		[Parameter(Position=6, Mandatory=$false)]
-		$QualificationRequirement = $null,
-		[Parameter(Position=7, Mandatory=$false)]
-		$HITType = $null
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$Title,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$Description,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$AutoApprovalDelayInSeconds,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [long]$AssignmentDurationInSeconds,
+        [Parameter(Position = 4, Mandatory = $false)]
+        [decimal]$Reward,
+        [Parameter(Position = 5, Mandatory = $false)]
+        [string]$Keywords,
+        [Parameter(Position = 6, Mandatory = $false)]
+        $QualificationRequirement = $null,
+        [Parameter(Position = 7, Mandatory = $false)]
+        $HITType = $null
+    )
 
-	TestAmtApi
-	Try {
-		# Create with HITType object
-		if($HITType) {
-			$ht = $AmtClient.RegisterHITType($HITType.Title, $HITType.Description, $HITType.AutoApprovalDelayInSeconds, $HITType.AssignmentDurationInSeconds, $HITType.Reward.Amount, $HITType.Keywords, $HITType.QualificationRequirement)			
-		} else {
-			$ht = $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
-		}
-		$ht
-		Write-Host "Registered HITType" $ht -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        # Create with HITType object
+        if ($HITType) {
+            $ht = $AmtClient.RegisterHITType($HITType.Title, $HITType.Description, $HITType.AutoApprovalDelayInSeconds, $HITType.AssignmentDurationInSeconds, $HITType.Reward.Amount, $HITType.Keywords, $HITType.QualificationRequirement)			
+        }
+        else {
+            $ht = $AmtClient.RegisterHITType($Title, $Description, $AutoApprovalDelayInSeconds, $AssignmentDurationInSeconds, $Reward, $Keywords, $QualificationRequirement)
+        }
+        $ht
+        Write-Host "Registered HITType" $ht -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 
-	# TODO:
-	# Add working example
+    # TODO:
+    # Add working example
 }
 
 #########################################################################################
 function Deny-Assignment {
-<# 
+    <# 
   .SYNOPSIS 
    Reject an assignment.
 
@@ -2119,26 +2124,26 @@ function Deny-Assignment {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$AssignmentId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$RequesterFeedback
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$AssignmentId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$RequesterFeedback
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
-		Write-Host "Rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.RejectAssignment($AssignmentId, $RequesterFeedback)
+        Write-Host "Rejected assignment $AssignmentId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
-function Deny-QualificationRequest  {
-<# 
+function Deny-QualificationRequest {
+    <# 
   .SYNOPSIS 
    Reject a qualification request.
 
@@ -2161,26 +2166,26 @@ function Deny-QualificationRequest  {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationRequestId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$Reason
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationRequestId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$Reason
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.RejectQualificationRequest($QualificationRequestId, $Reason)
-		Write-Host "Rejected qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.RejectQualificationRequest($QualificationRequestId, $Reason)
+        Write-Host "Rejected qualification request $QualificationRequestId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Revoke-Qualification {
-<# 
+    <# 
   .SYNOPSIS 
    Revokes a qualification.
 
@@ -2205,28 +2210,28 @@ function Revoke-Qualification {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationTypeId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$WorkerId,
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$Reason
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationTypeId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$WorkerId,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$Reason
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.RevokeQualification($QualificationTypeId, $WorkerId, $Reason)
-		Write-Host "Revoked qualification $QualificationTypeId from worker $WorkerId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.RevokeQualification($QualificationTypeId, $WorkerId, $Reason)
+        Write-Host "Revoked qualification $QualificationTypeId from worker $WorkerId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Unblock-Worker {
-<# 
+    <# 
   .SYNOPSIS 
    Unblock a worker.
 
@@ -2247,26 +2252,26 @@ function Unblock-Worker {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$WorkerId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$Reason
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$WorkerId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$Reason
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.UnblockWorker($WorkerId, $Reason)
-		Write-Host "Unblocked worker $WorkerId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.UnblockWorker($WorkerId, $Reason)
+        Write-Host "Unblocked worker $WorkerId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Update-QualificationScore {
-<# 
+    <# 
   .SYNOPSIS 
    Updates a qualification score of a worker.
 
@@ -2293,28 +2298,28 @@ function Update-QualificationScore {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$QualificationTypeId,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string]$WorkerId,
-		[Parameter(Position=2, Mandatory=$true)]
-		[int]$IntegerValue
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$QualificationTypeId,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$WorkerId,
+        [Parameter(Position = 2, Mandatory = $true)]
+        [int]$IntegerValue
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.UpdateQualificationScore($QualificationTypeId, $WorkerId, $IntegerValue)
-		Write-Host "Updated qualification score of worker $WorkerId" -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.UpdateQualificationScore($QualificationTypeId, $WorkerId, $IntegerValue)
+        Write-Host "Updated qualification score of worker $WorkerId" -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Update-QualificationType {
-<# 
+    <# 
   .SYNOPSIS 
    Updates a qualification type.
 
@@ -2367,85 +2372,89 @@ function Update-QualificationType {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$QualificationTypeId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$Description,
-		[Parameter(Position=2, Mandatory=$false)]
-		[ValidateSet('Active','Inactive')]
-		[string]$QualificationTypeStatus,
-		[Parameter(Position=3, Mandatory=$false)]
-		[string]$Test,
-		[Parameter(Position=4, Mandatory=$false)]
-		[string]$AnswerKey="",
-		[Parameter(Position=5, Mandatory=$false)]
-		[long]$TestDurationInSeconds,
-		[Parameter(Position=6, Mandatory=$false)]
-		[long]$RetryDelayInSeconds,
-		[Parameter(Position=7, Mandatory=$false)]
-		[bool]$AutoGranted=$false,
-		[Parameter(Position=8, Mandatory=$false)]
-		[int]$AutoGrantedValue,
-		[Parameter(Position=9, Mandatory=$false)]
-		[QualificationType]$OldQualificationType
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$QualificationTypeId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$Description,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [ValidateSet('Active', 'Inactive')]
+        [string]$QualificationTypeStatus,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [string]$Test,
+        [Parameter(Position = 4, Mandatory = $false)]
+        [string]$AnswerKey = "",
+        [Parameter(Position = 5, Mandatory = $false)]
+        [long]$TestDurationInSeconds,
+        [Parameter(Position = 6, Mandatory = $false)]
+        [long]$RetryDelayInSeconds,
+        [Parameter(Position = 7, Mandatory = $false)]
+        [bool]$AutoGranted = $false,
+        [Parameter(Position = 8, Mandatory = $false)]
+        [int]$AutoGrantedValue,
+        [Parameter(Position = 9, Mandatory = $false)]
+        [QualificationType]$OldQualificationType
+    )
 
-	if($OldQualificationType) {
-		$qt = $OldQualificationType
-	} else {
-		$qt = New-Object QualificationType
-	}
+    if ($OldQualificationType) {
+        $qt = $OldQualificationType
+    }
+    else {
+        $qt = New-Object QualificationType
+    }
 
-	if($QualificationTypeId) { $qt.QualificationTypeId = $QualificationTypeId }
-	if($Description) { $qt.Description = $Description }
-	if($QualificationTypeStatus) { 
-		$qt.QualificationTypeStatus = $QualificationTypeStatus 
-		$qt.QualificationTypeStatusSpecified = $true
-	}
-	if($Test) { $qt.Test = $Test}
-	if($AnswerKey) { $qt.AnswerKey = $AnswerKey }
-	if($TestDurationInSeconds) {$qt.TestDurationInSeconds = $TestDurationInSeconds }
-	if($RetryDelayInSeconds) { 
-		$qt.RetryDelayInSeconds = $RetryDelayInSeconds 
-		$qt.RetryDelayInSecondsSpecified = $true
-	}
-	if($AutoGranted) { 
-		$qt.AutoGranted = $true 
-		$qt.AutoGrantedSpecified = $true
-	}
-	if($AutoGrantedValue) {
-		if($AutoGrantedValue -eq 0) {
-			$qt.AutoGrantedValue = 1 
-			$qt.AutoGrantedValueSpecified = $false
-		} else {
-			$qt.AutoGrantedValue = $AutoGrantedValue
-		$qt.AutoGrantedValueSpecified = $true
-		}
-	} else {
-		if($qt.AutoGrantedValue -eq 0) {
-			$qt.AutoGrantedValue = 1
-			$qt.AutoGrantedValueSpecified = $false
-		}
-	}
+    if ($QualificationTypeId) { $qt.QualificationTypeId = $QualificationTypeId }
+    if ($Description) { $qt.Description = $Description }
+    if ($QualificationTypeStatus) { 
+        $qt.QualificationTypeStatus = $QualificationTypeStatus 
+        $qt.QualificationTypeStatusSpecified = $true
+    }
+    if ($Test) { $qt.Test = $Test}
+    if ($AnswerKey) { $qt.AnswerKey = $AnswerKey }
+    if ($TestDurationInSeconds) {$qt.TestDurationInSeconds = $TestDurationInSeconds }
+    if ($RetryDelayInSeconds) { 
+        $qt.RetryDelayInSeconds = $RetryDelayInSeconds 
+        $qt.RetryDelayInSecondsSpecified = $true
+    }
+    if ($AutoGranted) { 
+        $qt.AutoGranted = $true 
+        $qt.AutoGrantedSpecified = $true
+    }
+    if ($AutoGrantedValue) {
+        if ($AutoGrantedValue -eq 0) {
+            $qt.AutoGrantedValue = 1 
+            $qt.AutoGrantedValueSpecified = $false
+        }
+        else {
+            $qt.AutoGrantedValue = $AutoGrantedValue
+            $qt.AutoGrantedValueSpecified = $true
+        }
+    }
+    else {
+        if ($qt.AutoGrantedValue -eq 0) {
+            $qt.AutoGrantedValue = 1
+            $qt.AutoGrantedValueSpecified = $false
+        }
+    }
 
-	TestAmtApi
-	Try {
-		if($Test) {
-			$AmtClient.UpdateQualificationTypeFull($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus, $qt.Test, $qt.AnswerKey, $qt.TestDurationInSeconds, $qt.RetryDelayInSeconds, $null, $null) 
-		} else {
-			$AmtClient.UpdateQualificationType($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus)
-		}
-		Write-Host "Updated QualificationType" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        if ($Test) {
+            $AmtClient.UpdateQualificationTypeFull($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus, $qt.Test, $qt.AnswerKey, $qt.TestDurationInSeconds, $qt.RetryDelayInSeconds, $null, $null) 
+        }
+        else {
+            $AmtClient.UpdateQualificationType($qt.QualificationTypeId, $qt.Description, $qt.QualificationTypeStatus)
+        }
+        Write-Host "Updated QualificationType" $qt.QualificationTypeId -ForegroundColor $AmtConsoleColor
+    }
+    Catch {
+        Write-AMTError
+    }
 }
 
 #########################################################################################
 function Search-QualificationTypes {
-<# 
+    <# 
   .SYNOPSIS 
    Search qualification types.
 
@@ -2487,35 +2496,35 @@ function Search-QualificationTypes {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$Query,
-		[Parameter(Position=1, Mandatory=$false)]
-		[bool]$MustBeRequestable=$true,
-		[Parameter(Position=2, Mandatory=$false)]
-		[bool]$MustBeOwnedByCaller=$true,
-		[Parameter(Position=3, Mandatory=$false)]
-		[int]$PageNumber=$null,
-		[Parameter(Position=4, Mandatory=$false)]
-		[int]$PageSize=$null
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$Query,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [bool]$MustBeRequestable = $true,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [bool]$MustBeOwnedByCaller = $true,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [int]$PageNumber = $null,
+        [Parameter(Position = 4, Mandatory = $false)]
+        [int]$PageSize = $null
+    )
 
-	TestAmtApi
-	Try {
-		$AmtClient.SearchQualificationTypes($Query, $MustBeRequestable, $MustBeOwnedByCaller, $null, $null, $null, $null)
-	}
-	Catch {
-		Write-AMTError
-	}
+    TestAmtApi
+    Try {
+        $AmtClient.SearchQualificationTypes($Query, $MustBeRequestable, $MustBeOwnedByCaller, $null, $null, $null, $null)
+    }
+    Catch {
+        Write-AMTError
+    }
 
-	# TODO:
-	# Review order of PageNumber, PageSize and maximal values
-	# Add additional parameters
+    # TODO:
+    # Review order of PageNumber, PageSize and maximal values
+    # Add additional parameters
 }
 
 #########################################################################################
 function New-QualificationRequirement {
-<# 
+    <# 
  .SYNOPSIS 
   Setup a qualification requirement object
 
@@ -2561,94 +2570,96 @@ function New-QualificationRequirement {
  .LINK
   about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$QualificationTypeId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[ValidateSet('LessThan','LessThanOrEqualTo', 'GreaterThan', 'GreaterThanOrEqualTo', 'EqualTo', 'NotEqualTo', 'Exists', 'DoesNotExist', 'In', 'NotIn')]
-		[string]$Comparator,
-		[Parameter(Position=2, Mandatory=$false)]
-		$IntegerValue,
-		[Parameter(Position=3, Mandatory=$false)]
-		[string]$LocaleValue,
-		[Parameter(Position=4, Mandatory=$false)]
-		[bool]$RequiredToPreview,
-		[Parameter(Position=5, Mandatory=$false)]
-		[ValidateSet('Masters','CategorizationMasters','PhotoModerationMasters','NumberHITsApproved', 'Locale', 'Adult','PercentAssignmentsApproved')]
-		[string]$BuiltIn, 
-		[Parameter(Position=6, Mandatory=$false)]
-		[Locale[]]$Locale,
-		[Parameter(Position=7, Mandatory=$false)]
-		[bool]$Sandbox=$AmtSandbox
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$QualificationTypeId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [ValidateSet('LessThan', 'LessThanOrEqualTo', 'GreaterThan', 'GreaterThanOrEqualTo', 'EqualTo', 'NotEqualTo', 'Exists', 'DoesNotExist', 'In', 'NotIn')]
+        [string]$Comparator,
+        [Parameter(Position = 2, Mandatory = $false)]
+        $IntegerValue,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [string]$LocaleValue,
+        [Parameter(Position = 4, Mandatory = $false)]
+        [bool]$RequiredToPreview,
+        [Parameter(Position = 5, Mandatory = $false)]
+        [ValidateSet('Masters', 'CategorizationMasters', 'PhotoModerationMasters', 'NumberHITsApproved', 'Locale', 'Adult', 'PercentAssignmentsApproved')]
+        [string]$BuiltIn, 
+        [Parameter(Position = 6, Mandatory = $false)]
+        [Locale[]]$Locale,
+        [Parameter(Position = 7, Mandatory = $false)]
+        [bool]$Sandbox = $AmtSandbox
+    )
 
-	switch($BuiltIn)
-	{
-		"Masters" {  
-			if($AmtSandbox) {
-			$QualificationTypeId = "2ARFPLSP75KLA8M8DH1HTEQVJT3SY6"
-			} else {
-			$QualificationTypeId = "2F1QJWKUDD8XADTFD2Q0G6UTO95ALH"
-			}
-			$DefaultComparator = "Exists"
-		}
-		"CategorizationMasters" {
-			if($AmtSandbox) {
-			$QualificationTypeId = "2F1KVCNHMVHV8E9PBUB2A4J79LU20F"
-			} else {
-			$QualificationTypeId = "2NDP2L92HECWY8NS8H3CK0CP5L9GHO"
-			}
-			$DefaultComparator = "Exists"
-		}
-		"PhotoModerationMasters" {
-			if($AmtSandbox) {
-			$QualificationTypeId = "2TGBB6BFMFFOM08IBMAFGGESC1UWJX"
-			} else {
-			$QualificationTypeId = "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG"
-			}
-			$DefaultComparator = "Exists" 
-		}
-		"NumberHITsApproved" {
-			$QualificationTypeId = "00000000000000000040"
-			$DefaultComparator = "GreaterThanOrEqualTo"
-		}
-		"Locale" {
-			$QualificationTypeId = "00000000000000000071"
-			$DefaultComparator = "EqualTo"
-		}
-		"Adult" {
-			$QualificationTypeId = "00000000000000000060"
-			$DefaultComparator = "EqualTo"
-			$IntegerValue = 1
-		}
-		"PercentAssignmentsApproved" {
-			$QualificationTypeId = "000000000000000000L0"
-			$DefaultComparator = "GreaterThanOrEqualTo"
-		}
-	}
+    switch ($BuiltIn) {
+        "Masters" {  
+            if ($AmtSandbox) {
+                $QualificationTypeId = "2ARFPLSP75KLA8M8DH1HTEQVJT3SY6"
+            }
+            else {
+                $QualificationTypeId = "2F1QJWKUDD8XADTFD2Q0G6UTO95ALH"
+            }
+            $DefaultComparator = "Exists"
+        }
+        "CategorizationMasters" {
+            if ($AmtSandbox) {
+                $QualificationTypeId = "2F1KVCNHMVHV8E9PBUB2A4J79LU20F"
+            }
+            else {
+                $QualificationTypeId = "2NDP2L92HECWY8NS8H3CK0CP5L9GHO"
+            }
+            $DefaultComparator = "Exists"
+        }
+        "PhotoModerationMasters" {
+            if ($AmtSandbox) {
+                $QualificationTypeId = "2TGBB6BFMFFOM08IBMAFGGESC1UWJX"
+            }
+            else {
+                $QualificationTypeId = "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG"
+            }
+            $DefaultComparator = "Exists" 
+        }
+        "NumberHITsApproved" {
+            $QualificationTypeId = "00000000000000000040"
+            $DefaultComparator = "GreaterThanOrEqualTo"
+        }
+        "Locale" {
+            $QualificationTypeId = "00000000000000000071"
+            $DefaultComparator = "EqualTo"
+        }
+        "Adult" {
+            $QualificationTypeId = "00000000000000000060"
+            $DefaultComparator = "EqualTo"
+            $IntegerValue = 1
+        }
+        "PercentAssignmentsApproved" {
+            $QualificationTypeId = "000000000000000000L0"
+            $DefaultComparator = "GreaterThanOrEqualTo"
+        }
+    }
 
-	if(!$Comparator) {
-		$Comparator = $DefaultComparator
-	}
+    if (!$Comparator) {
+        $Comparator = $DefaultComparator
+    }
 
-	$qr = New-Object QualificationRequirement
-	if($QualificationTypeId) { $qr.QualificationTypeId = $QualificationTypeId }
-	if($Comparator) { $qr.Comparator = $Comparator }
-	if($IntegerValue) { $qr.IntegerValue = $IntegerValue }
-	if($LocaleValue) { $qr.LocaleValue = New-Locale $LocaleValue }
-	if($Locale) { $qr.LocaleValue = $Locale }
-	if($RequiredToPreview) { $qr.RequiredToPreview = $RequiredToPreview }
-	if($RequiredToPreview) { $qr.RequiredToPreviewSpecified = $RequiredToPreview }
-	return $qr
+    $qr = New-Object QualificationRequirement
+    if ($QualificationTypeId) { $qr.QualificationTypeId = $QualificationTypeId }
+    if ($Comparator) { $qr.Comparator = $Comparator }
+    if ($IntegerValue) { $qr.IntegerValue = $IntegerValue }
+    if ($LocaleValue) { $qr.LocaleValue = New-Locale $LocaleValue }
+    if ($Locale) { $qr.LocaleValue = $Locale }
+    if ($RequiredToPreview) { $qr.RequiredToPreview = $RequiredToPreview }
+    if ($RequiredToPreview) { $qr.RequiredToPreviewSpecified = $RequiredToPreview }
+    return $qr
 
-	# TODO:
-	# Tests if quals with integer values are properly set, e.g. percent assignments approved
-	# Add description of parameters
+    # TODO:
+    # Tests if quals with integer values are properly set, e.g. percent assignments approved
+    # Add description of parameters
 }
 
 #########################################################################################
 function New-ExternalQuestion {
-<# 
+    <# 
  .SYNOPSIS 
   Setup a new external HIT question.
 
@@ -2668,22 +2679,22 @@ function New-ExternalQuestion {
  .LINK
   about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$ExternalURL,
-		[Parameter(Position=1, Mandatory=$false)]
-		[int]$FrameHeight=400
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$ExternalURL,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [int]$FrameHeight = 400
+    )
 
-	$eq = New-object Amazon.WebServices.MechanicalTurk.Domain.ExternalQuestion
-	$eq.ExternalURL = $ExternalURL
-	$eq.FrameHeight = $FrameHeight
-	return $eq
+    $eq = New-object Amazon.WebServices.MechanicalTurk.Domain.ExternalQuestion
+    $eq.ExternalURL = $ExternalURL
+    $eq.FrameHeight = $FrameHeight
+    return $eq
 }
 
 #########################################################################################
 function New-QuestionForm {
-<# 
+    <# 
  .SYNOPSIS 
   Setup a new Question Form.
 
@@ -2707,25 +2718,25 @@ function New-QuestionForm {
  .LINK
   about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$TemplatePath
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$TemplatePath
+    )
 
-	Throw "Not implemented"
+    Throw "Not implemented"
 
-	$template = gc $TemplatePath
-	$qf = New-Object Amazon.WebServices.MechanicalTurk.Domain.QuestionForm
-	return $qf
+    $template = gc $TemplatePath
+    $qf = New-Object Amazon.WebServices.MechanicalTurk.Domain.QuestionForm
+    return $qf
 
-	# TODO:
-	# Required for complex forms. Check if this really required.
-	# At least trouble tickets seems to work without it.
+    # TODO:
+    # Required for complex forms. Check if this really required.
+    # At least trouble tickets seems to work without it.
 }
 
 #########################################################################################
 function New-HtmlQuestion {
-<# 
+    <# 
  .SYNOPSIS 
   Setup a new HTML question.
 
@@ -2745,22 +2756,22 @@ function New-HtmlQuestion {
  .LINK
   about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HTMLContent,
-		[Parameter(Position=1, Mandatory=$false)]
-		[int]$FrameHeight=400
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HTMLContent,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [int]$FrameHeight = 400
+    )
 
-	$htmlQuestion = New-object HTMLQuestion
-	$htmlQuestion.HTMLContent = $HTMLContent
-	$htmlQuestion.FrameHeight = $FrameHeight
-	return $htmlQuestion
+    $htmlQuestion = New-object HTMLQuestion
+    $htmlQuestion.HTMLContent = $HTMLContent
+    $htmlQuestion.FrameHeight = $FrameHeight
+    return $htmlQuestion
 }
 
 #########################################################################################
 function New-HIT {
-<# 
+    <# 
  .SYNOPSIS 
   Setup a new HIT.
 
@@ -2829,73 +2840,74 @@ function New-HIT {
  .LINK
   about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$HITTypeId,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$HITLayoutId,
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$Title,
-		[Parameter(Position=3, Mandatory=$false)]
-		[string]$Description,
-		[Parameter(Position=4, Mandatory=$false)]
-		[string]$Question,
-		[Parameter(Position=5, Mandatory=$false)]
-		[string]$Keywords,
-		[Parameter(Position=6, Mandatory=$false)]
-		[int]$MaxAssignments,
-		[Parameter(Position=7, Mandatory=$false)]
-		[double]$Reward,
-		[Parameter(Position=8, Mandatory=$false)]
-		[long]$AutoApprovalDelayInSeconds,
-		[Parameter(Position=9, Mandatory=$false)]
-		[long]$Expiration,
-		[Parameter(Position=10, Mandatory=$false)]
-		[long]$AssignmentDurationInSeconds,
-		[Parameter(Position=11, Mandatory=$false)]
-		[string]$RequesterAnnotation,
-		[Parameter(Position=12, Mandatory=$false)]
-		$QualificationRequirement,
-		[Parameter(Position=13, Mandatory=$false)]
-		[HIT]$OldHit
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$HITTypeId,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$HITLayoutId,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$Title,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [string]$Description,
+        [Parameter(Position = 4, Mandatory = $false)]
+        [string]$Question,
+        [Parameter(Position = 5, Mandatory = $false)]
+        [string]$Keywords,
+        [Parameter(Position = 6, Mandatory = $false)]
+        [int]$MaxAssignments,
+        [Parameter(Position = 7, Mandatory = $false)]
+        [double]$Reward,
+        [Parameter(Position = 8, Mandatory = $false)]
+        [long]$AutoApprovalDelayInSeconds,
+        [Parameter(Position = 9, Mandatory = $false)]
+        [long]$Expiration,
+        [Parameter(Position = 10, Mandatory = $false)]
+        [long]$AssignmentDurationInSeconds,
+        [Parameter(Position = 11, Mandatory = $false)]
+        [string]$RequesterAnnotation,
+        [Parameter(Position = 12, Mandatory = $false)]
+        $QualificationRequirement,
+        [Parameter(Position = 13, Mandatory = $false)]
+        [HIT]$OldHit
+    )
 
-	if($OldHit) {
-		$hit = $OldHit
-	} else {
-		$hit = New-Object HIT
-	}
-	if($HITTypeId) { $hit.HITTypeId = $HITTypeId }
-	if($HITLayoutId) { $hit.HITLayoutId = $HITLayoutId }
-	if($Title) { $hit.Title = $Title }
-	if($Description) { $hit.Description = $Description }
-	if($Question) { $hit.Question = $Question }
-	if($Keywords) { $hit.Keywords = $Keywords }
-	if($MaxAssignments) { 
-		$hit.MaxAssignments = $MaxAssignments 
-		$hit.MaxAssignmentsSpecified = $true  
-	}
-	if($Reward) { $hit.Reward = New-Price $Reward }
-	if($AutoApprovalDelayInSeconds) { 
-		$hit.AutoApprovalDelayInSeconds = $AutoApprovalDelayInSeconds
-		$hit.AutoApprovalDelayInSecondsSpecified = $true
-	}
-	if($Expiration) { }
-	if($AssignmentDurationInSeconds) { 
-		$hit.AssignmentDurationInSeconds = $AssignmentDurationInSeconds
-		$hit.AssignmentDurationInSecondsSpecified = $true
-	}
-	if($RequesterAnnotation) { $hit.RequesterAnnotation = $RequesterAnnotation }
-	if($QualificationRequirement) { $hit.QualificationRequirement = $QualificationRequirement }
-	return $hit
+    if ($OldHit) {
+        $hit = $OldHit
+    }
+    else {
+        $hit = New-Object HIT
+    }
+    if ($HITTypeId) { $hit.HITTypeId = $HITTypeId }
+    if ($HITLayoutId) { $hit.HITLayoutId = $HITLayoutId }
+    if ($Title) { $hit.Title = $Title }
+    if ($Description) { $hit.Description = $Description }
+    if ($Question) { $hit.Question = $Question }
+    if ($Keywords) { $hit.Keywords = $Keywords }
+    if ($MaxAssignments) { 
+        $hit.MaxAssignments = $MaxAssignments 
+        $hit.MaxAssignmentsSpecified = $true  
+    }
+    if ($Reward) { $hit.Reward = New-Price $Reward }
+    if ($AutoApprovalDelayInSeconds) { 
+        $hit.AutoApprovalDelayInSeconds = $AutoApprovalDelayInSeconds
+        $hit.AutoApprovalDelayInSecondsSpecified = $true
+    }
+    if ($Expiration) { }
+    if ($AssignmentDurationInSeconds) { 
+        $hit.AssignmentDurationInSeconds = $AssignmentDurationInSeconds
+        $hit.AssignmentDurationInSecondsSpecified = $true
+    }
+    if ($RequesterAnnotation) { $hit.RequesterAnnotation = $RequesterAnnotation }
+    if ($QualificationRequirement) { $hit.QualificationRequirement = $QualificationRequirement }
+    return $hit
 
-	# TODO:
-	# Provide a an example
+    # TODO:
+    # Provide a an example
 }
 
 #########################################################################################
 function New-HITType {
-<# 
+    <# 
   .SYNOPSIS 
    Setup a new HITType object.
 
@@ -2938,62 +2950,62 @@ function New-HITType {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$Title,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$Description,
-		[Parameter(Position=2, Mandatory=$false)]
-		[string]$AutoApprovalDelayInSeconds,
-		[Parameter(Position=3, Mandatory=$false)]
-		[long]$AssignmentDurationInSeconds,
-		[Parameter(Position=4, Mandatory=$false)]
-		[decimal]$Reward,
-		[Parameter(Position=5, Mandatory=$false)]
-		[string]$Keywords,
-		[Parameter(Position=6, Mandatory=$false)]
-		$QualificationRequirement = $null,
-		[Parameter(Position=7, Mandatory=$false)]
-		$HITType = $null
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$Title,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$Description,
+        [Parameter(Position = 2, Mandatory = $false)]
+        [string]$AutoApprovalDelayInSeconds,
+        [Parameter(Position = 3, Mandatory = $false)]
+        [long]$AssignmentDurationInSeconds,
+        [Parameter(Position = 4, Mandatory = $false)]
+        [decimal]$Reward,
+        [Parameter(Position = 5, Mandatory = $false)]
+        [string]$Keywords,
+        [Parameter(Position = 6, Mandatory = $false)]
+        $QualificationRequirement = $null,
+        [Parameter(Position = 7, Mandatory = $false)]
+        $HITType = $null
+    )
 
-	$ht = New-Object Amazon.WebServices.MechanicalTurk.Domain.HITType
+    $ht = New-Object Amazon.WebServices.MechanicalTurk.Domain.HITType
 
-	if($HITType) {
-		$ht = $HITType
-	}
-	if($Title) {
-		$ht.Title = $Title
-	}
-	if($Description) {
-		$ht.Description = $Description
-	}
-	if($AutoApprovalDelayInSeconds) {
-		$ht.AutoApprovalDelayInSeconds = $AutoApprovalDelayInSeconds
-	}
-	if($AssignmentDurationInSeconds) {
-		$ht.AssignmentDurationInSeconds = $AssignmentDurationInSeconds
-	}
-	if($Reward) {
-		$ht.Reward = New-Price $Reward
-	}
-	if($Keywords) {
-		$ht.Keywords = $Keywords
-	}
-	if($QualificationRequirement) {
-		$ht.QualificationRequirement = $QualificationRequirement
-	}
+    if ($HITType) {
+        $ht = $HITType
+    }
+    if ($Title) {
+        $ht.Title = $Title
+    }
+    if ($Description) {
+        $ht.Description = $Description
+    }
+    if ($AutoApprovalDelayInSeconds) {
+        $ht.AutoApprovalDelayInSeconds = $AutoApprovalDelayInSeconds
+    }
+    if ($AssignmentDurationInSeconds) {
+        $ht.AssignmentDurationInSeconds = $AssignmentDurationInSeconds
+    }
+    if ($Reward) {
+        $ht.Reward = New-Price $Reward
+    }
+    if ($Keywords) {
+        $ht.Keywords = $Keywords
+    }
+    if ($QualificationRequirement) {
+        $ht.QualificationRequirement = $QualificationRequirement
+    }
 
-	return $ht
+    return $ht
 
-	# TODO:
-	# Provide a working example
+    # TODO:
+    # Provide a working example
 }
 
 
 #########################################################################################
 function New-Price {
-<# 
+    <# 
   .SYNOPSIS 
    Setup a new price object.
 
@@ -3019,21 +3031,21 @@ function New-Price {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[decimal]$Amount,
-		[Parameter(Position=1, Mandatory=$false)]
-		[string]$CurrencyCode="USD"
-	)
-	$price = New-Object Price
-	$price.Amount = $Amount
-	$price.CurrencyCode = "USD"
-	return $price
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [decimal]$Amount,
+        [Parameter(Position = 1, Mandatory = $false)]
+        [string]$CurrencyCode = "USD"
+    )
+    $price = New-Object Price
+    $price.Amount = $Amount
+    $price.CurrencyCode = "USD"
+    return $price
 }
 
 #########################################################################################
 function New-Locale {
-<# 
+    <# 
   .SYNOPSIS 
    Setup a new locale object.
 
@@ -3054,26 +3066,26 @@ function New-Locale {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$false)]
-		[string]$Country
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [string]$Country
+    )
 
-	if($Country.IndexOf("-") -gt 0) {
-		$Both = $Country.Split("-")
-		$Country = $Both[0].ToUpper()
-		$Subdivision = $Both[1].ToUpper()
-	}
+    if ($Country.IndexOf("-") -gt 0) {
+        $Both = $Country.Split("-")
+        $Country = $Both[0].ToUpper()
+        $Subdivision = $Both[1].ToUpper()
+    }
 
-	$locale = New-Object Locale
-	$locale.Country = $Country
-	$locale.Subdivision = $Subdivision
-	return $locale
+    $locale = New-Object Locale
+    $locale.Country = $Country
+    $locale.Subdivision = $Subdivision
+    return $locale
 }
 
 #########################################################################################
 function New-TestHIT {
-<# 
+    <# 
   .SYNOPSIS 
    Setup a new HIT object.
 
@@ -3096,28 +3108,28 @@ function New-TestHIT {
   .LINK
    about_PSAmt
 #>
-	$hit = New-Object HIT
-	$hit.Title = "Meaning of Live"
-	$hit.Description = "Answer a hard question."
-	$hit.Keywords = "Question, Testing"
-	$hit.Question = "What is the meaning of live?"
-	$hit.MaxAssignments = 10
-	$hit.MaxAssignmentsSpecified = $true
-	$hit.AssignmentDurationInSeconds = 3600
-	$hit.AssignmentDurationInSecondsSpecified = $true
-	$hit.AutoApprovalDelayInSeconds = 0
-	$hit.AutoApprovalDelayInSecondsSpecified = $true
-	$hit.Reward = New-Price 0
-	$hit.RequesterAnnotation = "LiveHIT-1"
-	return $hit
+    $hit = New-Object HIT
+    $hit.Title = "Meaning of Live"
+    $hit.Description = "Answer a hard question."
+    $hit.Keywords = "Question, Testing"
+    $hit.Question = "What is the meaning of live?"
+    $hit.MaxAssignments = 10
+    $hit.MaxAssignmentsSpecified = $true
+    $hit.AssignmentDurationInSeconds = 3600
+    $hit.AssignmentDurationInSecondsSpecified = $true
+    $hit.AutoApprovalDelayInSeconds = 0
+    $hit.AutoApprovalDelayInSecondsSpecified = $true
+    $hit.Reward = New-Price 0
+    $hit.RequesterAnnotation = "LiveHIT-1"
+    return $hit
 
-	# TODO: 
-	# Consider changing the example question.
+    # TODO: 
+    # Consider changing the example question.
 }
 
 #########################################################################################
 function Enter-HIT {
-<# 
+    <# 
   .SYNOPSIS 
    Open the HIT in preview mode.
 
@@ -3133,19 +3145,19 @@ function Enter-HIT {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string]$HITGroupId
-	)
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$HITGroupId
+    )
 
-	# Take the URL of the current client config and launch a browser
-	$url = $AmtClient.Config.WebsiteURL + "/mturk/preview?groupId=" + $HITGroupId
-	[System.Diagnostics.Process]::Start($url)
+    # Take the URL of the current client config and launch a browser
+    $url = $AmtClient.Config.WebsiteURL + "/mturk/preview?groupId=" + $HITGroupId
+    [System.Diagnostics.Process]::Start($url)
 }
 
 #########################################################################################
 function Get-RequesterStatistic {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves requester statistics.
 
@@ -3193,54 +3205,54 @@ function Get-RequesterStatistic {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
         [ValidateSet('NumberHITsAssignable', `
-                     'NumberHITsReviewable', `
-                     'NumberHITsCreated', `
-                     'NumberHITsCompleted', `
-                     'TotalRewardPayout', `
-                     'TotalRewardFeePayout', `
-                     'TotalFeePayout', `
-                     'TotalRewardAndFeePayout', `
-                     'TotalBonusPayout', `
-                     'TotalBonusFeePayout', `
-                     'EstimatedFeeLiability', `
-                     'EstimatedRewardLiability', `
-                     'EstimatedTotalLiability', `
-                     'NumberAssignmentsAvailable', `
-                     'NumberAssignmentsAccepted', `
-                     'NumberAssignmentsPending', `
-                     'NumberAssignmentsApproved', `
-                     'NumberAssignmentsRejected', `
-                     'NumberAssignmentsReturned', `
-                     'NumberAssignmentsAbandoned', `
-                     'AverageRewardAmount', `
-                     'PercentAssignmentsApproved', `
-                     'PercentAssignmentsRejected')]
-		[string]$Statistic,
-		[Parameter(Position=1, Mandatory=$false)]
+                'NumberHITsReviewable', `
+                'NumberHITsCreated', `
+                'NumberHITsCompleted', `
+                'TotalRewardPayout', `
+                'TotalRewardFeePayout', `
+                'TotalFeePayout', `
+                'TotalRewardAndFeePayout', `
+                'TotalBonusPayout', `
+                'TotalBonusFeePayout', `
+                'EstimatedFeeLiability', `
+                'EstimatedRewardLiability', `
+                'EstimatedTotalLiability', `
+                'NumberAssignmentsAvailable', `
+                'NumberAssignmentsAccepted', `
+                'NumberAssignmentsPending', `
+                'NumberAssignmentsApproved', `
+                'NumberAssignmentsRejected', `
+                'NumberAssignmentsReturned', `
+                'NumberAssignmentsAbandoned', `
+                'AverageRewardAmount', `
+                'PercentAssignmentsApproved', `
+                'PercentAssignmentsRejected')]
+        [string]$Statistic,
+        [Parameter(Position = 1, Mandatory = $false)]
         [ValidateSet('OneDay', `
-                     'SevenDays', `
-                     'ThirtyDays', `
-                     'LifeToDate')]
-		[string]$TimePeriod = "LifeToDate",
-        [Parameter(Position=2, Mandatory=$false)]
+                'SevenDays', `
+                'ThirtyDays', `
+                'LifeToDate')]
+        [string]$TimePeriod = "LifeToDate",
+        [Parameter(Position = 2, Mandatory = $false)]
         [string]$Count = 1
-	)
+    )
 
     TestAmtApi
     Try {
-		$AmtClient.GetRequesterStatistic($Statistic, $TimePeriod, $Count)
-	}
-	Catch {
-		Write-AMTError
-	}    
+        $AmtClient.GetRequesterStatistic($Statistic, $TimePeriod, $Count)
+    }
+    Catch {
+        Write-AMTError
+    }    
 }
 
 #########################################################################################
 function Get-RequesterWorkerStatistic {
-<# 
+    <# 
   .SYNOPSIS 
    Retrieves requester statistics.
 
@@ -3283,60 +3295,60 @@ function Get-RequesterWorkerStatistic {
   .LINK
    about_PSAmt
 #>
-	Param(
-		[Parameter(Position=0, Mandatory=$true)]
+    Param(
+        [Parameter(Position = 0, Mandatory = $true)]
         [string]$WorkerId,
-		[Parameter(Position=1, Mandatory=$true)]
+        [Parameter(Position = 1, Mandatory = $true)]
         [ValidateSet('NumberAssignmentsApproved', `
-                     'NumberAssignmentsRejected', `
-					 'PercentAssignmentsApproved', `
-					 'PercentAssignmentsRejected', `
-                     'NumberKnownAnswersCorrect', `
-                     'NumberKnownAnswersIncorrect', `
-                     'NumberKnownAnswersEvaluated', `
-                     'PercentKnownAnswersCorrect', `
-                     'NumberPluralityAnswersCorrect', `
-                     'NumberPluralityAnswersIncorrect', `
-                     'NumberPluralityAnswersEvaluated', `
-                     'PercentPluralityAnswersCorrect')]
-		[string]$Statistic,
-		[Parameter(Position=2, Mandatory=$false)]
+                'NumberAssignmentsRejected', `
+                'PercentAssignmentsApproved', `
+                'PercentAssignmentsRejected', `
+                'NumberKnownAnswersCorrect', `
+                'NumberKnownAnswersIncorrect', `
+                'NumberKnownAnswersEvaluated', `
+                'PercentKnownAnswersCorrect', `
+                'NumberPluralityAnswersCorrect', `
+                'NumberPluralityAnswersIncorrect', `
+                'NumberPluralityAnswersEvaluated', `
+                'PercentPluralityAnswersCorrect')]
+        [string]$Statistic,
+        [Parameter(Position = 2, Mandatory = $false)]
         [ValidateSet('OneDay', `
-                     'SevenDays', `
-                     'ThirtyDays', `
-                     'LifeToDate')]
-		[string]$TimePeriod = "LifeToDate",
-        [Parameter(Position=3, Mandatory=$false)]
+                'SevenDays', `
+                'ThirtyDays', `
+                'LifeToDate')]
+        [string]$TimePeriod = "LifeToDate",
+        [Parameter(Position = 3, Mandatory = $false)]
         [string]$Count = 1
-	)
+    )
 
-	TestAmtApi
+    TestAmtApi
     Try {
-		$AmtClient.GetRequesterWorkerStatistic($WorkerId, $Statistic, $TimePeriod, $Count)
-	}
-	Catch {
-		Write-AMTError
-	}    
+        $AmtClient.GetRequesterWorkerStatistic($WorkerId, $Statistic, $TimePeriod, $Count)
+    }
+    Catch {
+        Write-AMTError
+    }    
 }
 
 #########################################################################################
 function Search-HITs {
-	Throw "Not Implemented"
+    Throw "Not Implemented"
 }
 
 #########################################################################################
 function Send-TestEventNotification {
-	Throw "Not Implemented"
+    Throw "Not Implemented"
 }
 
 #########################################################################################
 function Set-HITAsReviewing {
-	Throw "Not Implemented"
+    Throw "Not Implemented"
 }
 
 #########################################################################################
 function Set-HITTypeNotification {
-	Throw "Not Implemented"
+    Throw "Not Implemented"
 }
 
 #########################################################################################

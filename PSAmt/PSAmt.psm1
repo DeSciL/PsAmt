@@ -15,86 +15,86 @@
 function about_PSAmt {
   <# 
   .SYNOPSIS 
-    PowerShell scripts to access Amazon Mechanical Turk
+      PowerShell scripts to access Amazon Mechanical Turk
 
   .DESCRIPTION
-    Connect to Amazom Mechanical Turk by means of PowerShell Wrappers
-    for the AMT .Net SDK. First step is to setup a connection to the web
-    service with: 
+      Connect to Amazom Mechanical Turk by means of PowerShell Wrappers
+      for the AMT .Net SDK. First step is to setup a connection to the web
+      service with: 
 
-    Connect-AMT -AccessKey "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
+      Connect-AMT -AccessKey "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
 
-    After a successful connection, the following operations are supported. 
-    See comment based help of the functions for more details, e.g. help Add-Hit
+      After a successful connection, the following operations are supported. 
+      See comment based help of the functions for more details, e.g. help Add-Hit
 
-    Settings:
-    - Connect-AMT
-    - Set-AMTKeys
+      Settings:
+      - Connect-AMT
+      - Set-AMTKeys
 
-    Working with Hits:
-    - Add-HIT
-    - Get-HIT
-    - Set-HITTypeOfHIT
-    - Disable-HIT
-    - Remove-HIT
-    - Expand-HIT
-    - Stop-HIT
-    - Register-HITType
+      Working with Hits:
+      - Add-HIT
+      - Get-HIT
+      - Set-HITTypeOfHIT
+      - Disable-HIT
+      - Remove-HIT
+      - Expand-HIT
+      - Stop-HIT
+      - Register-HITType
 
-    Assignments:
-    - Approve-Assignment
-    - Approve-RejectedAssignment
-    - Get-Assignment
-    - Get-AssignmentsForHIT
-    - Reject-Assignment
+      Assignments:
+      - Approve-Assignment
+      - Approve-RejectedAssignment
+      - Get-Assignment
+      - Get-AssignmentsForHIT
+      - Reject-Assignment
 
-    Qualifications:
-    - Add-QualificationType
-    - Get-QualificationType
-    - Update-QualificationType
-    - Remove-QualificationType
-    - Search-QualificationTypes
-    - Get-QualificationRequests
-    - Reject-QualificationRequest
-    - Get-QualificationScore
-    - Update-QualificationScore
-    - Grant-Qualification
-    - Revoke-Qualification
+      Qualifications:
+      - Add-QualificationType
+      - Get-QualificationType
+      - Update-QualificationType
+      - Remove-QualificationType
+      - Search-QualificationTypes
+      - Get-QualificationRequests
+      - Reject-QualificationRequest
+      - Get-QualificationScore
+      - Update-QualificationScore
+      - Grant-Qualification
+      - Revoke-Qualification
 
-    Bonus payments:
-    - Grant-Bonus
-    - Get-BonusPayments
+      Bonus payments:
+      - Grant-Bonus
+      - Get-BonusPayments
 
-    Misc:
-    - Get-AccountBalance
-    - Block-Worker
-    - Get-BlockedWorkers
-    - Unblock-Worker
-    - Get-FileUploadURL
-    - Send-WorkerNotification
-    - Get-RequesterStatistic
-    - Get-RequesterWorkerStatistic
+      Misc:
+      - Get-AccountBalance
+      - Block-Worker
+      - Get-BlockedWorkers
+      - Unblock-Worker
+      - Get-FileUploadURL
+      - Send-WorkerNotification
+      - Get-RequesterStatistic
+      - Get-RequesterWorkerStatistic
 
-    Currently not implemented:
-    // GetHITsForQualificationType
-    // GetQualificationsForQualificationType
-    // GetReviewableHITs
-    // GetReviewResultsForHIT
-    // Help
-    // SearchHITs
-    // SendTestEventNotification
-    // SetHITAsReviewing
-    // SetHITTypeNotification
+      Currently not implemented:
+      // GetHITsForQualificationType
+      // GetQualificationsForQualificationType
+      // GetReviewableHITs
+      // GetReviewResultsForHIT
+      // Help
+      // SearchHITs
+      // SendTestEventNotification
+      // SetHITAsReviewing
+      // SetHITTypeNotification
 
   .NOTES
-    PowerShell scripts are based on .Net code and
-    infrastructure provided by:
-    https://github.com/descil/dotnetmturk
-    http://mturkdotnet.codeplex.com/
-    http://www.mturk.com
+      PowerShell scripts are based on .Net code and
+      infrastructure provided by:
+      https://github.com/descil/dotnetmturk
+      http://mturkdotnet.codeplex.com/
+      http://www.mturk.com
 
   .LINK
-    https://github.com/descil/PSAmt
+      https://github.com/descil/PSAmt
   #>
 }
 
