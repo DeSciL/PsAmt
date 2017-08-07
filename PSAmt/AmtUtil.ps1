@@ -59,7 +59,7 @@ function Set-AMTKeys {
 		Specifies the file to store the encrypted keys. Default is Amt.key.
 
 	.EXAMPLE 
-		Set-AMTKeys -Passphrase "MyPassphrase" -AccessKey "MyAccessKey" -SecretKey "MySecretKey" -RequesterId "MyRequesterId"
+		PS C:\> Set-AMTKeys -Passphrase "MyPassphrase" -AccessKey "MyAccessKey" -SecretKey "MySecretKey" -RequesterId "MyRequesterId"
 
 	.LINK
 		Get-AmtKeys
@@ -131,13 +131,13 @@ function Get-AMTKeys {
 		Specifies the file which stores the encrypted keys
 
 	.EXAMPLE 
-		Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -AccessKey
+		PS C:\> Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -AccessKey
 
 	.EXAMPLE
-		Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -SecretKey
+		PS C:\> Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -SecretKey
 
 	.EXAMPLE
-		Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -RequesterId
+		PS C:\> Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -RequesterId
 
 	.LINK
 		Set-AmtKeys
@@ -230,10 +230,10 @@ function Protect-String {
 		Specifies the initial password. You can take the default value.
 
 	.EXAMPLE 
-		Protect-String "The sentence that needs to be protected." "My passphrase"
+		PS C:\> Protect-String "The sentence that needs to be protected." "My passphrase"
 
 	.EXAMPLE
-		Protect-String "Hello "Moon" "My passphrase"
+		PS C:\> Protect-String "Hello "Moon" "My passphrase"
 
 	.LINK
 		Unprotect-String
@@ -299,7 +299,7 @@ function Unprotect-String {
 		Specifies the initial password. You can take the default value.
 
 	.EXAMPLE 
-		Unprotect-String "The encrypted string" "My passphrase"
+		PS C:\> Unprotect-String "The encrypted string" "My passphrase"
 
 	.LINK
 		Protect-String

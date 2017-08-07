@@ -152,7 +152,7 @@ function Connect-AMT {
         Switches between sandbox and production site.
 
     .EXAMPLE 
-        Connect-AMT -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
+        PS C:\> Connect-AMT -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
 
     .LINK
         about_PSAmt
@@ -251,7 +251,7 @@ function Disconnect-AMT {
         Disconnects from AMT, clears all password and key usage.
 
     .EXAMPLE 
-        Disconnect-AMT
+        PS C:\> Disconnect-AMT
 
     .LINK
         about_PSAmt
@@ -280,7 +280,7 @@ function Approve-Assignment {
         Constraints: Can be up to 1024 characters.
 
     .EXAMPLE
-        Approve-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Well done."
+        PS C:\> Approve-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Well done."
 
     .LINK
         about_PSAmt
@@ -321,7 +321,7 @@ function Approve-RejectedAssignment {
         Constraints: Can be up to 1024 characters.
 
     .EXAMPLE
-        Approve-RejectedAssignment -AssignmentId "ABCDEFG" -RequesterFeedback "Sorry, now approved."
+        PS C:\> Approve-RejectedAssignment -AssignmentId "ABCDEFG" -RequesterFeedback "Sorry, now approved."
 
     .LINK
         about_PSAmt
@@ -369,7 +369,7 @@ function Grant-Qualification {
         the qualification was assigned to the Worker. Default is $false.
 
     .EXAMPLE
-        Grant-Qualification -QualificationTypeId "ABCDEFG" -WorkerId "ABCEDFG"
+        PS C:\> Grant-Qualification -QualificationTypeId "ABCDEFG" -WorkerId "ABCEDFG"
 
     .LINK
         about_PSAmt
@@ -414,7 +414,7 @@ function Block-Worker {
         you to keep track of your Workers. The Worker does not see this message.
 
     .EXAMPLE
-        Block-Worker -WorkerId "ABCDEFG" -Reason "Don't do this again!"
+        PS C:\> Block-Worker -WorkerId "ABCDEFG" -Reason "Don't do this again!"
 
     .LINK
         about_PSAmt
@@ -459,7 +459,7 @@ function Set-HITTypeOfHIT {
         ChangeHITTypeOfHIT -> Set-HitTypeOfHit
 
     .EXAMPLE
-        Set-HITTypeOfHIT -HITId "ABCDEFG" -HITTypeId "ABCDEFG"
+        PS C:\> Set-HITTypeOfHIT -HITId "ABCDEFG" -HITTypeId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -574,7 +574,7 @@ function Add-HIT {
         A HIT object.
 
     .EXAMPLE
-        Add-HIT -Title "President" -Description "Find name of president" -Reward 0.55  -Question "Who was the last president of the United States?" -MaxAssignments 5
+        PS C:\> Add-HIT -Title "President" -Description "Find name of president" -Reward 0.55  -Question "Who was the last president of the United States?" -MaxAssignments 5
 
         This is a simple hit asking for the last US president:
 
@@ -678,7 +678,7 @@ function Disable-HIT {
         The ID of the HIT to diable.
 
     .EXAMPLE
-        Disable-Hit -HITId "ABCDEFG"
+        PS C:\> Disable-Hit -HITId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -716,7 +716,7 @@ function Remove-HIT {
         DisposeHIT -> Remove-Hit
 
     .EXAMPLE
-        Remove-HIT -HITId "ABCDEFG"
+        PS C:\> Remove-HIT -HITId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -792,7 +792,7 @@ function Add-QualificationTypeFull {
         This parameter is used only if the AutoGranted parameter is true.
 
     .EXAMPLE
-        [...]
+        PS C:\> [...]
 
     .LINK
         about_PSAmt
@@ -865,7 +865,7 @@ function Add-QualificationType {
         version of the function: Add-QualificationTypeFull
 
     .EXAMPLE
-        Add-QualificationType "Test Qual" "Test Qualification" "Keyword 123"
+        PS C:\> Add-QualificationType "Test Qual" "Test Qualification" "Keyword 123"
 
     .LINK
         about_PSAmt
@@ -909,7 +909,7 @@ function Remove-QualificationType {
         DisposeQualificationType -> Remove-QualificationType
 
     .EXAMPLE
-        Remove-QualificationType -QualificationTypeId "ABCDEFG"
+        PS C:\> Remove-QualificationType -QualificationTypeId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -955,7 +955,7 @@ function Expand-HIT {
         ExtendHIT -> Expand-Hit
 
     .EXAMPLE
-        Expand-HIT -HITId "ABCDEFG" -M 20 -E 1000
+        PS C:\> Expand-HIT -HITId "ABCDEFG" -M 20 -E 1000
 
         This will add 20 assignments to the HIT and pushes the expiration time by 1000 seconds.
 
@@ -999,7 +999,7 @@ function Stop-HIT {
         ForceExpireHIT -> Stop-Hit
 
     .EXAMPLE
-        Stop-HIT -HITId "ABCDEFG"
+        PS C:\> Stop-HIT -HITId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1036,7 +1036,7 @@ function Get-AccountBalance {
         Turk account. On the sandbox this stays at $10'000.
 
     .EXAMPLE
-        Get-AccountBalance
+        PS C:\> Get-AccountBalance
 
     .LINK
         about_PSAmt
@@ -1066,7 +1066,7 @@ function Get-Assignment {
         The ID of the assignment that is being requested.
 
     .EXAMPLE
-        Get-Assignment -AssignmentId "ABCDEFG"
+        PS C:\> Get-Assignment -AssignmentId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1127,7 +1127,7 @@ function Get-AssignmentsForHIT {
         Type: positive integer
 
     .EXAMPLE
-        Get-AssignmentsForHIT -HITId "ABCDEFG"
+        PS C:\> Get-AssignmentsForHIT -HITId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1178,7 +1178,7 @@ function Get-AllAssignmentsForHIT {
         The ID of the HIT for which completed assignments are requested.
 
     .EXAMPLE
-        Get-AllAssignmentsForHit -HITId "ABCDEFG"
+        PS C:\> Get-AllAssignmentsForHit -HITId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1208,7 +1208,7 @@ function Get-BlockedWorkers {
         Workers who are blocked from working on your HITs.
 
     .EXAMPLE
-        Get-BlockedWorkers
+        PS C:\> Get-BlockedWorkers
 
     .LINK
         about_PSAmt
@@ -1251,10 +1251,10 @@ function Get-BonusPayments {
         The complete result set is divided into pages of this many bonus payments.
 
     .EXAMPLE
-        Get-BonusPayments -HITId "ABCDEFG"
+        PS C:\> Get-BonusPayments -HITId "ABCDEFG"
 
     .EXAMPLE
-        Get-BonusPayments -AssignmentId "ABCDEFG"
+        PS C:\> Get-BonusPayments -AssignmentId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1386,7 +1386,7 @@ function Get-FileUploadUrl {
         the QuestionForm of the HIT.
 
     .EXAMPLE
-        Get-FileUploadUrl -AssignmentId "ABCDEFG" -QuestionIdentifier "ABCDEFG"
+        PS C:\> Get-FileUploadUrl -AssignmentId "ABCDEFG" -QuestionIdentifier "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1420,7 +1420,7 @@ function Get-HIT {
         The ID of the HIT to retrieve.
 
     .EXAMPLE
-        Get-HIT -HITId "ABCDEFG"
+        PS C:\> Get-HIT -HITId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1449,7 +1449,7 @@ function Get-AllHITs {
         Retrieves all active HITs in the system.
 
     .EXAMPLE
-        Get-AllHITs
+        PS C:\> Get-AllHITs
 
     .LINK
         about_PSAmt
@@ -1487,7 +1487,7 @@ function Get-HITsForQualificationType {
         is divided into pages of this many HITs.
 
     .EXAMPLE
-        Get-HITsForQualificationType -QualificationTypeId "ABCDEFG"
+        PS C:\> Get-HITsForQualificationType -QualificationTypeId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1538,7 +1538,7 @@ function Get-QualificationsForQualificationType {
         pages of size PageSize, it returns the page corresponding to PageNumber.
 
     .EXAMPLE
-        Get-QualificationsForQualificationType -QualificationTypeId "ABCDEFG"
+        PS C:\> Get-QualificationsForQualificationType -QualificationTypeId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1604,7 +1604,7 @@ function Get-QualificationRequests {
         returns the page corresponding to the PageNumber parameter.
 
     .EXAMPLE
-        Get-QualificationRequests -QualificationTypeId "ABCDEFG"
+        PS C:\> Get-QualificationRequests -QualificationTypeId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1651,7 +1651,7 @@ function Get-QualificationScore {
         The ID of the Worker whose Qualification is being returned.
 
     .EXAMPLE
-        Get-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG"
+        PS C:\> Get-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1685,7 +1685,7 @@ function Get-QualificationType {
         The ID of the Qualification type, as returned by the CreateQualificationType operation.
 
     .EXAMPLE
-        Get-QualificationType -QualificationTypeId "ABCDEFG"
+        PS C:\> Get-QualificationType -QualificationTypeId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1714,7 +1714,7 @@ function Get-AllQualificationTypes {
         Retrieves the details of all qualification types.
 
     .EXAMPLE
-        Get-AllQualificationTypes
+        PS C:\> Get-AllQualificationTypes
 
     .LINK
         about_PSAmt
@@ -1763,7 +1763,7 @@ function Get-ReviewableHITs {
         complete sorted result set is divided into pages of this many HITs.
 
     .EXAMPLE
-        Get-ReviewableHits -HITTypeId "ABCDEFG"
+        PS C:\> Get-ReviewableHits -HITTypeId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1831,7 +1831,7 @@ function Get-ReviewResultsForHIT {
         Constraints: T or F
 
     .EXAMPLE
-        Get-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG"
+        PS C:\> Get-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -1891,7 +1891,7 @@ function Grant-Bonus {
         The Worker receiving the bonus can see this message.
 
     .EXAMPLE
-        Grant-Bonus -WorkerId "ABCDEFG" -AssignmentId "ABCDEFG" -BonusAmount 1.25 -Reason "Good job"
+        PS C:\> Grant-Bonus -WorkerId "ABCDEFG" -AssignmentId "ABCDEFG" -BonusAmount 1.25 -Reason "Good job"
 
     .LINK
         about_PSAmt
@@ -1938,7 +1938,7 @@ function Grant-QualificationRequest {
         GrantQualification -> Grant-QualificationRequest
 
     .EXAMPLE
-        Grant-QualificationRequest -QualificationRequestId "ABCDEFG" [-IntegerValue 1]
+        PS C:\> Grant-QualificationRequest -QualificationRequestId "ABCDEFG" [-IntegerValue 1]
 
     .LINK
         about_PSAmt
@@ -1982,11 +1982,11 @@ function Send-WorkerNotification {
         The text of the email message to send
 
     .EXAMPLE
-        Send-Notification -WorkerId "ABCDEFG" -Subject "Hi" -MessageText "A new hit is online."
+        PS C:\> Send-Notification -WorkerId "ABCDEFG" -Subject "Hi" -MessageText "A new hit is online."
 
     .EXAMPLE
-        $workers = "ABCDEFG1","ABCDEF2","ABCDEF3"
-        Send-Notification -WorkerId $workers -Subject "Hi" -MessageText "A new hit is online."
+        PS C:\> $workers = "ABCDEFG1","ABCDEF2","ABCDEF3"
+        PS C:\> Send-Notification -WorkerId $workers -Subject "Hi" -MessageText "A new hit is online."
 
     .LINK
         about_PSAmt
@@ -2054,7 +2054,7 @@ function Register-HITType {
         A predefined HITType object.
 
     .EXAMPLE
-        [...]
+        PS C:\> [...]
 
     .LINK
         about_PSAmt
@@ -2119,7 +2119,7 @@ function Deny-Assignment {
         Constraints: can be up to 1024 characters, including multi-byte characters.
 
     .EXAMPLE
-        Deny-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Bad work!"
+        PS C:\> Deny-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Bad work!"
 
     .LINK
         about_PSAmt
@@ -2161,7 +2161,7 @@ function Deny-QualificationRequest {
         who made the request.
 
     .EXAMPLE
-        Deny-QualificationRequest -QualificationRequestId "ABCDEFG" -Reason "Sorry!"
+        PS C:\> Deny-QualificationRequest -QualificationRequestId "ABCDEFG" -Reason "Sorry!"
 
     .LINK
         about_PSAmt
@@ -2205,7 +2205,7 @@ function Revoke-Qualification {
         The user who had the Qualification sees this message.
 
     .EXAMPLE
-        Revoke-Qualification -QualificationTypeId "ABCDEFG"  -WorkerId "ABCDEFG" -Reason "Sorry!"
+        PS C:\> Revoke-Qualification -QualificationTypeId "ABCDEFG"  -WorkerId "ABCDEFG" -Reason "Sorry!"
 
     .LINK
         about_PSAmt
@@ -2247,7 +2247,7 @@ function Unblock-Worker {
         The Worker does not see this message.
 
     .EXAMPLE
-        Unblock-Worker -WorkerId "ABCDEFG" -Reason "Be nice!"
+        PS C:\> Unblock-Worker -WorkerId "ABCDEFG" -Reason "Be nice!"
 
     .LINK
         about_PSAmt
@@ -2293,7 +2293,7 @@ function Update-QualificationScore {
         The new value for the Qualification.
 
     .EXAMPLE
-        Update-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG" -Reason "Much better now." -IntegerValue 5
+        PS C:\> Update-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG" -Reason "Much better now." -IntegerValue 5
 
     .LINK
           about_PSAmt
@@ -2367,7 +2367,7 @@ function Update-QualificationType {
         The Qualification value to use if AutoGranted is true.
 
     .EXAMPLE
-        Update-QualificationType -$QualificationTypeId "ABCDEFG" -Title "The new title"
+        PS C:\> Update-QualificationType -$QualificationTypeId "ABCDEFG" -Title "The new title"
 
     .LINK
         about_PSAmt
@@ -2491,7 +2491,7 @@ function Search-QualificationTypes {
         of this many Qualification types.
 
     .EXAMPLE
-        Search-QualificationTypes -Query "Test" -MustBeRequestable $false -MustBeOwnedByCaller $false
+        PS C:\> Search-QualificationTypes -Query "Test" -MustBeRequestable $false -MustBeOwnedByCaller $false
 
     .LINK
         about_PSAmt
@@ -2565,7 +2565,7 @@ function New-QualificationRequirement {
         Indicate where you want to use them.
 
     .EXAMPLE
-        Add-QualificationRequirement 
+        PS C:\> Add-QualificationRequirement 
 
     .LINK
         about_PSAmt
@@ -2674,7 +2674,7 @@ function New-ExternalQuestion {
         The height of the frame, in pixels.
 
     .EXAMPLE
-        New-ExternalQuestion -ExternalURL "https://mysite.com/" -FrameHeight 400 
+        PS C:\> New-ExternalQuestion -ExternalURL "https://mysite.com/" -FrameHeight 400 
 
     .LINK
         about_PSAmt
@@ -2713,7 +2713,7 @@ function New-QuestionForm {
         Path to the question form template
 
     .EXAMPLE
-        New-QuestionForm -TemplatePath c:\template.xml 
+       PS C:\> New-QuestionForm -TemplatePath c:\template.xml 
 
     .LINK
         about_PSAmt
@@ -2751,7 +2751,7 @@ function New-HtmlQuestion {
         The height of the frame, in pixels.
 
     .EXAMPLE
-        New-HtmlQuestion -HTMLContent "<h1>Hello World</h1>" -FrameHeight 400 
+        PS C:\> New-HtmlQuestion -HTMLContent "<h1>Hello World</h1>" -FrameHeight 400 
 
     .LINK
         about_PSAmt
@@ -2835,7 +2835,7 @@ function New-HIT {
         Not all attributes of the AMT HIT data structure are settable via parameters.
 
     .EXAMPLE
-        New-HIT
+       PS C:\>  New-HIT
 
     .LINK
         about_PSAmt
@@ -2945,7 +2945,7 @@ function New-HITType {
         A predefined HITType object
 
     .EXAMPLE
-        [...]
+       PS C:\>  [...]
 
     .LINK
         about_PSAmt
@@ -3023,10 +3023,10 @@ function New-Price {
         Default is USD.
 
     .EXAMPLE
-        New-Price 0.5
+        PS C:\> New-Price 0.5
 
     .EXAMPLE
-        New-Price -Amount 0.5 -CurrencyCode "USD"
+        PS C:\> New-Price -Amount 0.5 -CurrencyCode "USD"
 
     .LINK
         about_PSAmt
@@ -3058,10 +3058,10 @@ function New-Locale {
         e.g. US-NY.
 
     .EXAMPLE
-        New-Locale -Country "US"
+        PS C:\> New-Locale -Country "US"
 
     .EXAMPLE
-        New-Locale -Country "US-NY"
+        PS C:\> New-Locale -Country "US-NY"
 
     .LINK
         about_PSAmt
@@ -3103,7 +3103,7 @@ function New-TestHIT {
         RequesterAnnotation = "A test question"
 
     .EXAMPLE
-        New-TestHIT
+        PS C:\> New-TestHIT
 
     .LINK
         about_PSAmt
@@ -3140,7 +3140,7 @@ function Enter-HIT {
         The GroupId of the HIT
 
     .EXAMPLE
-        Enter-HIT -HITGroupId "ABCDEFG"
+        PS C:\> Enter-HIT -HITGroupId "ABCDEFG"
 
     .LINK
         about_PSAmt
@@ -3200,7 +3200,7 @@ function Get-RequesterStatistic {
         Specifies the number of data points to return.
 
     .EXAMPLE
-        Get-RequesterStatistic -s NumberHITsCompleted -t LifeToDate
+        PS C:\> Get-RequesterStatistic -s NumberHITsCompleted -t LifeToDate
 
     .LINK
         about_PSAmt
@@ -3290,7 +3290,7 @@ function Get-RequesterWorkerStatistic {
         Specifies the number of data points to return.
 
     .EXAMPLE
-        Get-RequesterStatistic -w "ABCDEFG" -s NumberAssignmentsApproved -t LifeToDate
+        PS C:\> Get-RequesterStatistic -w "ABCDEFG" -s NumberAssignmentsApproved -t LifeToDate
 
     .LINK
         about_PSAmt
