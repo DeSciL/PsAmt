@@ -11,6 +11,13 @@ function PSAmt_Assets {
     $assets += "PSAmt.psd1"
     $assets += "PSAmt.psm1"
 
+    $assets += "\samples\ApiSamples.ps1"
+    $assets += "\templates\Qualification.answer"
+    $assets += "\templates\Qualification.question"
+    $assets += "\templates\Survey.question"
+    $assets += "\templates\Trivia.question"
+    $assets += "\templates\Troubles.question"
+
     $assets
 }
 
