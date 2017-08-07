@@ -13,16 +13,16 @@
 #
 #########################################################################################
 function Write-AMTError {
-<# 
-  .SYNOPSIS 
-   Return formated error
-   
-  .DESCRIPTION
-   Return formated error
+	<# 
+	.SYNOPSIS 
+		Return formated error
 
-  .LINK
-   about_PSAmt
-#>
+	.DESCRIPTION
+		Return formated error
+
+	.LINK
+		about_PSAmt
+	#>
 	Write-Host $($_.Exception.Message) -ForegroundColor Red
 	Write-Host
 
@@ -32,40 +32,40 @@ function Write-AMTError {
 
 #########################################################################################
 function Set-AMTKeys {
-<# 
-  .SYNOPSIS 
-   Encrypt Amt Service Keys.
-  
-  .DESCRIPTION
-   Provide AMT AccessKey and SecretKey together with a passphrase
-   to protect credentials in an encrypted file (Amt.key).
-   If passphrase, access key and secret keys are not specified, the
-   user will be promped to enter them as secure keys. In future
-   connection requests, only the passphrase will be queried.
+	<# 
+	.SYNOPSIS 
+		Encrypt Amt Service Keys.
 
-  .PARAMETER Passphrase
-   Specifies the passphrase to encrypt the keys.
+	.DESCRIPTION
+		Provide AMT AccessKey and SecretKey together with a passphrase
+		to protect credentials in an encrypted file (Amt.key).
+		If passphrase, access key and secret keys are not specified, the
+		user will be promped to enter them as secure keys. In future
+		connection requests, only the passphrase will be queried.
 
-  .PARAMETER AccessKey
-   Specifies the Amazon Mechanical Turk AccessKey Id.
-   
-  .PARAMETER SecretKey
-   Specifies the Amazon Mechanical Turk SecretKey.
+	.PARAMETER Passphrase
+		Specifies the passphrase to encrypt the keys.
 
-  .PARAMETER RequesterId
-   Specifies the Amazon Mechanical Turk Requester Id
+	.PARAMETER AccessKey
+		Specifies the Amazon Mechanical Turk AccessKey Id.
 
-  .PARAMETER KeyFile
-   Specifies the file to store the encrypted keys. Default is Amt.key.
- 
-  .EXAMPLE 
-   Set-AMTKeys -Passphrase "MyPassphrase" -AccessKey "MyAccessKey" -SecretKey "MySecretKey" -RequesterId "MyRequesterId"
+	.PARAMETER SecretKey
+		Specifies the Amazon Mechanical Turk SecretKey.
 
-  .LINK
-   Get-AmtKeys
-   Protect-String
-   Unprotect-String
-#>
+	.PARAMETER RequesterId
+		Specifies the Amazon Mechanical Turk Requester Id
+
+	.PARAMETER KeyFile
+		Specifies the file to store the encrypted keys. Default is Amt.key.
+
+	.EXAMPLE 
+		Set-AMTKeys -Passphrase "MyPassphrase" -AccessKey "MyAccessKey" -SecretKey "MySecretKey" -RequesterId "MyRequesterId"
+
+	.LINK
+		Get-AmtKeys
+		Protect-String
+		Unprotect-String
+	#>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
 		[string]$Passphrase,
@@ -106,44 +106,44 @@ function Set-AMTKeys {
 
 #########################################################################################
 function Get-AMTKeys {
-<# 
-  .SYNOPSIS 
-   Decrypts AMT Service Keys
-   
-  .DESCRIPTION
-   Decrypts AMT Service Keys from an encrypted key file. If passphrase
-   is not provided, script prompts to enter a passphrase as a secure string.
-   Passphrase is stored in $Global:AmtPassphrase
+	<# 
+	.SYNOPSIS 
+		Decrypts AMT Service Keys
 
-  .PARAMETER Passphrase
-   Specifies the Passphrase to decrypt the keys
+	.DESCRIPTION
+		Decrypts AMT Service Keys from an encrypted key file. If passphrase
+		is not provided, script prompts to enter a passphrase as a secure string.
+		Passphrase is stored in $Global:AmtPassphrase
 
-  .PARAMETER AccessKey
-   Switch to request the Amazon Mechanical Turk AccessKey Id from secure store.
-   
-  .PARAMETER SecretKey
-   Switch to request the Amazon Mechanical Turk SecretKey from secure store.
+	.PARAMETER Passphrase
+		Specifies the Passphrase to decrypt the keys
 
-  .PARAMETER RequesterId
-   Switch to request the Amazon Mechanical Turk Requester Id
+	.PARAMETER AccessKey
+		Switch to request the Amazon Mechanical Turk AccessKey Id from secure store.
 
-  .PARAMETER KeyFile
-   Specifies the file which stores the encrypted keys
-   
-  .EXAMPLE 
-   Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -AccessKey
+	.PARAMETER SecretKey
+		Switch to request the Amazon Mechanical Turk SecretKey from secure store.
 
-  .EXAMPLE
-   Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -SecretKey
+	.PARAMETER RequesterId
+		Switch to request the Amazon Mechanical Turk Requester Id
 
-  .EXAMPLE
-   Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -RequesterId
+	.PARAMETER KeyFile
+		Specifies the file which stores the encrypted keys
 
-  .LINK
-   Set-AmtKeys
-   Protect-String
-   Unprotect-String
-#>
+	.EXAMPLE 
+		Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -AccessKey
+
+	.EXAMPLE
+		Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -SecretKey
+
+	.EXAMPLE
+		Get-AMTKeys -KeyFile "Amt.key" -Passphrase "My Passphrase" -RequesterId
+
+	.LINK
+		Set-AmtKeys
+		Protect-String
+		Unprotect-String
+	#>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
 		[string]$Passphrase,
@@ -210,35 +210,35 @@ function Get-AMTKeys {
 
 #########################################################################################
 function Protect-String {
-<# 
- .SYNOPSIS 
-  Protect / encrypt a string
-  
- .DESCRIPTION
-  Encrypts a string with Advanced Encryption Standard (AES/Rijndael).
+	<# 
+	.SYNOPSIS 
+		Protect / encrypt a string
 
- .PARAMETER  StringToProtect
-  Specifies the string that needs to be encrypted.
+	.DESCRIPTION
+		Encrypts a string with Advanced Encryption Standard (AES/Rijndael).
 
- .PARAMETER  Passphrase
-  Specifies the passphrase to use with encryption.
+	.PARAMETER  StringToProtect
+		Specifies the string that needs to be encrypted.
 
- .PARAMETER  Salt
-  Specifies the passphrase salt. You can take the default value.
+	.PARAMETER  Passphrase
+		Specifies the passphrase to use with encryption.
 
- .PARAMETER  Init
-  Specifies the initial password. You can take the default value.
-  
- .EXAMPLE 
-  Protect-String "The sentence that needs to be protected." "My passphrase"
+	.PARAMETER  Salt
+		Specifies the passphrase salt. You can take the default value.
 
- .EXAMPLE
-  Protect-String "Hello "Moon" "My passphrase"
+	.PARAMETER  Init
+		Specifies the initial password. You can take the default value.
 
- .LINK
-  Unprotect-String
-  http://poshcode.org/116
-#>
+	.EXAMPLE 
+		Protect-String "The sentence that needs to be protected." "My passphrase"
+
+	.EXAMPLE
+		Protect-String "Hello "Moon" "My passphrase"
+
+	.LINK
+		Unprotect-String
+		http://poshcode.org/116
+	#>
 	Param(
 		[Parameter(Position=0, Mandatory=$True, ValueFromPipeline=$true)]
 		[string]$StringToProtect,
@@ -279,32 +279,32 @@ function Protect-String {
 
 #########################################################################################
 function Unprotect-String {
-<# 
- .SYNOPSIS 
-  Unprotect / encrypt a string
-  
- .DESCRIPTION
-  Decrypts a string with Advanced Encryption Standard (AES/Rijndael).
-  
- .PARAMETER EncryptedString
-  Specifies the string that needs to be decrypted.
+	<# 
+	.SYNOPSIS 
+		Unprotect / encrypt a string
 
- .PARAMETER Passphrase
-  Specifies the passphrase used to encrypt the string.
+	.DESCRIPTION
+		Decrypts a string with Advanced Encryption Standard (AES/Rijndael).
 
- .PARAMETER Salt
-  Specifies the passphrase salt. You can take the default value.
+	.PARAMETER EncryptedString
+		Specifies the string that needs to be decrypted.
 
- .PARAMETER Init
-  Specifies the initial password. You can take the default value.
+	.PARAMETER Passphrase
+		Specifies the passphrase used to encrypt the string.
 
- .EXAMPLE 
-  Unprotect-String "The encrypted string" "My passphrase"
+	.PARAMETER Salt
+		Specifies the passphrase salt. You can take the default value.
 
- .LINK
-  Protect-String
-  http://poshcode.org/116
-#>
+	.PARAMETER Init
+		Specifies the initial password. You can take the default value.
+
+	.EXAMPLE 
+		Unprotect-String "The encrypted string" "My passphrase"
+
+	.LINK
+		Protect-String
+		http://poshcode.org/116
+	#>
 	Param(
 		[Parameter(Position=0, Mandatory=$True, ValueFromPipeline=$true)]
 		[string]$EncryptedString,
