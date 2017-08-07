@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuestionForm xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionForm.xsd">
+  <Overview>
+    <Title>Trouble Ticket</Title>
+  </Overview>
+  <Question>
+    <QuestionIdentifier>comments</QuestionIdentifier>
+    <QuestionContent>
+      <Text>Use this form in case you have encountered problems with our HITs. Please briefly explain what kind of of trouble you ran into.</Text>
+    </QuestionContent>
+    <AnswerSpecification>
+      <FreeTextAnswer>
+        <NumberOfLinesSuggestion>10</NumberOfLinesSuggestion>
+      </FreeTextAnswer>
+    </AnswerSpecification>
+  </Question>
+  <Question>
+    <QuestionIdentifier>exitcode</QuestionIdentifier>
+    <QuestionContent>
+      <Text>If you have received a redemption code, please paste it below.</Text>
+    </QuestionContent>
+    <AnswerSpecification>
+      <FreeTextAnswer>
+        <NumberOfLinesSuggestion>1</NumberOfLinesSuggestion>
+      </FreeTextAnswer>
+    </AnswerSpecification>
+  </Question>
+  <Overview>
+    <Text>If we can confirm your problem, you will receive the reward by bonus. Sorry for any inconvenience!</Text>
+    <Text>Best regards, your requester</Text>
+  </Overview>
+</QuestionForm>
