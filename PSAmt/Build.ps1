@@ -12,6 +12,8 @@ function PSAmt_Assets {
     $assets += "PSAmt.psm1"
 
     $assets += "lib\Amazon.WebServices.MechanicalTurk.dll"
+    $assets += "lib\Amazon.WebServices.MechanicalTurk.pdb"
+    $assets += "lib\Amazon.WebServices.MechanicalTurk.xml"
 
     $assets += "\samples\ApiSamples.ps1"
     
