@@ -1,5 +1,5 @@
 #########################################################################################
-# PsAmt Module - Utility Functions
+# PSAmt Module - Utility Functions
 # stwehrli@gmail.com
 # 6may2014
 #########################################################################################
@@ -21,7 +21,7 @@ function Write-AMTError {
    Return formated error
 
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Write-Host $($_.Exception.Message) -ForegroundColor Red
 	Write-Host

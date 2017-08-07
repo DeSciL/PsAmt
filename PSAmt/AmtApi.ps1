@@ -1,5 +1,5 @@
 #########################################################################################
-# PsAmt Module - Amazon Mechanical Turk .NET API for PowerShell
+# PSAmt Module - Amazon Mechanical Turk .NET API for PowerShell
 # stwehrli@gmail.com
 # 28sept2015
 #########################################################################################
@@ -82,7 +82,7 @@ function LoadAmt {
   Loads Mturk .Net SDK dll and prepares required objects.
 
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	# Set assembly location
 	$assembly = "Amazon.WebServices.MechanicalTurk.dll"
@@ -115,7 +115,7 @@ function Test-AmtApi {
   a connection is established.
 
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	TestAmtApi
 }
@@ -155,7 +155,7 @@ function Connect-AMT {
    Connect-AMT -AccessKeyId "MyAccessKeyId" -SecretKey "MySecretKey" -Sandbox
 
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -250,7 +250,7 @@ function Disconnect-AMT {
    Disconnect-AMT
 
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	$Global:AmtConfig = $null
 	$Global:AmtClient = $null
@@ -279,7 +279,7 @@ function Approve-Assignment {
    Approve-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Well done."
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -320,7 +320,7 @@ function Approve-RejectedAssignment {
    Approve-RejectedAssignment -AssignmentId "ABCDEFG" -RequesterFeedback "Sorry, now approved."
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -368,7 +368,7 @@ function Grant-Qualification {
    Grant-Qualification -QualificationTypeId "ABCDEFG" -WorkerId "ABCEDFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -413,7 +413,7 @@ function Block-Worker {
    Block-Worker -WorkerId "ABCDEFG" -Reason "Don't do this again!"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -458,7 +458,7 @@ function Set-HITTypeOfHIT {
    Set-HITTypeOfHIT -HITId "ABCDEFG" -HITTypeId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -588,7 +588,7 @@ function Add-HIT {
    Add-HIT -HITTypeId $hitTypeId -Keywords "keyword1, keyword2" -Question $q  -LifetimeInSeconds 3600 -MaxAssignments 5  -RequesterAnnotation "My External HIT"
    
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -676,7 +676,7 @@ function Disable-HIT {
   Disable-Hit -HITId "ABCDEFG"
   
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -714,7 +714,7 @@ function Remove-HIT {
   Remove-HIT -HITId "ABCDEFG"
   
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -790,7 +790,7 @@ function Add-QualificationTypeFull {
    [...]
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -863,7 +863,7 @@ function Add-QualificationType {
    Add-QualificationType "Test Qual" "Test Qualification" "Keyword 123"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -907,7 +907,7 @@ function Remove-QualificationType {
    Remove-QualificationType -QualificationTypeId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -955,7 +955,7 @@ function Expand-HIT {
    This will add 20 assignments to the HIT and pushes the expiration time by 1000 seconds.
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -997,7 +997,7 @@ function Stop-HIT {
    Stop-HIT -HITId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1034,7 +1034,7 @@ function Get-AccountBalance {
   Get-AccountBalance
 
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	TestAmtApi
 	Try {
@@ -1064,7 +1064,7 @@ function Get-Assignment {
    Get-Assignment -AssignmentId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1125,7 +1125,7 @@ function Get-AssignmentsForHIT {
    Get-AssignmentsForHIT -HITId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1176,7 +1176,7 @@ function Get-AllAssignmentsForHIT {
    Get-AllAssignmentsForHit -HITId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1206,7 +1206,7 @@ function Get-BlockedWorkers {
    Get-BlockedWorkers
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	TestAmtApi
 	Try {
@@ -1252,7 +1252,7 @@ function Get-BonusPayments {
    Get-BonusPayments -AssignmentId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -1330,7 +1330,7 @@ function Format-BonusList {
    The ID of the HIT.
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -1385,7 +1385,7 @@ function Get-FileUploadUrl {
    Get-FileUploadUrl -AssignmentId "ABCDEFG" -QuestionIdentifier "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1419,7 +1419,7 @@ function Get-HIT {
    Get-HIT -HITId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1448,7 +1448,7 @@ function Get-AllHITs {
    Get-AllHITs
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	TestAmtApi
 	Try {
@@ -1486,7 +1486,7 @@ function Get-HITsForQualificationType {
    Get-HITsForQualificationType -QualificationTypeId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1537,7 +1537,7 @@ function Get-QualificationsForQualificationType {
    Get-QualificationsForQualificationType -QualificationTypeId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1603,7 +1603,7 @@ function Get-QualificationRequests {
    Get-QualificationRequests -QualificationTypeId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1650,7 +1650,7 @@ function Get-QualificationScore {
    Get-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1684,7 +1684,7 @@ function Get-QualificationType {
    Get-QualificationType -QualificationTypeId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
@@ -1713,7 +1713,7 @@ function Get-AllQualificationTypes {
    Get-AllQualificationTypes
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	TestAmtApi
 	Try {
@@ -1762,7 +1762,7 @@ function Get-ReviewableHITs {
    Get-ReviewableHits -HITTypeId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -1830,7 +1830,7 @@ function Get-ReviewResultsForHIT {
    Get-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1890,7 +1890,7 @@ function Grant-Bonus {
    Grant-Bonus -WorkerId "ABCDEFG" -AssignmentId "ABCDEFG" -BonusAmount 1.25 -Reason "Good job"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1937,7 +1937,7 @@ function Grant-QualificationRequest {
    Grant-QualificationRequest -QualificationRequestId "ABCDEFG" [-IntegerValue 1]
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -1985,7 +1985,7 @@ function Send-WorkerNotification {
    Send-Notification -WorkerId $workers -Subject "Hi" -MessageText "A new hit is online."
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2053,7 +2053,7 @@ function Register-HITType {
    [...]
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -2117,7 +2117,7 @@ function Deny-Assignment {
    Deny-Assignment -AssignmentId "ABCDEFG" -RequesterFeedback "Bad work!"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2159,7 +2159,7 @@ function Deny-QualificationRequest  {
    Deny-QualificationRequest -QualificationRequestId "ABCDEFG" -Reason "Sorry!"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2203,7 +2203,7 @@ function Revoke-Qualification {
    Revoke-Qualification -QualificationTypeId "ABCDEFG"  -WorkerId "ABCDEFG" -Reason "Sorry!"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2245,7 +2245,7 @@ function Unblock-Worker {
    Unblock-Worker -WorkerId "ABCDEFG" -Reason "Be nice!"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2291,7 +2291,7 @@ function Update-QualificationScore {
    Update-QualificationScore -QualificationTypeId "ABCDEFG" -WorkerId "ABCDEFG" -Reason "Much better now." -IntegerValue 5
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2365,7 +2365,7 @@ function Update-QualificationType {
    Update-QualificationType -$QualificationTypeId "ABCDEFG" -Title "The new title"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -2485,7 +2485,7 @@ function Search-QualificationTypes {
    Search-QualificationTypes -Query "Test" -MustBeRequestable $false -MustBeOwnedByCaller $false
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2559,7 +2559,7 @@ function New-QualificationRequirement {
   Add-QualificationRequirement 
   
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -2666,7 +2666,7 @@ function New-ExternalQuestion {
   New-ExternalQuestion -ExternalURL "https://mysite.com/" -FrameHeight 400 
   
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2705,7 +2705,7 @@ function New-QuestionForm {
   New-QuestionForm -TemplatePath c:\template.xml 
   
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2743,7 +2743,7 @@ function New-HtmlQuestion {
   New-HtmlQuestion -HTMLContent "<h1>Hello World</h1>" -FrameHeight 400 
   
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -2827,7 +2827,7 @@ function New-HIT {
   New-HIT [...]
   
  .LINK
-  about_PsAmt
+  about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -2936,7 +2936,7 @@ function New-HITType {
    [...]
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -3017,7 +3017,7 @@ function New-Price {
    New-Price -Amount 0.5 -CurrencyCode "USD"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -3052,7 +3052,7 @@ function New-Locale {
    New-Locale -Country "US-NY"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$false)]
@@ -3094,7 +3094,7 @@ function New-TestHIT {
    New-TestHIT
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	$hit = New-Object HIT
 	$hit.Title = "Meaning of Live"
@@ -3131,7 +3131,7 @@ function Enter-HIT {
    Enter-HIT -HITGroupId "ABCDEFG"
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -3191,7 +3191,7 @@ function Get-RequesterStatistic {
    Get-RequesterStatistic -s NumberHITsCompleted -t LifeToDate
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]
@@ -3281,7 +3281,7 @@ function Get-RequesterWorkerStatistic {
    Get-RequesterStatistic -w "ABCDEFG" -s NumberAssignmentsApproved -t LifeToDate
   
   .LINK
-   about_PsAmt
+   about_PSAmt
 #>
 	Param(
 		[Parameter(Position=0, Mandatory=$true)]

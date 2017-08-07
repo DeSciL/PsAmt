@@ -1,4 +1,4 @@
-# PsAmt
+# PSAmt
 
 PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
@@ -26,64 +26,64 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 ### Methods
 
-     Get-Command -Module PsAmt
+     Get-Command -Module PSAmt
 
      CommandType  Name                                       ModuleName
      -----------  ----                                       ----------
-     Function     about_PsAmt                                PsAmt
-     Function     Add-HIT                                    PsAmt
-     Function     Add-QualificationType                      PsAmt
-     Function     Add-QualificationTypeFull                  PsAmt
-     Function     Approve-Assignment                         PsAmt
-     Function     Approve-RejectedAssignment                 PsAmt
-     Function     Block-Worker                               PsAmt
-     Function     Connect-AMT                                PsAmt
-     Function     Deny-Assignment                            PsAmt
-     Function     Deny-QualificationRequest                  PsAmt
-     Function     Disable-HIT                                PsAmt
-     Function     Disconnect-AMT                             PsAmt
-     Function     Enter-HIT                                  PsAmt
-     Function     Expand-HIT                                 PsAmt
-     Function     Get-AccountBalance                         PsAmt
-     Function     Get-AllAssignmentsForHIT                   PsAmt
-     Function     Get-AllHITs                                PsAmt
-     Function     Get-AllQualificationTypes                  PsAmt
-     Function     Get-AMTKeys                                PsAmt
-     Function     Get-Assignment                             PsAmt
-     Function     Get-BlockedWorkers                         PsAmt
-     Function     Get-BonusPayments                          PsAmt
-     Function     Get-FileUploadUrl                          PsAmt
-     Function     Get-HIT                                    PsAmt
-     Function     Get-QualificationRequests                  PsAmt
-     Function     Get-QualificationScore                     PsAmt
-     Function     Get-QualificationsForQualificationType     PsAmt
-     Function     Get-QualificationType                      PsAmt
-     Function     Get-RequesterStatistic                     PsAmt
-	   Function     Get-RequesterWorkerStatistc                PsAmt
-     Function     Get-ReviewableHITs                         PsAmt
-     Function     Grant-Bonus                                PsAmt
-     Function     Grant-Qualification                        PsAmt
-     Function     Grant-QualificationRequest                 PsAmt
-     Function     New-ExternalQuestion                       PsAmt
-     Function     New-HIT                                    PsAmt
-     Function     New-HtmlQuestion                           PsAmt
-     Function     New-Locale                                 PsAmt
-     Function     New-Price                                  PsAmt
-     Function     New-QualificationRequirement               PsAmt
-     Function     New-QuestionForm                           PsAmt
-     Function     New-TestHIT                                PsAmt
-     Function     Register-HITType                           PsAmt
-     Function     Remove-HIT                                 PsAmt
-     Function     Remove-QualificationType                   PsAmt
-     Function     Revoke-Qualification                       PsAmt
-     Function     Search-QualificationTypes                  PsAmt
-     Function     Send-WorkerNotification                    PsAmt
-     Function     Set-AMTKeys                                PsAmt
-     Function     Set-HITTypeOfHit                           PsAmt
-     Function     Stop-HIT                                   PsAmt
-     Function     Unblock-Worker                             PsAmt
-     Function     Update-QualificationScore                  PsAmt
-     Function     Update-QualificationType                   PsAmt
+     Function     about_PSAmt                                PSAmt
+     Function     Add-HIT                                    PSAmt
+     Function     Add-QualificationType                      PSAmt
+     Function     Add-QualificationTypeFull                  PSAmt
+     Function     Approve-Assignment                         PSAmt
+     Function     Approve-RejectedAssignment                 PSAmt
+     Function     Block-Worker                               PSAmt
+     Function     Connect-AMT                                PSAmt
+     Function     Deny-Assignment                            PSAmt
+     Function     Deny-QualificationRequest                  PSAmt
+     Function     Disable-HIT                                PSAmt
+     Function     Disconnect-AMT                             PSAmt
+     Function     Enter-HIT                                  PSAmt
+     Function     Expand-HIT                                 PSAmt
+     Function     Get-AccountBalance                         PSAmt
+     Function     Get-AllAssignmentsForHIT                   PSAmt
+     Function     Get-AllHITs                                PSAmt
+     Function     Get-AllQualificationTypes                  PSAmt
+     Function     Get-AMTKeys                                PSAmt
+     Function     Get-Assignment                             PSAmt
+     Function     Get-BlockedWorkers                         PSAmt
+     Function     Get-BonusPayments                          PSAmt
+     Function     Get-FileUploadUrl                          PSAmt
+     Function     Get-HIT                                    PSAmt
+     Function     Get-QualificationRequests                  PSAmt
+     Function     Get-QualificationScore                     PSAmt
+     Function     Get-QualificationsForQualificationType     PSAmt
+     Function     Get-QualificationType                      PSAmt
+     Function     Get-RequesterStatistic                     PSAmt
+	   Function     Get-RequesterWorkerStatistc                PSAmt
+     Function     Get-ReviewableHITs                         PSAmt
+     Function     Grant-Bonus                                PSAmt
+     Function     Grant-Qualification                        PSAmt
+     Function     Grant-QualificationRequest                 PSAmt
+     Function     New-ExternalQuestion                       PSAmt
+     Function     New-HIT                                    PSAmt
+     Function     New-HtmlQuestion                           PSAmt
+     Function     New-Locale                                 PSAmt
+     Function     New-Price                                  PSAmt
+     Function     New-QualificationRequirement               PSAmt
+     Function     New-QuestionForm                           PSAmt
+     Function     New-TestHIT                                PSAmt
+     Function     Register-HITType                           PSAmt
+     Function     Remove-HIT                                 PSAmt
+     Function     Remove-QualificationType                   PSAmt
+     Function     Revoke-Qualification                       PSAmt
+     Function     Search-QualificationTypes                  PSAmt
+     Function     Send-WorkerNotification                    PSAmt
+     Function     Set-AMTKeys                                PSAmt
+     Function     Set-HITTypeOfHit                           PSAmt
+     Function     Stop-HIT                                   PSAmt
+     Function     Unblock-Worker                             PSAmt
+     Function     Update-QualificationScore                  PSAmt
+     Function     Update-QualificationType                   PSAmt
 
 ### Prerequisites
 
@@ -93,19 +93,19 @@ PowerShell wrapper module for the Amazon Mechanical Turk .Net SDK
 
 ### Install
 
-- Download and copy the latest release [PsAmt-v*.zip](https://github.com/descil/psamt/releases) to your module directory.
-- Alternatively, clone and copy PsAmt subfolder to your module directory. Additionally, add DLL from modified [dotnetmturk](https://github.com/descil/dotnetmturk/releases).
+- Download and copy the latest release [PSAmt-v*.zip](https://github.com/descil/PSAmt/releases) to your module directory.
+- Alternatively, clone and copy PSAmt subfolder to your module directory. Additionally, add DLL from modified [dotnetmturk](https://github.com/descil/dotnetmturk/releases).
 
 ### Documentation
 
-- PowerShell functions have comment-based help, i.e., type `help about_PsAmt`
+- PowerShell functions have comment-based help, i.e., type `help about_PSAmt`
 - Functions follow closely operations from the [Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html)
-- See walk-through [examples](https://github.com/DeSciL/PsAmt/blob/master/PsAmt/samples/ApiSamples.ps1) in the sample folder.
+- See walk-through [examples](https://github.com/DeSciL/PSAmt/blob/master/PSAmt/samples/ApiSamples.ps1) in the sample folder.
 
 ### License
 
 Copyright (C) 2015 Stefan Wehrli
 
-PsAmt is based on a modified version of the [Amazon Mechanical Turk SDK for .Net](http://mturkdotnet.codeplex.com/). 
+PSAmt is based on a modified version of the [Amazon Mechanical Turk SDK for .Net](http://mturkdotnet.codeplex.com/). 
 Comment based help of PowerShell functions are taken from the [Amazon Mturk API Reference](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/Welcome.html).
-The rest is [MIT](https://github.com/DeSciL/PsAmt/blob/master/LICENSE) and provided "as is".
+The rest is [MIT](https://github.com/DeSciL/PSAmt/blob/master/LICENSE) and provided "as is".

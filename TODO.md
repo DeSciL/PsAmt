@@ -1,4 +1,4 @@
-# TODO PsAmt
+# TODO PSAmt
 stwehrli@gmail.com
 
 ## Know Bugs / Issues

@@ -1,12 +1,12 @@
 #########################################################################################
-# PsAmt Module
+# PSAmt Module
 # stwehrli@gmail.com
 # 28apr2014
 #########################################################################################
 
 # Global Settings
-[string]$Global:AmtModulePath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
-[string]$Global:AmtKeyPath = Get-Module -ListAvailable PsAmt | Split-Path -Parent
+[string]$Global:AmtModulePath = Get-Module -ListAvailable PSAmt | Split-Path -Parent
+[string]$Global:AmtKeyPath = Get-Module -ListAvailable PSAmt | Split-Path -Parent
 [bool]$Global:AmtSandbox = $true
 [string]$Global:AmtConsoleColor = "Cyan"
 [Security.SecureString]$Global:AmtPassphrase = $null
@@ -93,14 +93,14 @@
   http://www.mturk.com
 
  .LINK
-  https://github.com/descil/psamt
+  https://github.com/descil/PSAmt
   
 #>
-function about_PsAmt {}
+function about_PSAmt {}
 
 #########################################################################################
 # Exports
-Export-ModuleMember about_PsAmt
+Export-ModuleMember about_PSAmt
 
 #########################################################################################
 # AmtApi
