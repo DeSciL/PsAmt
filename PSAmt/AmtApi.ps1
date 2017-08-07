@@ -85,7 +85,7 @@ function LoadAmt {
         about_PSAmt
     #>
     # Set assembly location
-    $assembly = "Amazon.WebServices.MechanicalTurk.dll"
+    $assembly = "lib\Amazon.WebServices.MechanicalTurk.dll"
     $modulePath = $Global:AmtModulePath
     $assemblyPath = Join-Path $modulePath $assembly
 
